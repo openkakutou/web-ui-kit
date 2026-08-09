@@ -23,6 +23,7 @@
 | `WuikSliderElement` | custom element class (`<wuik-slider>`) | `src/components/slider.ts` |
 | `WuikColorPickerElement` | custom element class (`<wuik-color-picker>`) | `src/components/color-picker.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
+| `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -132,6 +133,38 @@ Wraps a native `<button>`.
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
+
+## Canvas/viewport controls (`src/canvas/`)
+
+### `<wuik-viewport>`
+
+Reusable zoom/pan/reset-to-fit controls wrapping a single default-slotted element — typically a `<canvas>`, but the component never reads or writes its pixels: it applies a CSS `transform: translate() scale()` to whatever is slotted, so it works with any content regardless of how that content renders itself. This is the entire integration contract — there is no render callback to implement. See `.vibe/decisions/008-viewport-controls-integration-contract.md`.
+
+The host has no intrinsic size: set `width`/`height` (or `aspect-ratio`) via CSS, like any other block box — the component fills 100% of that box and clips overflow.
+
+| Attribute | Meaning |
+|---|---|
+| `min-scale`, `max-scale` | Zoom bounds. Default `0.1`/`8`. A non-numeric value, a non-positive bound, or `min-scale >= max-scale` falls back to the defaults **and** shows a visible invalid indicator, matching the convention in `.vibe/decisions/007-form-input-components-shared-conventions.md`. |
+| `zoom-step` | Fractional zoom increment per wheel notch/keyboard `+`/`-` press. Default `0.1` (10%). A non-numeric or non-positive value falls back to the default and is flagged invalid the same way. |
+| `label` | Overrides the default `aria-label` (`"Zoom and pan viewport"`) on the interactive region. |
+
+| Method | Effect |
+|---|---|
+| `getTransform()` | Returns the current `{ scale, x, y }` (read-only; use the methods below to change it). |
+| `resetToFit()` | Fits the slotted content's natural (unscaled) size into the visible area, centered. A no-op producing an identity transform if content/container has no measurable size yet — call again once layout/image load has happened. |
+| `zoomBy(factor, originX?, originY?)` | Zooms by `factor` (> 1 in, < 1 out), centered on `(originX, originY)` in the viewport's own coordinates, defaulting to the viewport's center. |
+| `panBy(dx, dy)` | Pans by `(dx, dy)` in the viewport's own coordinates. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-viewport-change` | `{ scale, x, y }` | The transform changes, from any source (wheel, drag, keyboard, or a method call) — for consumers that need the numeric transform (e.g. to redraw a canvas at a different internal resolution when zoomed). |
+
+Interaction:
+- **Mouse wheel** zooms centered on the pointer, but only once the component has received focus (click or Tab) — an unfocused wheel pass-through is left alone so the component never traps the page's own scroll (see decision `008`).
+- **Pointer drag** (primary button only) pans; the cursor switches to a "grabbing" look while dragging.
+- **Keyboard**, once focused: arrow keys pan; `+`/`-` zoom (centered on the viewport's own center); `0`/`Home` resets to fit. A Ctrl/Cmd-modified `+`/`-` is left alone so the browser's own page-zoom shortcut keeps working. A visually-hidden live region announces zoom-level changes (including "Maximum/minimum zoom reached" when a further zoom is clamped) for screen reader users.
+
+Default slot: the wrapped content (typically a single `<canvas>`). Named `overlay` slot: an optional place for a consumer's own chrome (e.g. a zoom-percentage readout or reset button) positioned over the stage without blocking pan/drag on the empty areas around it.
 
 ## Design tokens (`src/tokens/`)
 

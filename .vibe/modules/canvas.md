@@ -1,0 +1,6 @@
+# Module: canvas
+**Role:** Reusable zoom/pan/reset-to-fit viewport controls for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback) across the org's apps. The pure zoom/pan/fit math is kept separate from the Web Component's DOM/event glue, mirroring the form/input components' split between validation logic and the component itself (`modules/components.md`).
+**Files:** `src/canvas/viewport-transform.ts`, `src/canvas/viewport.ts`, `src/canvas/index.ts`
+**Exports:** `WuikViewportElement` (`<wuik-viewport>`) — self-registers via `customElements.define` as a side effect of import; `resolveViewportConfig`, `clampScale`, `zoomAtPoint`, `panBy`, `computeFitTransform` (pure functions, not part of the package's public API — internal to the component); `index.ts` is the barrel re-exporting the component.
+**Public contract:** See `docs/api.md` for the full attribute/method/event/keyboard reference, and `.vibe/decisions/008-viewport-controls-integration-contract.md` for why the component never reads or writes the slotted content's pixels — it applies a CSS transform and exposes the numeric result via `getTransform()`/`wuik-viewport-change`, nothing more.
+**Depends on:** `modules/tokens.md`

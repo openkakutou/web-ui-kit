@@ -1,5 +1,5 @@
 ---
-status: todo
+status: in_progress
 ---
 # Canvas/Viewport Controls (Zoom/Pan, Reusable Across Previews)
 

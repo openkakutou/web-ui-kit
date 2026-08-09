@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A reusable zoom/pan viewport control (`<wuik-viewport>`) for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom centered on the cursor, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone (arrow keys to pan, plus/minus to zoom, `0`/`Home` to reset), with a screen-reader announcement of zoom-level changes. Works with any wrapped content — the control never touches its pixels — and never hijacks the page's own scroll: wheel-zoom only engages once the viewport has been focused.
+
 ## [0.4.0] - 2026-08-09
 
 ### Added

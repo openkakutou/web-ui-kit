@@ -9,10 +9,10 @@ This project is in early-stage development. Available now:
 - Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
 - A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
 - Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently.
+- A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
 
 Planned:
 
-- Reusable canvas/viewport controls: zoom/pan for every sprite/stage/animation preview
 - Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
 - An accessibility baseline: keyboard navigation, focus states, contrast
 <!-- vibe:end:features -->
@@ -115,6 +115,22 @@ colorPicker.addEventListener("wuik-change", (e) => console.log(e.detail.value));
 ```
 
 See [docs/api.md](docs/api.md) for the full event/attribute contract, including how each component shows an invalid/empty input state.
+
+Wrap any canvas-based preview in `<wuik-viewport>` to get mouse wheel zoom, drag-to-pan, and a reset-to-fit action for free — it never reads or draws your canvas's pixels, it just applies a CSS transform around whatever you slot into it:
+
+```html
+<wuik-viewport style="width: 400px; height: 300px;">
+  <canvas width="200" height="150"></canvas>
+</wuik-viewport>
+```
+
+```js
+const viewport = document.querySelector("wuik-viewport");
+window.addEventListener("load", () => viewport.resetToFit());
+viewport.addEventListener("wuik-viewport-change", (e) => console.log(e.detail)); // { scale, x, y }
+```
+
+Fully keyboard-operable once focused: arrow keys pan, `+`/`-` zoom, `0`/`Home` resets to fit. See [docs/api.md](docs/api.md) for the full attribute/method/event/keyboard reference.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

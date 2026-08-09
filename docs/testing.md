@@ -45,6 +45,16 @@ Real rendered appearance — including that hiding/showing and light/dark theme 
 
 `src/components/slider.test.ts` and `color-picker.test.ts` set the native `<input type="range">`/`<input type="color">`'s `.value` directly and dispatch a plain `input`/`change` `Event` — this is what the component's own listeners react to, without needing a real pointer-drag simulation.
 
+### Simulating pointer drag in jsdom
+
+`jsdom` does not implement `PointerEvent` or `setPointerCapture`/`releasePointerCapture` at all. `src/canvas/viewport.test.ts` dispatches a plain `Event` (type `"pointerdown"`/`"pointermove"`/`"pointerup"`) with `pointerId`/`clientX`/`clientY`/`button` set as plain own properties via `Object.assign`, and the component itself calls `setPointerCapture`/`releasePointerCapture` through an optional-call (`?.()`) so it degrades safely where the API doesn't exist, real-browser drag reliability included.
+
+### Constructing a component imported from another module
+
+Under this project's specific Vitest + jsdom + esbuild combination, an element built through the `CustomElementRegistry` construction path — `document.createElement(tagName)`, or the HTML parser upgrading an already-declared tag — loses access to its own methods and accessors (they read back as `undefined`, even though `instanceof` and the prototype's own property list both report them present) whenever the class was imported from a **separate** module file. Every existing component test happened to avoid ever triggering this: they always reach into a shadow-internal native element (`nativeInput(slider).value`, `shadowRoot.querySelector(...)`) rather than calling a custom method/accessor on the host directly.
+
+`src/canvas/viewport.test.ts` calls real methods (`getTransform()`, `resetToFit()`, …) on the host directly, which hits this. Verified **not** to be a real defect: a plain Node script using the `jsdom` package directly (no Vite/Vitest transform involved) constructs the exact same class via `document.createElement` correctly, and a real headless-browser (Playwright) pass against the built package — the Step 4b runtime smoke check — also confirmed `<wuik-viewport>` markup parses, upgrades, and exposes every method correctly with zero console errors. The test file works around the artifact by constructing with `new WuikViewportElement()` instead of `document.createElement("wuik-viewport")` — `connectedCallback`/`attributeChangedCallback` still fire normally once the instance is inserted/attributed, so this exercises identical behavior. If a future component's tests hit the same symptom, the same workaround applies.
+
 ### Verifying the built artifact, not just the source transform
 
 Tests exercise the source CSS through Vite's dev transform pipeline. That does not prove the *built* package (what a consuming app actually imports) behaves the same after bundling/minification — e.g. the production build minifies `#ffffff` to `#fff` (same color, different string). When changing tokens, it's worth an extra manual check against the real build output:

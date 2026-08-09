@@ -1,0 +1,21 @@
+---
+date: 2026-08-10
+status: accepted
+---
+# Viewport controls are transform+event based, never own canvas rendering
+
+**Context:** Building `<wuik-viewport>` (backlog item `004`) — reusable zoom/pan/reset-to-fit controls meant to wrap "any `<canvas>`-rendering consumer" across sprite viewers, stage backgrounds, and animation playback. Two integration shapes were possible: (a) the component owns a render loop / redraw callback contract, requiring each consumer to hand it a draw function; or (b) the component treats its default-slotted content as an opaque box, applies a CSS `transform: translate() scale()` to it, and exposes the resulting `{ scale, x, y }` purely as a read API (`getTransform()`) and a `wuik-viewport-change` event, leaving all actual pixel rendering entirely to the consumer.
+
+Also decided alongside this: wheel-driven zoom only activates once the component has received focus (via click or Tab), rather than zooming on hover the instant the pointer crosses the component — because a viewport control that hijacks the mouse wheel unconditionally would trap page scroll for any consumer that embeds it mid-page (e.g. a sprite viewer inside a longer, scrolling docs/editor layout), which several of this kit's real consumers do.
+
+**Decision:** `<wuik-viewport>` never reads or writes canvas pixels and never assumes anything about how its slotted content draws itself. It:
+- Wraps a single default-slotted element in a shadow-DOM wrapper, applies `transform: translate(x, y) scale(s)` to that wrapper, and lets the browser's own compositor handle the visual scaling — this alone is enough to make wheel-zoom/drag-pan/reset-to-fit work for *any* slotted element (a `<canvas>`, an `<img>`, a `<div>`), independent of its internal rendering technology.
+- Exposes the numeric transform via `getTransform()` and a `wuik-viewport-change` custom event, for the (optional) subset of consumers that want to redraw their canvas at a different internal resolution when zoomed, or sync a minimap/readout.
+- Requires the component to hold focus (`document.activeElement === this`) before a wheel event is treated as a zoom gesture; an unfocused wheel pass-through is left alone (no `preventDefault`) so normal page scroll is never trapped.
+- Documents this as the entire "integration contract" (see `docs/api.md`) — no render callback, no canvas context handed to or from the component.
+
+**Reason:** A render-callback contract would force every consumer to adapt its own draw loop to the shape web-ui-kit dictates, coupling a generic design-system primitive to each app's rendering internals (raw 2D context, WebGL, or future engines) — disproportionate for a shared kit whose stated goal (decision `011`) is staying framework/technology agnostic. The transform+event approach needs zero cooperation from the consumer's rendering code to deliver the acceptance criteria (wheel zoom, drag pan, reset-to-fit, keyboard operability) and degrades gracefully: a consumer that never reads the event still gets fully working zoom/pan for free via the CSS transform alone. The focus-gated wheel behavior was raised independently by both the UI/UX and frontend-design expert consultations as the single biggest ergonomic risk of a naive implementation, and is cheap to implement (a single `document.activeElement` check) against the alternative of every consumer needing a workaround (e.g. a "click to activate" overlay) to avoid trapping scroll.
+
+**Rejected alternatives:**
+- *Render-callback contract (`onRedraw(scale, x, y) => void` invoked by the component, which owns the animation frame loop)* — rejected: forces every consumer's rendering code to integrate against this component's loop/timing, when the acceptance criteria never require the component to touch pixels at all; a much heavier and more coupled contract than the goal calls for.
+- *Wheel-zooms on hover, unconditionally, matching some common map-widget UX (e.g. embedded map libraries)* — rejected: acceptable for a full-page or clearly-bounded interactive map, but this kit's own consumers embed viewports inside longer scrolling editor/viewer pages (sprite viewers, stage previews) where unconditional wheel capture would trap the page's scroll the moment the pointer passes over the component, with no visible cue why scrolling suddenly stopped working.

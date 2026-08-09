@@ -44,6 +44,11 @@ A control for choosing a color, combining a native color picker with an optional
 **Do not confuse with:** the palette itself, which is just the list of preset swatch colors — not the currently selected value.
 _Sources: `src/components/color-picker.ts`, `src/components/color-picker-color.ts`_
 
+## Viewport
+A control that lets the user zoom, pan, and reset-to-fit a wrapped piece of content — typically a `<canvas>`-based preview (a sprite, a stage background, an animation frame) — without knowing or touching how that content renders its own pixels. Distinguishes the current transform's scale from its pan offset, both exposed together as a single read value and change event.
+**Do not confuse with:** the wrapped content itself — the viewport only ever moves/scales it as an opaque box; drawing the content is entirely the wrapped element's own responsibility.
+_Sources: `src/canvas/viewport.ts`, `src/canvas/viewport-transform.ts`_
+
 ## Button
 A standard clickable action control with a primary/secondary/danger variant, wrapping a native button. Deliberately never synthesizes visible label text for an empty slot — an honest, visibly-flagged empty state is preferred over giving the control a false accessible name.
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.
