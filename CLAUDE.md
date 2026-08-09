@@ -20,23 +20,25 @@ This repo ships components and tokens — it is never itself a site. There is no
 
 ## Architecture
 
-Early scaffold stage — only the build setup and the package entrypoint exist so far.
+Design tokens and the publish pipeline have landed; Web Components (layout shell, form/input widgets) and canvas/viewport controls (2D and, per roadmap decision `014`, 3D) are still planned.
 
 ```
 web-ui-kit/
 ├── src/
-│   ├── index.ts        # package entrypoint (public API surface)
-│   ├── version.ts      # package version constant
-│   └── version.test.ts # placeholder test
-├── vite.config.ts      # Vite (library mode) + Vitest config
+│   ├── index.ts             # package entrypoint (public API surface)
+│   ├── version.ts           # package version constant
+│   ├── tokens/               # design tokens: colors (light/dark), spacing, typography (CSS custom properties)
+│   └── publish/              # pack-content/metadata guards gating the tag-triggered npm publish pipeline
+├── smoke/                    # fixture app the release pipeline builds against before publishing for real
+├── vite.config.ts           # Vite (library mode) + Vitest config
 ├── tsconfig.json
-└── biome.json          # lint/format config
+└── biome.json                # lint/format config
 ```
 
 Planned, as features land (not yet present):
-- `src/tokens/` — CSS custom-property design tokens (color incl. light/dark, spacing, typography)
 - `src/components/` — Web Components: layout shell (app frame, panels, tabs, toolbar), form/input widgets (file drop-zone, sliders, color/palette picker, buttons)
-- `src/canvas/` — reusable canvas/viewport controls (zoom/pan) for sprite/stage/animation previews
+- `src/canvas/` — reusable canvas/viewport controls (zoom/pan) for sprite/stage/animation previews — backlog item `004`
+- `src/canvas3d/` (or similar) — reusable 3D viewport controls (orbit/pan/zoom camera) for Ikemen GO 3D model-based stage previews, shared by `stage-viewer-web`/`stage-editor` — backlog item `007`, roadmap decision `014`
 
 <!-- The import below loads the compact codebase map into every session. It is maintained by /vibe:sync; details (modules/, models.md, glossary.md) stay on-demand. -->
 @.vibe/index.md
