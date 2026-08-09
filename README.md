@@ -13,6 +13,7 @@ Planned:
 - A shared layout shell: app frame, side panels, tabs, toolbar
 - Core form/input components: file drop-zone, sliders, color/palette picker, buttons
 - Reusable canvas/viewport controls: zoom/pan for every sprite/stage/animation preview
+- Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
 - An accessibility baseline: keyboard navigation, focus states, contrast
 <!-- vibe:end:features -->
 
