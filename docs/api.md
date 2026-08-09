@@ -17,6 +17,51 @@
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
+Importing `src/index.ts` (or `src/components/index.ts` directly) also registers every custom element below via `customElements.define`, as a side effect — there is nothing else to call to make them available.
+
+## Layout components (`src/components/`)
+
+Native Web Components. Each is usable standalone or composed with the others; none requires `<wuik-app-shell>`. All styling comes from `--wuik-*` design tokens applied internally — no consumer CSS is required, and each follows the active `data-theme` automatically.
+
+### `<wuik-panel>`
+
+A titled container.
+
+| Slot | Content |
+|---|---|
+| `header` (named, optional) | Shown in a separated header row above the body. Omitted entirely (no reserved space) when nothing is slotted into it. |
+| (default) | The panel body. |
+
+### `<wuik-toolbar>`
+
+A horizontal container for buttons or other controls. Content that overflows the available width scrolls horizontally instead of being clipped. Single default slot, no attributes.
+
+### `<wuik-tabs>` + `<wuik-tab-panel>`
+
+A keyboard-accessible tab strip. `<wuik-tabs>` builds its tab buttons from its light-DOM `<wuik-tab-panel>` children and reacts to them being added or removed at runtime.
+
+| Element | Attribute | Meaning |
+|---|---|---|
+| `<wuik-tab-panel>` | `label` | The text shown on the corresponding tab button. |
+
+Behavior:
+- Activation is automatic: moving focus to a tab with the keyboard immediately selects it and shows its panel — see `.vibe/decisions/004-tabs-automatic-activation.md` for why.
+- Keyboard: `ArrowLeft`/`ArrowRight` move selection with wrap-around at the ends; `Home`/`End` jump to the first/last tab. Roving tabindex — only the selected tab button is in the page's tab order.
+- Full ARIA tabs pattern: `role="tablist"`/`"tab"`/`"tabpanel"`, `aria-selected`, `aria-controls`/`aria-labelledby` pairing each tab to its panel.
+- If the tab or its panel held focus when the selection changes, focus follows to the newly selected tab button rather than being lost.
+
+### `<wuik-app-shell>`
+
+A CSS-grid root layout: a toolbar row, an optional sidebar column, and a main content area. It does not instantiate the other three components itself — it only provides the regions.
+
+| Slot | Region |
+|---|---|
+| `toolbar` (named, optional) | Top row, full width. Collapses to zero size with no gap when nothing is slotted into it. |
+| `sidebar` (named, optional) | Left column. Collapses the same way when empty. |
+| (default) | Main content area. |
+
+Below a `640px` viewport width, the layout restacks vertically (toolbar, then main, then sidebar) instead of overflowing horizontally — see `.vibe/decisions/005-app-shell-empty-slot-collapse.md` for the empty-slot/no-gap design and the restack threshold.
+
 ## Design tokens (`src/tokens/`)
 
 Source layout: `colors.css`, `spacing.css`, `typography.css`, aggregated by `index.css` (the only supported import — the individual files are a private implementation detail and may be reorganized without notice).

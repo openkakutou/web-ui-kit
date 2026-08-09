@@ -7,10 +7,10 @@ This project is in early-stage development. Available now:
 
 - Design tokens: a color palette with matching light and dark values, a spacing scale, and a typography scale, delivered as CSS custom properties from a single stylesheet. Dark mode is switched by setting `data-theme="dark"` on the page; every color pairing meets WCAG AA contrast in both themes.
 - Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
+- A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
 
 Planned:
 
-- A shared layout shell: app frame, side panels, tabs, toolbar
 - Core form/input components: file drop-zone, sliders, color/palette picker, buttons
 - Reusable canvas/viewport controls: zoom/pan for every sprite/stage/animation preview
 - Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
@@ -73,10 +73,35 @@ Every token is a CSS custom property, e.g. `var(--wuik-color-bg)`, `var(--wuik-s
 ```html
 <html data-theme="dark">
 ```
+
+Import the layout components once to register them as custom elements, then use them declaratively in your markup:
+
+```js
+import "@openkakutou/web-ui-kit";
+import "@openkakutou/web-ui-kit/tokens.css";
+```
+
+```html
+<wuik-app-shell>
+  <wuik-toolbar slot="toolbar">
+    <button type="button">Save</button>
+  </wuik-toolbar>
+  <wuik-panel slot="sidebar">
+    <span slot="header">Navigation</span>
+    ...
+  </wuik-panel>
+  <wuik-tabs>
+    <wuik-tab-panel label="Details">...</wuik-tab-panel>
+    <wuik-tab-panel label="History">...</wuik-tab-panel>
+  </wuik-tabs>
+</wuik-app-shell>
+```
+
+Each of `<wuik-panel>`, `<wuik-toolbar>`, and `<wuik-tabs>` also works standalone, without `<wuik-app-shell>` or each other. See [docs/api.md](docs/api.md) for the full slot/attribute reference of every component.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->
-- [docs/api.md](docs/api.md) — the package's public exports and the full design token reference (names, values, theme switching)
+- [docs/api.md](docs/api.md) — the package's public exports, the layout components (slots, attributes, keyboard behavior), and the full design token reference (names, values, theme switching)
 - [docs/releasing.md](docs/releasing.md) — how a version tag turns into a published npm release, and the safety checks that run before publishing
 - [docs/testing.md](docs/testing.md) — how the test suite is organized and run, including how CSS custom-property tokens are verified
 <!-- vibe:end:docs-index -->

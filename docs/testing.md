@@ -27,6 +27,16 @@ The token tests cover:
 
 `jsdom` does not implement a real layout/media-query engine, so `window.matchMedia`/`@media (prefers-color-scheme: dark)` cannot be meaningfully asserted on under Vitest. This is one reason the tokens use only the `data-theme` attribute as their switching mechanism (see `.vibe/decisions/001-design-token-theme-switch-mechanism.md`) — it keeps the whole contract testable instead of leaving a path that can only be trusted, not verified.
 
+## Web Components: structural checks, not computed style
+
+`jsdom` does not apply a Shadow DOM `<style>` element's rules to `getComputedStyle`, and separately does not resolve `var()` into computed properties at all (confirmed with minimal reproductions — see `.vibe/decisions/006-token-css-tested-structurally-not-computed.md`). So component tests (`src/components/*.test.ts`) never assert a computed style. Instead:
+
+- Whether a shadow-internal element is shown or hidden is asserted via the class/attribute the component's own code toggles (e.g. `classList.contains("has-content")`), not via `getComputedStyle(...).display`.
+- Whether a component uses the right design tokens is asserted against the component's own shadow stylesheet **text** — the expected `var(--wuik-*)` names must appear, and no literal hex color may appear anywhere in it.
+- `slotchange` fires as a queued microtask; tests that mutate a component's children after the initial mount (e.g. adding/removing a `<wuik-tab-panel>`) await one tick (`new Promise(r => setTimeout(r, 0))`) before asserting on the result.
+
+Real rendered appearance — including that hiding/showing and light/dark theme switching actually show up on screen, and that CSS Grid/slot layout composes correctly — is confirmed once per component by a runtime smoke check in a real browser (Playwright) during development, not by this unit test suite. That check caught a real bug this way: an unstyled `<slot>` defaults to `display: contents` in real browsers, so `grid-area` set on the `<slot>` selector had no effect until `display: block` was added — `jsdom` could not have surfaced this.
+
 ### Verifying the built artifact, not just the source transform
 
 Tests exercise the source CSS through Vite's dev transform pipeline. That does not prove the *built* package (what a consuming app actually imports) behaves the same after bundling/minification — e.g. the production build minifies `#ffffff` to `#fff` (same color, different string). When changing tokens, it's worth an extra manual check against the real build output:

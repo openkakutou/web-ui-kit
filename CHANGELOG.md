@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Four framework-free layout components, usable together or on their own with no CSS required: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app shell (toolbar + sidebar + main content) that any of the other three can be slotted into. All four follow the light/dark theme automatically.
+
 ## [0.2.0] - 2026-08-09
 
 ### Added

@@ -2,3 +2,7 @@ node_modules/
 dist/
 *.local
 .DS_Store
+
+# Throwaway local harness used only to exercise components in a real browser
+# during development (Step 4b runtime smoke checks) — never published, never committed.
+dev-preview/
