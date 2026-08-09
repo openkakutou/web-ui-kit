@@ -3,7 +3,7 @@
 
 ## Modules
 - [`modules/package.md`](modules/package.md) — package entrypoint, re-exports the public API surface (version constant, layout components) and side-effect-imports the design tokens CSS
-- [`modules/components.md`](modules/components.md) — the layout-shell Web Components (panel, toolbar, tabs, app shell), each usable standalone or composed together
+- [`modules/components.md`](modules/components.md) — the layout-shell Web Components (panel, toolbar, tabs, app shell) and the form/input Web Components (file drop-zone, slider, color picker, button), each usable standalone or composed together
 - [`modules/tokens.md`](modules/tokens.md) — design tokens (color light/dark, spacing, typography) as CSS custom properties, the foundation layer components style themselves with
 - [`modules/publish.md`](modules/publish.md) — pack-content/metadata guards and the `smoke/` fixture gating the tag-triggered npm publish pipeline
 
@@ -22,6 +22,10 @@
 - Components with dynamic light-DOM children (`wuik-tabs`, `wuik-app-shell`'s named slots) react to `slotchange` on their own shadow `<slot>` rather than a `MutationObserver` on themselves, and also run that same handler once from `connectedCallback` for the initial render — needed because a parent custom element's `connectedCallback` fires *before* its children's (tree order), so a child's own state (e.g. an auto-generated `id`) cannot be relied on yet at that point; anything a parent needs from a child is derived/assigned by the parent itself instead
 - `jsdom` does not apply Shadow DOM `<style>` rules to computed style, and separately never resolves `var()` in computed properties — component tests assert shown/hidden state via the class the component toggles and assert token usage against the shadow stylesheet's **text**, never via `getComputedStyle` (see `.vibe/decisions/006-token-css-tested-structurally-not-computed.md`); real rendered/computed correctness is checked once per component with a real-browser (Playwright) smoke pass during development, not by the test suite
 - An unstyled `<slot>` defaults to `display: contents` in real browsers, making it transparent to CSS Grid placement — a `<slot>` used as a named grid area (`wuik-app-shell`) needs an explicit `display: block` or its `grid-area` has no effect and its slotted children fall back to grid auto-placement instead
+- Attribute-validation logic for a component (accept-pattern matching, numeric range resolution, hex color parsing) is kept in its own pure module, separate from the component's DOM/event glue, and given its own test file — so validation rules are tested directly without mounting a custom element (`file-drop-zone-accept.ts`, `slider-config.ts`, `color-picker-color.ts`)
+- A malformed *configuration* value (non-numeric slider range, malformed color string) falls back to a default **and** sets a visible `is-invalid` state (class + `aria-invalid` + inline error text); a well-formed value merely outside a valid range is just clamped silently, matching native `<input>` behavior — the two cases are deliberately not conflated (`.vibe/decisions/007-form-input-components-shared-conventions.md`)
+- `jsdom` does not implement `DataTransfer` — a component's `drop` handler is tested by dispatching a plain `Event` with a stubbed `dataTransfer: { files }` property via `Object.defineProperty`, rather than constructing a real `DragEvent`
+- A component that must never fabricate a visible label for empty/missing content (`wuik-button`) instead logs a `console.warn` and shows a non-labelling visual indicator — deliberate, not a debug leftover to be stripped
 
 ## Other context files
 - [`models.md`](models.md) — data models

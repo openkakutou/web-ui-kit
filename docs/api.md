@@ -19,6 +19,10 @@
 | `WuikTabsElement` | custom element class (`<wuik-tabs>`) | `src/components/tabs.ts` |
 | `WuikTabPanelElement` | custom element class (`<wuik-tab-panel>`) | `src/components/tabs.ts` |
 | `WuikAppShellElement` | custom element class (`<wuik-app-shell>`) | `src/components/app-shell.ts` |
+| `WuikFileDropZoneElement` | custom element class (`<wuik-file-drop-zone>`) | `src/components/file-drop-zone.ts` |
+| `WuikSliderElement` | custom element class (`<wuik-slider>`) | `src/components/slider.ts` |
+| `WuikColorPickerElement` | custom element class (`<wuik-color-picker>`) | `src/components/color-picker.ts` |
+| `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -66,6 +70,68 @@ A CSS-grid root layout: a toolbar row, an optional sidebar column, and a main co
 | (default) | Main content area. |
 
 Below a `640px` viewport width, the layout restacks vertically (toolbar, then main, then sidebar) instead of overflowing horizontally — see `.vibe/decisions/005-app-shell-empty-slot-collapse.md` for the empty-slot/no-gap design and the restack threshold.
+
+## Form/input components (`src/components/`)
+
+Same standalone-first rule as the layout components: none depends on `<wuik-app-shell>` or on each other. Shared conventions (invalid-state indicator, disabled-state styling, the focus-ring split between large and small targets) are recorded in `.vibe/decisions/007-form-input-components-shared-conventions.md`.
+
+### `<wuik-file-drop-zone>`
+
+A drag-and-drop + click-to-browse file input area. Keyboard-operable first: the zone is a real interactive element (`role="button"`, `tabindex="0"`), so Enter/Space opens the native file picker with no drag involved — drag-and-drop is a layered addition, never the only path in.
+
+| Attribute | Meaning |
+|---|---|
+| `accept` | Comma-separated list of accepted file extensions (`.png`), MIME wildcards (`image/*`), or exact MIME types (`image/png`). Omitted = accept everything. |
+| `multiple` | Presence enables selecting/dropping more than one file; otherwise only the first accepted file is kept. |
+| `disabled` | Ignores clicks, keyboard activation, and drag/drop entirely. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-files-selected` | `{ files: File[] }` | At least one dropped/selected file matches `accept`. Only accepted files are included — rejected files are never silently dropped: the zone shows a visible rejected state and an inline status message instead. A new selection/drop always replaces the previous one. |
+
+Default slot: custom prompt content (falls back to "Drag & drop files here, or click to browse").
+
+### `<wuik-slider>`
+
+Wraps a native `<input type="range">` with a value readout.
+
+| Attribute | Meaning |
+|---|---|
+| `min`, `max`, `step` | Same semantics as the native range input. Default `0`/`100`/`1`. |
+| `value` | Current value, clamped into `[min, max]`. A well-formed out-of-range value is just clamped (like a native input); a non-numeric attribute or `min >= max` falls back to the defaults **and** shows a visible invalid indicator (`aria-invalid`, red outline, inline error text) instead of silently defaulting. |
+| `label` | Sets an accessible name (`aria-label`) on the native input. |
+| `disabled` | Forwarded to the native input; stops emitting events. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-input` | `{ value: number }` | Continuously, as the value changes (live preview) — mirrors the native `input` event. |
+| `wuik-change` | `{ value: number }` | Once, when the change is committed — mirrors the native `change` event. |
+
+### `<wuik-color-picker>`
+
+Wraps a native `<input type="color">` plus optional preset swatch buttons.
+
+| Attribute | Meaning |
+|---|---|
+| `value` | A hex color (`#rgb` or `#rrggbb`). A malformed value falls back to `#000000` **and** shows a visible invalid indicator, rather than silently substituting a value. |
+| `palette` | Comma-separated hex colors rendered as clickable swatch buttons. Malformed entries are dropped individually rather than failing the whole list. |
+| `disabled` | Forwarded to the native input; swatch clicks are ignored. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-change` | `{ value: string }` | The native picker's value changes, or a swatch is clicked. |
+
+### `<wuik-button>`
+
+Wraps a native `<button>`.
+
+| Attribute | Meaning |
+|---|---|
+| `variant` | `primary` (default), `secondary`, or `danger`. An unrecognized value falls back to `primary`. |
+| `disabled` | Forwarded to the native button. |
+| `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
+
+Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
 
 ## Design tokens (`src/tokens/`)
 

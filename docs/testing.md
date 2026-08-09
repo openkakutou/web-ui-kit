@@ -37,6 +37,14 @@ The token tests cover:
 
 Real rendered appearance — including that hiding/showing and light/dark theme switching actually show up on screen, and that CSS Grid/slot layout composes correctly — is confirmed once per component by a runtime smoke check in a real browser (Playwright) during development, not by this unit test suite. That check caught a real bug this way: an unstyled `<slot>` defaults to `display: contents` in real browsers, so `grid-area` set on the `<slot>` selector had no effect until `display: block` was added — `jsdom` could not have surfaced this.
 
+### Simulating drag-and-drop in jsdom
+
+`jsdom` does not implement `DataTransfer`, so `src/components/file-drop-zone.test.ts` builds a plain `drop` `Event` and attaches a stub `dataTransfer: { files }` via `Object.defineProperty` rather than constructing a real `DragEvent`. This is enough to exercise the component's own `drop` handler, which only reads `event.dataTransfer.files`.
+
+### Simulating slider/color-picker live updates
+
+`src/components/slider.test.ts` and `color-picker.test.ts` set the native `<input type="range">`/`<input type="color">`'s `.value` directly and dispatch a plain `input`/`change` `Event` — this is what the component's own listeners react to, without needing a real pointer-drag simulation.
+
 ### Verifying the built artifact, not just the source transform
 
 Tests exercise the source CSS through Vite's dev transform pipeline. That does not prove the *built* package (what a consuming app actually imports) behaves the same after bundling/minification — e.g. the production build minifies `#ffffff` to `#fff` (same color, different string). When changing tokens, it's worth an extra manual check against the real build output:

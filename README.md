@@ -8,10 +8,10 @@ This project is in early-stage development. Available now:
 - Design tokens: a color palette with matching light and dark values, a spacing scale, and a typography scale, delivered as CSS custom properties from a single stylesheet. Dark mode is switched by setting `data-theme="dark"` on the page; every color pairing meets WCAG AA contrast in both themes.
 - Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
 - A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
+- Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently.
 
 Planned:
 
-- Core form/input components: file drop-zone, sliders, color/palette picker, buttons
 - Reusable canvas/viewport controls: zoom/pan for every sprite/stage/animation preview
 - Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
 - An accessibility baseline: keyboard navigation, focus states, contrast
@@ -98,10 +98,27 @@ import "@openkakutou/web-ui-kit/tokens.css";
 ```
 
 Each of `<wuik-panel>`, `<wuik-toolbar>`, and `<wuik-tabs>` also works standalone, without `<wuik-app-shell>` or each other. See [docs/api.md](docs/api.md) for the full slot/attribute reference of every component.
+
+The form/input components work standalone too, and each emits a typed `CustomEvent` instead of relying on native form events:
+
+```html
+<wuik-file-drop-zone accept=".png,.jpg" multiple>Drop images here</wuik-file-drop-zone>
+<wuik-slider min="0" max="100" value="50" label="Volume"></wuik-slider>
+<wuik-color-picker value="#2563eb" palette="#dc2626,#16a34a,#2563eb"></wuik-color-picker>
+<wuik-button variant="primary">Save</wuik-button>
+```
+
+```js
+dropZone.addEventListener("wuik-files-selected", (e) => console.log(e.detail.files));
+slider.addEventListener("wuik-change", (e) => console.log(e.detail.value)); // also emits wuik-input live, during drag
+colorPicker.addEventListener("wuik-change", (e) => console.log(e.detail.value));
+```
+
+See [docs/api.md](docs/api.md) for the full event/attribute contract, including how each component shows an invalid/empty input state.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->
-- [docs/api.md](docs/api.md) — the package's public exports, the layout components (slots, attributes, keyboard behavior), and the full design token reference (names, values, theme switching)
+- [docs/api.md](docs/api.md) — the package's public exports, the layout components and form/input components (slots, attributes, events, keyboard behavior), and the full design token reference (names, values, theme switching)
 - [docs/releasing.md](docs/releasing.md) — how a version tag turns into a published npm release, and the safety checks that run before publishing
 - [docs/testing.md](docs/testing.md) — how the test suite is organized and run, including how CSS custom-property tokens are verified
 <!-- vibe:end:docs-index -->
