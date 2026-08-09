@@ -6,6 +6,7 @@ A shared, framework-agnostic design system for every [OpenKakutou](https://githu
 This project is in early-stage development. Available now:
 
 - Design tokens: a color palette with matching light and dark values, a spacing scale, and a typography scale, delivered as CSS custom properties from a single stylesheet. Dark mode is switched by setting `data-theme="dark"` on the page; every color pairing meets WCAG AA contrast in both themes.
+- Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
 
 Planned:
 
@@ -54,7 +55,13 @@ Run the linter/formatter (auto-fixes issues in place):
 npm run lint
 ```
 
-In a consuming app, import the design tokens once (e.g. in your app's entrypoint):
+In a consuming app, add the package as a normal dependency:
+
+```sh
+npm install @openkakutou/web-ui-kit
+```
+
+Then import the design tokens once (e.g. in your app's entrypoint):
 
 ```js
 import "@openkakutou/web-ui-kit/tokens.css";
@@ -69,5 +76,6 @@ Every token is a CSS custom property, e.g. `var(--wuik-color-bg)`, `var(--wuik-s
 
 <!-- vibe:begin:docs-index -->
 - [docs/api.md](docs/api.md) — the package's public exports and the full design token reference (names, values, theme switching)
+- [docs/releasing.md](docs/releasing.md) — how a version tag turns into a published npm release, and the safety checks that run before publishing
 - [docs/testing.md](docs/testing.md) — how the test suite is organized and run, including how CSS custom-property tokens are verified
 <!-- vibe:end:docs-index -->

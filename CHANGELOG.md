@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The package is now published to the public npmjs.org registry on every tagged release, so any Vite app can add it as a normal dependency (`npm install @openkakutou/web-ui-kit`) and resolve it via a standard semver range — no extra build configuration needed.
+
 ## [0.1.0] - 2026-08-09
 
 ### Added

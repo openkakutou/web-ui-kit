@@ -1,0 +1,12 @@
+{
+  "name": "web-ui-kit-smoke",
+  "private": true,
+  "type": "module",
+  "description": "Not part of the published package. A throwaway Vite app used only in CI to prove the packed @openkakutou/web-ui-kit tarball installs and builds with zero extra config, before it is published for real. See .vibe/decisions/002-publish-pipeline-safety-gates.md.",
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^8.2.1"
+  }
+}
