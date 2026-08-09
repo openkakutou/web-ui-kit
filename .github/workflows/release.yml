@@ -60,7 +60,7 @@ jobs:
         run: |
           cd smoke
           npm install
-          npm install "../$(ls ../openkakutou-*.tgz)"
+          npm install "$(ls ../openkakutou-*.tgz)"
           npm run build
 
       - name: Publish to npmjs.org
