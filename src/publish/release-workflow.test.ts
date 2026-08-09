@@ -36,11 +36,12 @@ describe("release workflow", () => {
     expect(verifyPackIndex).toBeLessThan(publishIndex);
   });
 
-  it("authenticates the publish step with the NPM_TOKEN secret, not a hardcoded value", () => {
-    expect(workflow).toContain("secrets.NPM_TOKEN");
+  it("authenticates via OIDC trusted publishing, never a long-lived token secret", () => {
+    expect(workflow).not.toMatch(/secrets\.\w*NPM/i);
+    expect(workflow).not.toContain("NODE_AUTH_TOKEN");
   });
 
-  it("never echoes the auth token to the workflow logs", () => {
+  it("never echoes an auth token to the workflow logs", () => {
     expect(workflow).not.toMatch(/echo.*NODE_AUTH_TOKEN/i);
     expect(workflow).not.toMatch(/--loglevel[= ]silly/);
     expect(workflow).not.toContain("ACTIONS_STEP_DEBUG");

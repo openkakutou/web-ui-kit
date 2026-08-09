@@ -13,13 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      # Required for `npm publish --provenance` (OIDC-based supply-chain
-      # attestation) — see .vibe/decisions/002-publish-pipeline-safety-gates.md.
+      # Required both for `npm publish --provenance` and for npm Trusted
+      # Publishing (OIDC-based) — no NPM_TOKEN secret exists in this repo
+      # at all; npm exchanges this job's GitHub identity token for a
+      # short-lived publish grant instead. See
+      # .vibe/decisions/002-publish-pipeline-safety-gates.md and
+      # .vibe/decisions/003-npm-trusted-publishing-over-token.md.
       id-token: write
     steps:
-      # Actions are pinned to a commit SHA, not a floating tag, since this
-      # workflow handles a publish-capable secret (NPM_TOKEN) — an upstream
-      # action update must never be able to silently exfiltrate it.
+      # Actions are pinned to a commit SHA, not a floating tag — this
+      # workflow still publishes a real package on npmjs.org, and an
+      # upstream action update must never be able to silently change what
+      # runs here.
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -31,6 +36,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Trusted Publishing needs a recent npm CLI (OIDC support) — don't
+      # rely on whatever version happens to ship with the Node.js version
+      # above.
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Test
         run: npm test
@@ -64,6 +75,6 @@ jobs:
           npm run build
 
       - name: Publish to npmjs.org
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # No token: authenticated via npm Trusted Publishing (OIDC),
+        # configured on npmjs.org for this exact repo + workflow file.
         run: npm publish --provenance
