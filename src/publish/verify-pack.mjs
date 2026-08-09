@@ -4,14 +4,14 @@
 // see .vibe/decisions/002-publish-pipeline-safety-gates.md: this must
 // catch a bad tarball before the irreversible step, not after.
 import { execFileSync } from "node:child_process";
+import { extractPackedFilePaths } from "./parse-pack-output.ts";
 import { validatePackFileList } from "./validate-pack-file-list.ts";
 
 function getPackedFileList() {
   const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
     encoding: "utf8",
   });
-  const [entry] = JSON.parse(output);
-  return entry.files.map((file) => file.path);
+  return extractPackedFilePaths(JSON.parse(output));
 }
 
 const files = getPackedFileList();
