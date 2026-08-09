@@ -1,0 +1,43 @@
+/**
+ * Semantic color tokens.
+ *
+ * Components must always read a semantic token (`--wuik-color-*`) and never
+ * hardcode a hex value. Light values are the default on `:root`; dark values
+ * apply when an ancestor element carries `data-theme="dark"` (see
+ * `.vibe/decisions/001-design-token-theme-switch-mechanism.md` for why this
+ * is the only switching mechanism — no `prefers-color-scheme` fallback).
+ *
+ * Every (background, foreground) pair listed below is verified to meet
+ * WCAG AA contrast (>= 4.5:1) for normal text in both themes — see
+ * `src/tokens/index.test.ts`. Keep values and tests in sync.
+ */
+
+:root {
+  --wuik-color-bg: #ffffff;
+  --wuik-color-surface: #f4f4f5;
+  --wuik-color-border: #e4e4e7;
+  --wuik-color-text: #18181b;
+  --wuik-color-text-secondary: #52525b;
+  --wuik-color-accent: #2563eb;
+  --wuik-color-text-on-accent: #ffffff;
+  --wuik-color-danger: #dc2626;
+  --wuik-color-text-on-danger: #ffffff;
+  --wuik-color-success: #16a34a;
+  --wuik-color-warning: #d97706;
+  --wuik-color-focus-ring: #2563eb;
+}
+
+:root[data-theme="dark"] {
+  --wuik-color-bg: #09090b;
+  --wuik-color-surface: #18181b;
+  --wuik-color-border: #27272a;
+  --wuik-color-text: #f4f4f5;
+  --wuik-color-text-secondary: #a1a1aa;
+  --wuik-color-accent: #60a5fa;
+  --wuik-color-text-on-accent: #09090b;
+  --wuik-color-danger: #f87171;
+  --wuik-color-text-on-danger: #09090b;
+  --wuik-color-success: #4ade80;
+  --wuik-color-warning: #fbbf24;
+  --wuik-color-focus-ring: #60a5fa;
+}

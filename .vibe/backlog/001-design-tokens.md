@@ -1,5 +1,5 @@
 ---
-status: todo
+status: in_progress
 ---
 # Design Tokens (Color, Spacing, Typography, Light/Dark)
 

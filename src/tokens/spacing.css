@@ -1,0 +1,15 @@
+/**
+ * Spacing scale tokens, on a 4px base unit. Theme-independent.
+ */
+
+:root {
+  --wuik-space-0: 0;
+  --wuik-space-1: 0.25rem;
+  --wuik-space-2: 0.5rem;
+  --wuik-space-3: 0.75rem;
+  --wuik-space-4: 1rem;
+  --wuik-space-5: 1.5rem;
+  --wuik-space-6: 2rem;
+  --wuik-space-7: 3rem;
+  --wuik-space-8: 4rem;
+}

@@ -6,7 +6,8 @@
   "license": "MIT",
   "files": ["dist"],
   "exports": {
-    ".": "./dist/web-ui-kit.js"
+    ".": "./dist/web-ui-kit.js",
+    "./tokens.css": "./dist/web-ui-kit.css"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
