@@ -14,6 +14,11 @@
 | Export | Type | Source |
 |---|---|---|
 | `version` | `string` (semver, e.g. `"0.1.0"`) | `src/version.ts` |
+| `WuikPanelElement` | custom element class (`<wuik-panel>`) | `src/components/panel.ts` |
+| `WuikToolbarElement` | custom element class (`<wuik-toolbar>`) | `src/components/toolbar.ts` |
+| `WuikTabsElement` | custom element class (`<wuik-tabs>`) | `src/components/tabs.ts` |
+| `WuikTabPanelElement` | custom element class (`<wuik-tab-panel>`) | `src/components/tabs.ts` |
+| `WuikAppShellElement` | custom element class (`<wuik-app-shell>`) | `src/components/app-shell.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 

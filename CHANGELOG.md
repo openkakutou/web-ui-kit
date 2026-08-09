@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-09
+
 ### Added
 
 - Four framework-free layout components, usable together or on their own with no CSS required: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app shell (toolbar + sidebar + main content) that any of the other three can be slotted into. All four follow the light/dark theme automatically.
@@ -23,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.1.0
