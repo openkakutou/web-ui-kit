@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 ---
 # Publish/Consumption Pipeline (ESM Package Consumable By Vite Apps)
 
