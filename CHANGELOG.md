@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-09
+
 ### Added
 
 - Four framework-free form/input components, usable on their own with no CSS required: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently, and each follows the light/dark theme automatically.
@@ -29,7 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.4.0
 [0.3.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.1.0
