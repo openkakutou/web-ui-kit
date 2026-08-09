@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 ---
 # Canvas/Viewport Controls (Zoom/Pan, Reusable Across Previews)
 
@@ -7,9 +7,9 @@ status: in_progress
 Reusable zoom/pan controls for the many canvas-based previews across the org's apps (sprite viewers, stage backgrounds, animation playback).
 
 ## Acceptance Criteria
-- [ ] Works with any `<canvas>`-rendering consumer via a documented integration contract
-- [ ] Supports mouse wheel zoom, drag pan, and a reset-to-fit action
-- [ ] Usable via keyboard alone (accessibility)
+- [x] Works with any `<canvas>`-rendering consumer via a documented integration contract
+- [x] Supports mouse wheel zoom, drag pan, and a reset-to-fit action
+- [x] Usable via keyboard alone (accessibility)
 
 ## Notes
 None.
