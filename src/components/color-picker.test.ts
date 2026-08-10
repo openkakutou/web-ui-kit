@@ -87,6 +87,18 @@ describe("wuik-color-picker", () => {
     expect(swatches).toHaveLength(1);
   });
 
+  it("forwards a label attribute to the native input's accessible name", () => {
+    const picker = mountColorPicker({ label: "Highlight color" });
+    expect(nativeInput(picker).getAttribute("aria-label")).toBe(
+      "Highlight color",
+    );
+  });
+
+  it("does not fabricate an accessible name when no label is given (edge case)", () => {
+    const picker = mountColorPicker();
+    expect(nativeInput(picker).hasAttribute("aria-label")).toBe(false);
+  });
+
   it("disables the native input and ignores swatch clicks while disabled", () => {
     const picker = mountColorPicker({
       disabled: "",
@@ -112,6 +124,14 @@ describe("wuik-color-picker", () => {
       const picker = mountColorPicker();
       const css = hostStyleText(picker);
       expect(css).toContain("--wuik-color-focus-ring");
+    });
+
+    it("colors the invalid-state message text with the always-accessible text token, not danger (see decision 009)", () => {
+      const picker = mountColorPicker();
+      const css = hostStyleText(picker);
+      const errorRule = css.match(/\.error\s*{[^}]*}/)?.[0] ?? "";
+      expect(errorRule).toContain("var(--wuik-color-text)");
+      expect(errorRule).not.toContain("var(--wuik-color-danger)");
     });
   });
 });

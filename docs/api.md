@@ -116,6 +116,7 @@ Wraps a native `<input type="color">` plus optional preset swatch buttons.
 |---|---|
 | `value` | A hex color (`#rgb` or `#rrggbb`). A malformed value falls back to `#000000` **and** shows a visible invalid indicator, rather than silently substituting a value. |
 | `palette` | Comma-separated hex colors rendered as clickable swatch buttons. Malformed entries are dropped individually rather than failing the whole list. |
+| `label` | Sets an accessible name (`aria-label`) on the native input, matching `<wuik-slider>`. |
 | `disabled` | Forwarded to the native input; swatch clicks are ignored. |
 
 | Event | Detail | Fired when |
@@ -191,7 +192,9 @@ Semantic tokens only — no separate primitive/raw-hue layer exists yet (kept ou
 | `--wuik-color-warning` | `#d97706` | `#fbbf24` |
 | `--wuik-color-focus-ring` | `#2563eb` | `#60a5fa` |
 
-Every (background, foreground) pair used by a component — `bg`/`text`, `surface`/`text`, `accent`/`text-on-accent`, `danger`/`text-on-danger` — is verified in `src/tokens/index.test.ts` to meet WCAG AA contrast (>= 4.5:1) for normal text, in both themes.
+Every (background, foreground) pair used by a component as rendered text — `bg`/`text`, `surface`/`text`, `bg`/`text-secondary`, `surface`/`text-secondary`, `accent`/`text-on-accent`, `danger`/`text-on-danger` — is verified in `src/tokens/index.test.ts` to meet WCAG AA contrast (>= 4.5:1) for normal text, in both themes. The focus ring is separately verified for non-text contrast (>= 3:1) against `bg` and `surface`, the only ambient backgrounds it renders against.
+
+`--wuik-color-danger` is deliberately **not** used as text color anywhere: measured as foreground-on-surface in the light theme it falls short of 4.5:1. Invalid-state message text (slider, color picker) uses `--wuik-color-text` instead, while the invalid state itself still signals non-verbally via a `--wuik-color-danger` border/outline plus `aria-invalid` — never color alone. See `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
 
 **Theme switching:** light values apply on `:root` by default. Dark values apply when an ancestor element (typically `<html>`) carries `data-theme="dark"`. An unrecognized `data-theme` value (or none) falls back to light — there is no crash or empty-value state. There is deliberately no `prefers-color-scheme` fallback; see the ADR referenced above for why.
 

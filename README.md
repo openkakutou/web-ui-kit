@@ -10,11 +10,11 @@ This project is in early-stage development. Available now:
 - A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
 - Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently.
 - A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
+- An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
 
 Planned:
 
 - Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
-- An accessibility baseline: keyboard navigation, focus states, contrast
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -104,7 +104,7 @@ The form/input components work standalone too, and each emits a typed `CustomEve
 ```html
 <wuik-file-drop-zone accept=".png,.jpg" multiple>Drop images here</wuik-file-drop-zone>
 <wuik-slider min="0" max="100" value="50" label="Volume"></wuik-slider>
-<wuik-color-picker value="#2563eb" palette="#dc2626,#16a34a,#2563eb"></wuik-color-picker>
+<wuik-color-picker value="#2563eb" palette="#dc2626,#16a34a,#2563eb" label="Highlight color"></wuik-color-picker>
 <wuik-button variant="primary">Save</wuik-button>
 ```
 

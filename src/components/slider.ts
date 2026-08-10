@@ -63,7 +63,7 @@ TEMPLATE.innerHTML = `
 
     .error {
       display: none;
-      color: var(--wuik-color-danger);
+      color: var(--wuik-color-text);
       font-size: var(--wuik-font-size-sm);
     }
 

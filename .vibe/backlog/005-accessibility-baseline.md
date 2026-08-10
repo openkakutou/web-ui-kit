@@ -1,5 +1,5 @@
 ---
-status: todo
+status: in_progress
 depends_on: [001, 002, 003, 004]
 ---
 # Accessibility Baseline (Keyboard Navigation, Focus States, Contrast)

@@ -21,7 +21,7 @@ The token tests cover:
 - `data-theme="dark"` switches semantic color tokens to their dark values, while spacing/typography (theme-independent) stay unchanged
 - `data-theme="light"` explicitly matches the default
 - an invalid `data-theme` value degrades to light rather than crashing or resolving empty
-- WCAG AA contrast (>= 4.5:1) is computed (not eyeballed) for every documented (background, foreground) pair, in both themes, via a small relative-luminance helper local to the test file
+- WCAG AA contrast (>= 4.5:1) is computed (not eyeballed) for every (background, foreground) pair actually used as rendered text — including the secondary/muted text color — in both themes, via a small relative-luminance helper local to the test file. The focus ring gets its own non-text check (>= 3:1) against every ambient background it can render on. `--wuik-color-danger` is deliberately excluded from the text-pair list — see `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
 
 ### Known gap: `prefers-color-scheme` is not exercised
 

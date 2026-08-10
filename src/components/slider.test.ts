@@ -91,6 +91,16 @@ describe("wuik-slider", () => {
     expect(error.textContent?.length).toBeGreaterThan(0);
   });
 
+  it("forwards a label attribute to the native input's accessible name", () => {
+    const slider = mountSlider({ label: "Brush size" });
+    expect(nativeInput(slider).getAttribute("aria-label")).toBe("Brush size");
+  });
+
+  it("does not fabricate an accessible name when no label is given (edge case)", () => {
+    const slider = mountSlider();
+    expect(nativeInput(slider).hasAttribute("aria-label")).toBe(false);
+  });
+
   it("disables the native input and stops emitting events while disabled (error path)", () => {
     const slider = mountSlider({ disabled: "" });
     const input = nativeInput(slider);
@@ -118,6 +128,14 @@ describe("wuik-slider", () => {
       const slider = mountSlider();
       const css = hostStyleText(slider);
       expect(css).not.toMatch(/#[0-9a-f]{3,8}/i);
+    });
+
+    it("colors the invalid-state message text with the always-accessible text token, not danger (see decision 009)", () => {
+      const slider = mountSlider();
+      const css = hostStyleText(slider);
+      const errorRule = css.match(/\.error\s*{[^}]*}/)?.[0] ?? "";
+      expect(errorRule).toContain("var(--wuik-color-text)");
+      expect(errorRule).not.toContain("var(--wuik-color-danger)");
     });
   });
 });

@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A reusable zoom/pan viewport control (`<wuik-viewport>`) for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom centered on the cursor, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone (arrow keys to pan, plus/minus to zoom, `0`/`Home` to reset), with a screen-reader announcement of zoom-level changes. Works with any wrapped content — the control never touches its pixels — and never hijacks the page's own scroll: wheel-zoom only engages once the viewport has been focused.
+- An accessibility baseline pass confirming and permanently guarding every component's keyboard operability, visible focus indicator, and text color contrast (light and dark themes verified against WCAG AA). The color picker now accepts an optional `label` attribute for an accessible name, matching the slider.
+
+### Fixed
+
+- The invalid-configuration message shown by the slider and color picker was slightly too low-contrast to read comfortably in the light theme; it now uses the same easy-to-read text color as the rest of the component, while the red outline still clearly flags the error.
 
 ## [0.4.0] - 2026-08-09
 

@@ -7,9 +7,13 @@
  * `.vibe/decisions/001-design-token-theme-switch-mechanism.md` for why this
  * is the only switching mechanism — no `prefers-color-scheme` fallback).
  *
- * Every (background, foreground) pair listed below is verified to meet
- * WCAG AA contrast (>= 4.5:1) for normal text in both themes — see
- * `src/tokens/index.test.ts`. Keep values and tests in sync.
+ * Every (background, foreground) pair actually used as rendered text is
+ * verified to meet WCAG AA contrast (>= 4.5:1) in both themes, and the focus
+ * ring is separately verified against every surface it renders on (>= 3:1,
+ * non-text) — see `src/tokens/index.test.ts`. Keep values and tests in sync.
+ * `--wuik-color-danger` is intentionally not verified as text-on-surface: it
+ * falls short in the light theme, so components never use it for text — see
+ * `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
  */
 
 :root {

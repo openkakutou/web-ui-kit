@@ -81,7 +81,7 @@ TEMPLATE.innerHTML = `
 
     .error {
       display: none;
-      color: var(--wuik-color-danger);
+      color: var(--wuik-color-text);
       font-size: var(--wuik-font-size-sm);
     }
 
@@ -98,7 +98,7 @@ TEMPLATE.innerHTML = `
 
 export class WuikColorPickerElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["value", "palette", "disabled"];
+    return ["value", "palette", "disabled", "label"];
   }
 
   readonly #wrapper: HTMLElement;
@@ -143,6 +143,14 @@ export class WuikColorPickerElement extends HTMLElement {
 
     const { value, invalid } = normalizeHexColor(this.getAttribute("value"));
     this.#input.value = value;
+
+    const label = this.getAttribute("label");
+    if (label) {
+      this.#input.setAttribute("aria-label", label);
+    } else {
+      this.#input.removeAttribute("aria-label");
+    }
+
     this.#wrapper.classList.toggle("is-invalid", invalid);
     this.#input.setAttribute("aria-invalid", String(invalid));
     this.#error.textContent = invalid
