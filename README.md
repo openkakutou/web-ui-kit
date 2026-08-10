@@ -11,10 +11,7 @@ This project is in early-stage development. Available now:
 - Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently.
 - A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
 - An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
-
-Planned:
-
-- Reusable 3D viewport controls: orbit/pan/zoom camera for Ikemen GO 3D model-based stage previews
+- A reusable 3D orbit/pan/zoom camera control for wrapping any 3D-rendering preview (first built for Ikemen GO 3D model-based stage previews): drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom, and a built-in reset button, all fully usable from the keyboard alone. Shows a clear message instead of a broken view when the browser doesn't support WebGL, and never hijacks the page's own scroll.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -131,6 +128,24 @@ viewport.addEventListener("wuik-viewport-change", (e) => console.log(e.detail));
 ```
 
 Fully keyboard-operable once focused: arrow keys pan, `+`/`-` zoom, `0`/`Home` resets to fit. See [docs/api.md](docs/api.md) for the full attribute/method/event/keyboard reference.
+
+Wrap any 3D-rendering preview (e.g. a `<canvas>` running three.js) in `<wuik-viewport-3d>` to get drag-to-orbit, pan, and zoom for free — it never touches your renderer, it only tracks the camera and hands you the numbers:
+
+```html
+<wuik-viewport-3d style="width: 400px; height: 300px;">
+  <canvas width="400" height="300"></canvas>
+</wuik-viewport-3d>
+```
+
+```js
+const viewport3d = document.querySelector("wuik-viewport-3d");
+viewport3d.addEventListener("wuik-viewport3d-change", (e) => {
+  const { target, distance, azimuth, elevation, position } = e.detail;
+  // apply position/target to your own 3D camera
+});
+```
+
+Drag the primary button to orbit, Shift-drag or drag with the right button to pan, and scroll to zoom once focused. A built-in "Reset view" button and a one-time on-screen hint are included, and a clear message is shown instead of a broken view when the browser doesn't support WebGL. Fully keyboard-operable once focused: arrow keys orbit, Shift+arrow keys pan, `+`/`-` zoom, `0`/`Home` resets to the default view. See [docs/api.md](docs/api.md) for the full attribute/method/event/keyboard reference.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

@@ -1,0 +1,6 @@
+# Module: canvas3d
+**Role:** Reusable orbit/pan/zoom camera controls for wrapping any 3D-rendering consumer (first: Ikemen GO 3D model-based stage previews in `stage-viewer-web`/`stage-editor`) across the org's apps. The pure spherical-coordinate camera math is kept separate from the Web Component's DOM/event glue, mirroring `modules/canvas.md`'s split for its 2D sibling.
+**Files:** `src/canvas3d/orbit-camera.ts`, `src/canvas3d/viewport-3d.ts`, `src/canvas3d/index.ts`
+**Exports:** `WuikViewport3DElement` (`<wuik-viewport-3d>`) — self-registers via `customElements.define` as a side effect of import; `resolveOrbitCameraConfig`, `defaultOrbitCameraState`, `clampDistance`, `clampElevation`, `normalizeAzimuth`, `orbitBy`, `zoomBy`, `panBy`, `sphericalToCartesian`, `detectWebglSupport` (pure functions, not part of the package's public API — internal to the component); `index.ts` is the barrel re-exporting the component.
+**Public contract:** See `docs/api.md` for the full attribute/method/event/keyboard reference, and `.vibe/decisions/010-3d-viewport-controls-integration-contract.md` for why the component never creates a WebGL context or reads the consumer's scene — it only tracks a camera as spherical coordinates and exposes it via `getCamera()`/`wuik-viewport3d-change`.
+**Depends on:** `modules/tokens.md`

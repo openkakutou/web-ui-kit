@@ -1,5 +1,5 @@
 ---
-status: todo
+status: in_progress
 ---
 # 3D Viewport Controls (Orbit/Pan/Zoom Camera, Reusable For 3D Previews)
 

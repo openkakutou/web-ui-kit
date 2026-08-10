@@ -24,6 +24,7 @@
 | `WuikColorPickerElement` | custom element class (`<wuik-color-picker>`) | `src/components/color-picker.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
+| `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -166,6 +167,44 @@ Interaction:
 - **Keyboard**, once focused: arrow keys pan; `+`/`-` zoom (centered on the viewport's own center); `0`/`Home` resets to fit. A Ctrl/Cmd-modified `+`/`-` is left alone so the browser's own page-zoom shortcut keeps working. A visually-hidden live region announces zoom-level changes (including "Maximum/minimum zoom reached" when a further zoom is clamped) for screen reader users.
 
 Default slot: the wrapped content (typically a single `<canvas>`). Named `overlay` slot: an optional place for a consumer's own chrome (e.g. a zoom-percentage readout or reset button) positioned over the stage without blocking pan/drag on the empty areas around it.
+
+## 3D viewport controls (`src/canvas3d/`)
+
+### `<wuik-viewport-3d>`
+
+Reusable orbit/pan/zoom camera controls wrapping a single default-slotted element — typically a `<canvas>` running a 3D renderer (three.js, raw WebGL, or otherwise), but the component never creates a WebGL context, a renderer, or reads the consumer's scene. It tracks a camera as spherical coordinates (azimuth, elevation, distance around a target point) and exposes it via a getter and a change event — the consumer applies those numbers to its own renderer. See `.vibe/decisions/010-3d-viewport-controls-integration-contract.md`.
+
+The host has no intrinsic size: set `width`/`height` (or `aspect-ratio`) via CSS, like `<wuik-viewport>`.
+
+| Attribute | Meaning |
+|---|---|
+| `min-distance`, `max-distance` | Zoom (distance-from-target) bounds. Default `1`/`100`. A non-numeric value, a non-positive bound, or `min-distance >= max-distance` falls back to the defaults **and** shows a visible invalid indicator, matching `.vibe/decisions/007-form-input-components-shared-conventions.md`. |
+| `zoom-step` | Fractional zoom increment per wheel notch/keyboard `+`/`-` press. Default `0.1` (10%). A non-numeric or non-positive value falls back to the default and is flagged invalid the same way. |
+| `label` | Overrides the default `aria-label` (`"Orbit, pan, and zoom 3D viewport"`) on the interactive region. |
+
+| Method | Effect |
+|---|---|
+| `getCamera()` | Returns the current camera as `{ target: {x,y,z}, distance, azimuth, elevation, position: {x,y,z} }` (read-only; use the methods below to change it). `position` is the camera's derived world-space location; `target`, `distance`, `azimuth` (radians), and `elevation` (radians, measured from the +Y pole) are its spherical coordinates. |
+| `resetToDefault()` | Resets the camera to the documented default view (`target` at the origin, `distance` `10`, `azimuth` `0`, `elevation` `π/3`). |
+| `orbitBy(deltaAzimuth, deltaElevation)` | Orbits by the given deltas (radians). Azimuth wraps freely; elevation is hard-clamped away from the poles so the camera can never flip past top/bottom-dead-center. |
+| `panBy(dx, dy)` | Moves the target along the camera's own right/up basis vectors, scaled by the camera's current distance so a pan feels proportional at any zoom level. Deliberately unbounded — see decision `010`. |
+| `zoomBy(factor)` | Dollies by `factor` (> 1 zooms in toward the target, < 1 zooms out). Always target-relative, never cursor-relative (decision `010`). |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-viewport3d-change` | The full `getCamera()` snapshot | The camera changes, from any source (drag, wheel, keyboard, or a method call). |
+
+Interaction:
+- **Primary-button drag** orbits around the target; the cursor switches to a "grabbing" look while dragging.
+- **Shift-held primary drag, or secondary (right) button drag** pans instead of orbiting — the context menu is suppressed on the interactive region so right-drag works cleanly; the cursor switches to a "move" look while panning.
+- **Mouse wheel** dollies toward/away from the target, but only once the component has received focus (click or Tab) — same focus-gated rule as `<wuik-viewport>` (decision `008`), so it never traps the page's own scroll.
+- **Keyboard**, once focused: arrow keys orbit; Shift+arrow keys pan; `+`/`-` zoom; `0`/`Home` resets to the default view. A Ctrl/Cmd-modified `+`/`-` is left alone so the browser's own page-zoom shortcut keeps working. A visually-hidden live region announces zoom changes ("Zoomed in."/"Zoomed out.", or "Maximum/minimum zoom reached" when a further zoom is clamped) and the reset action, for screen reader users — pan/orbit are not individually announced, matching `<wuik-viewport>`'s own convention of only announcing zoom and reset.
+- A dismissible on-screen hint (`"Drag to orbit • Shift+drag or right-drag to pan • Scroll to zoom"`) is shown until the first successful interaction, then hidden for the lifetime of that instance.
+- A built-in, always-visible "Reset view" button is rendered as part of the component's own chrome — reachable by mouse without needing the `0`/`Home` keyboard shortcut, since panning has no other bounded way back (decision `010`).
+
+**WebGL-unsupported fallback:** on connect, the component feature-detects WebGL support once. If unsupported, it adds an `is-unsupported` class to the host, hides the interactive area entirely, and shows a `role="status"` panel stating that 3D preview is unavailable in this browser/environment with a suggested next step (update the browser / enable hardware acceleration) — deliberately a neutral/muted treatment, not the danger-adjacent invalid-configuration styling, since this is an environment fact rather than a user-correctable mistake (decision `010`). No orbit/pan/zoom/reset controls are rendered in this state.
+
+Default slot: the wrapped content (typically a single `<canvas>`). Named `overlay` slot: same purpose as `<wuik-viewport>`'s — an optional place for a consumer's own chrome positioned over the stage.
 
 ## Design tokens (`src/tokens/`)
 

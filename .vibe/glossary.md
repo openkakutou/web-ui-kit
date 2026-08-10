@@ -49,6 +49,11 @@ A control that lets the user zoom, pan, and reset-to-fit a wrapped piece of cont
 **Do not confuse with:** the wrapped content itself — the viewport only ever moves/scales it as an opaque box; drawing the content is entirely the wrapped element's own responsibility.
 _Sources: `src/canvas/viewport.ts`, `src/canvas/viewport-transform.ts`_
 
+## 3D orbit camera
+A control that lets the user orbit (rotate around a target point), pan, and zoom a 3D camera to preview 3D content — typically a model rendered by a `<canvas>`-based 3D renderer — without knowing or touching how that content renders its own pixels. Tracked as spherical coordinates (an azimuth and elevation angle plus a distance around a target point), exposed together with the derived camera position as a single read value and change event. Elevation is hard-clamped away from the poles so the camera can never flip past top/bottom-dead-center.
+**Do not confuse with:** Viewport — the 2D control pans/zooms a flat CSS transform; the 3D orbit camera instead tracks an angular position around a target point, since a 3D scene has no single "transform" to apply to slotted content.
+_Sources: `src/canvas3d/viewport-3d.ts`, `src/canvas3d/orbit-camera.ts`_
+
 ## Button
 A standard clickable action control with a primary/secondary/danger variant, wrapping a native button. Deliberately never synthesizes visible label text for an empty slot — an honest, visibly-flagged empty state is preferred over giving the control a false accessible name.
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.
