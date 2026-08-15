@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 ---
 # Fix version constant drift from package.json
 
