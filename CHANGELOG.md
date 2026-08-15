@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-16
+
 ### Added
 
 - A reusable 3D orbit/pan/zoom camera control (`<wuik-viewport-3d>`) for wrapping any 3D-rendering preview — first built for previewing Ikemen GO 3D model-based stages: drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom toward the model, and a built-in "Reset view" button, all fully usable from the keyboard alone (arrow keys to orbit, Shift+arrow keys to pan, plus/minus to zoom, `0`/`Home` to reset). A visible one-time hint explains the controls, and the camera can never flip upside-down while orbiting. Shows a clear "3D preview unavailable" message instead of a broken view when the browser doesn't support WebGL. Works with any wrapped content — the control never touches its pixels — and never hijacks the page's own scroll: wheel-zoom only engages once the viewport has been focused.
@@ -42,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.5.0
 [0.4.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.4.0
 [0.3.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.2.0
