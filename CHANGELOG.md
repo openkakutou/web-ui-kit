@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The invalid-configuration message shown by the slider and color picker was slightly too low-contrast to read comfortably in the light theme; it now uses the same easy-to-read text color as the rest of the component, while the red outline still clearly flags the error.
+- Fixed a stale package version that had blocked the last release from actually publishing to npm; the version is now always read directly from the package's own metadata, so this can't happen again.
 
 ## [0.4.0] - 2026-08-09
 
