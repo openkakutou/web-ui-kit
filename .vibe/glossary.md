@@ -54,6 +54,16 @@ A control that lets the user orbit (rotate around a target point), pan, and zoom
 **Do not confuse with:** Viewport — the 2D control pans/zooms a flat CSS transform; the 3D orbit camera instead tracks an angular position around a target point, since a 3D scene has no single "transform" to apply to slotted content.
 _Sources: `src/canvas3d/viewport-3d.ts`, `src/canvas3d/orbit-camera.ts`_
 
+## Command stack
+An undo/redo history: a consumer registers a command (a do/undo pair) by pushing it, and the stack tracks how to reverse (`undo`) or replay (`redo`) it later. Framework-agnostic, not a Web Component — any consuming app plugs its own domain actions into a shared stack instead of re-implementing history management itself.
+**Do not confuse with:** a component's own internal state — the command stack only ever holds the do/undo functions a consumer gives it; it never inspects or mutates anything itself.
+_Sources: `src/history/command-stack.ts`_
+
+## Coalescing
+Merging a rapid sequence of pushed commands sharing the same coalesce key (within a configurable time window) into a single history entry, so one `undo()` reverts all the way back to before the whole sequence — not one step per intermediate value. Typical use: dragging a value continuously should produce one undo step, not one per pixel of movement.
+**Do not confuse with:** Command stack's bounded size — coalescing reduces how many entries a *related* sequence of pushes produces; the size bound instead discards old, *unrelated* entries once the history grows too long.
+_Sources: `src/history/command-stack.ts`_
+
 ## Button
 A standard clickable action control with a primary/secondary/danger variant, wrapping a native button. Deliberately never synthesizes visible label text for an empty slot — an honest, visibly-flagged empty state is preferred over giving the control a false accessible name.
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.

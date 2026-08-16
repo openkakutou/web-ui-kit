@@ -12,6 +12,7 @@ This project is in early-stage development. Available now:
 - A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
 - An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
 - A reusable 3D orbit/pan/zoom camera control for wrapping any 3D-rendering preview (first built for Ikemen GO 3D model-based stage previews): drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom, and a built-in reset button, all fully usable from the keyboard alone. Shows a clear message instead of a broken view when the browser doesn't support WebGL, and never hijacks the page's own scroll.
+- A reusable undo/redo history primitive: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -146,6 +147,32 @@ viewport3d.addEventListener("wuik-viewport3d-change", (e) => {
 ```
 
 Drag the primary button to orbit, Shift-drag or drag with the right button to pan, and scroll to zoom once focused. A built-in "Reset view" button and a one-time on-screen hint are included, and a clear message is shown instead of a broken view when the browser doesn't support WebGL. Fully keyboard-operable once focused: arrow keys orbit, Shift+arrow keys pan, `+`/`-` zoom, `0`/`Home` resets to the default view. See [docs/api.md](docs/api.md) for the full attribute/method/event/keyboard reference.
+
+Use `CommandStack` to give your app undo/redo: register a `do`/`undo` pair for each action, and let the stack track history for you.
+
+```js
+import { CommandStack } from "@openkakutou/web-ui-kit";
+
+const history = new CommandStack();
+
+history.push({
+  do: () => (model.name = "New name"),
+  undo: () => (model.name = "Old name"),
+});
+
+history.undo(); // reverts to "Old name"
+history.redo(); // re-applies "New name"
+```
+
+Pass a `coalesceKey` to merge rapid repeated edits (like dragging a slider) into a single undo step, so `undo()` reverts back to before the whole gesture instead of one intermediate value at a time:
+
+```js
+history.push({ coalesceKey: "drag", do: () => (model.x = 10), undo: () => (model.x = 0) });
+history.push({ coalesceKey: "drag", do: () => (model.x = 20), undo: () => (model.x = 0) });
+history.undo(); // model.x is back to 0, not 10
+```
+
+See [docs/api.md](docs/api.md) for the full API, including the configurable history size limit and coalesce time window.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

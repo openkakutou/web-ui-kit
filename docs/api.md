@@ -25,6 +25,8 @@
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
+| `CommandStack` | class | `src/history/command-stack.ts` |
+| `Command`, `CommandStackOptions` | TypeScript types (type-only export) | `src/history/command-stack.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -205,6 +207,42 @@ Interaction:
 **WebGL-unsupported fallback:** on connect, the component feature-detects WebGL support once. If unsupported, it adds an `is-unsupported` class to the host, hides the interactive area entirely, and shows a `role="status"` panel stating that 3D preview is unavailable in this browser/environment with a suggested next step (update the browser / enable hardware acceleration) — deliberately a neutral/muted treatment, not the danger-adjacent invalid-configuration styling, since this is an environment fact rather than a user-correctable mistake (decision `010`). No orbit/pan/zoom/reset controls are rendered in this state.
 
 Default slot: the wrapped content (typically a single `<canvas>`). Named `overlay` slot: same purpose as `<wuik-viewport>`'s — an optional place for a consumer's own chrome positioned over the stage.
+
+## Undo/redo history (`src/history/`)
+
+### `CommandStack`
+
+A framework-agnostic undo/redo history — not a Web Component, a plain class any consumer (component or app code) can instantiate and drive. A consumer registers a `Command` (a `do`/`undo` pair); the stack applies `do()` immediately on `push`, then tracks how to reverse and replay it.
+
+```ts
+new CommandStack(options?: CommandStackOptions)
+```
+
+| Option | Meaning |
+|---|---|
+| `maxSize` | Maximum number of history entries kept. Once exceeded, the oldest entry is dropped and becomes permanently unreachable via `undo()`. Default `100`. |
+| `coalesceWindowMs` | Time window, in milliseconds, during which a push sharing the previous push's `coalesceKey` merges into the same entry instead of creating a new one. Default `500`. |
+
+| Method/getter | Effect |
+|---|---|
+| `push(command: Command)` | Runs `command.do()` immediately, then records it as a new history entry (clearing any redo history), unless it coalesces into the current top entry (see below). |
+| `undo()` | Reverts the most recent history entry. Returns `false` and does nothing if there is none. |
+| `redo()` | Replays the most recently undone entry. Returns `false` and does nothing if there is none. |
+| `clear()` | Empties both the undo and redo history. |
+| `canUndo` | `true` if `undo()` would do something. |
+| `canRedo` | `true` if `redo()` would do something. |
+
+`Command` shape:
+
+| Field | Meaning |
+|---|---|
+| `do()` | Applies the change. Called once, synchronously, by `push`. |
+| `undo()` | Reverses the change applied by `do`. |
+| `coalesceKey?` | When set, a push sharing this same key with the current top-of-history entry, within `coalesceWindowMs`, merges into that entry instead of creating a new one. Omit for a command that should always become its own history entry. |
+
+**Coalescing semantics:** merging keeps the group's *original* `undo` (the state before the whole group started) and only replaces the entry's `redo` target with the latest `do`. A single `undo()` on a coalesced group therefore reverts all the way back to before the group — not just one step back through the last intermediate value. See `.vibe/decisions/011-command-stack-coalescing-semantics.md`.
+
+This item covers the shared primitive only — it has no UI of its own; each editor app maps its own domain operations onto it and builds its own undo/redo buttons or shortcuts on top.
 
 ## Design tokens (`src/tokens/`)
 

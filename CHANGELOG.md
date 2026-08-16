@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A reusable undo/redo history primitive that any editor app can plug its own actions into: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
+
 ## [0.5.0] - 2026-08-16
 
 ### Added
