@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 ---
 # Undo/Redo Command-Stack Primitive
 
