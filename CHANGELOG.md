@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A reusable undo/redo history primitive that any editor app can plug its own actions into: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
+- A remappable keyboard shortcut manager and a shared panel to go with it: an app registers its actions with a default key, and users can rebind any of them through the panel, with their choice remembered the next time they visit. Trying to reuse a key another action already has never silently overwrites it — instead the panel names the other action and offers to swap the two keys. A key that's just a modifier on its own, or one already claimed by the browser, is rejected with a clear message instead of being silently accepted. A reset control brings a changed action back to its original key.
 
 ## [0.5.0] - 2026-08-16
 

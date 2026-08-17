@@ -27,6 +27,9 @@
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
 | `CommandStack` | class | `src/history/command-stack.ts` |
 | `Command`, `CommandStackOptions` | TypeScript types (type-only export) | `src/history/command-stack.ts` |
+| `ShortcutManager` | class | `src/shortcuts/shortcut-manager.ts` |
+| `WuikShortcutsPanelElement` | custom element class (`<wuik-shortcuts-panel>`) | `src/shortcuts/shortcut-panel.ts` |
+| `ShortcutAction`, `ShortcutBinding`, `RebindOptions`, `RebindResult`, `ShortcutChangeDetail`, `ShortcutManagerOptions` | TypeScript types (type-only export) | `src/shortcuts/shortcut-manager.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -243,6 +246,52 @@ new CommandStack(options?: CommandStackOptions)
 **Coalescing semantics:** merging keeps the group's *original* `undo` (the state before the whole group started) and only replaces the entry's `redo` target with the latest `do`. A single `undo()` on a coalesced group therefore reverts all the way back to before the group — not just one step back through the last intermediate value. See `.vibe/decisions/011-command-stack-coalescing-semantics.md`.
 
 This item covers the shared primitive only — it has no UI of its own; each editor app maps its own domain operations onto it and builds its own undo/redo buttons or shortcuts on top.
+
+## Remappable keyboard shortcuts (`src/shortcuts/`)
+
+### `ShortcutManager`
+
+A headless (no DOM) class — a plain class, not a Web Component — that tracks each registered action's current key binding, rejects a rebind that would silently steal another action's key, and persists overrides to `localStorage` (or an injected `Storage`) so they survive a page reload. `<wuik-shortcuts-panel>` below is the shared UI built on top of it, but the class can be driven directly with no UI at all (e.g. to just look up the active binding for a given action before dispatching on a raw `keydown`).
+
+```ts
+new ShortcutManager(options?: ShortcutManagerOptions)
+```
+
+| Option | Meaning |
+|---|---|
+| `storageKey` | The `localStorage` key overrides are read/written under. Default `"wuik-shortcuts"` — override per consuming app, since sharing this across apps on the same origin would also share their persisted overrides. |
+| `storage` | Injectable `Storage` implementation. Default `globalThis.localStorage`. |
+
+| Method | Effect |
+|---|---|
+| `register(action: ShortcutAction)` | Registers (or re-registers) an action: `{ id, label, defaultKey }`. If a persisted override exists for `id`, it becomes the active binding instead of `defaultKey`. |
+| `list()` | Returns every registered action as `ShortcutBinding[]`: `{ id, label, key, isDefault }`. |
+| `getBinding(id)` | Returns the action's current key, or `undefined` if `id` isn't registered. |
+| `rebind(id, key, options?)` | Sets `id`'s binding to `key`. Returns a `RebindResult`: `{ ok: true }`, `{ ok: false, reason: "unknown-action" }`, or `{ ok: false, reason: "conflict", conflictWith: string }` (another action's id) if `key` is already bound elsewhere — the binding is **not** changed on conflict. Pass `{ swap: true }` to instead trade keys with the conflicting action, both writes applied atomically. |
+| `resetToDefault(id)` | Equivalent to `rebind(id, action.defaultKey)` — reverts to the registered default, going through the same conflict handling. |
+
+Dispatches `"change"` as a `CustomEvent<ShortcutChangeDetail>` (`{ id, key }`) on every successful `rebind`/`resetToDefault`, including each side of a swap.
+
+### `<wuik-shortcuts-panel>`
+
+The shared UI for a `ShortcutManager`: one row per registered action (label, current key, a Rebind button, and a Reset button shown only once the action differs from its default), all styled from `--wuik-*` tokens like every other component in this kit. Not a modal `<dialog>` — an in-page panel, since no modal primitive exists yet in this kit; wrap it in your own dialog if you need one.
+
+Takes its manager through a **JS property, not an attribute** — a `ShortcutManager` instance can't be serialized into one:
+
+```js
+document.querySelector("wuik-shortcuts-panel").manager = myShortcutManager;
+```
+
+Reassigning `manager` re-renders the panel for the new instance and cancels any in-progress rebind. The panel also re-renders on the manager's own `"change"` event (e.g. from another panel instance sharing the same manager), except while the user is actively mid-rebind here.
+
+Rebind interaction, once "Rebind" is clicked for a row:
+- The next keydown is captured and normalized into a combo string (e.g. `"Ctrl+Shift+S"`).
+- **Escape**, or focus leaving the row (blur/click-away), cancels — the binding is unchanged.
+- A modifier key pressed alone (Shift/Ctrl/Alt/Meta with nothing else) is rejected with a status message; capture stays active for another attempt.
+- A combo from a conservative, non-exhaustive reserved list (browser/OS shortcuts like `Ctrl+W`, `F11`, …) is rejected the same way. See `RESERVED_COMBOS` in `src/shortcuts/shortcut-key.ts` for the exact list — consumers targeting a specific platform should still verify their own shortcuts there.
+- Otherwise the key is applied via `manager.rebind`. On conflict, the row shows the other action's label plus **Swap** (trades the two bindings) and **Cancel** controls instead of silently failing.
+
+A shared `role="status"` live region announces every state change (listening, invalid key, conflict, applied, reset) for screen-reader users — see the UI/UX consultation recorded for backlog item 010.
 
 ## Design tokens (`src/tokens/`)
 

@@ -64,6 +64,16 @@ Merging a rapid sequence of pushed commands sharing the same coalesce key (withi
 **Do not confuse with:** Command stack's bounded size — coalescing reduces how many entries a *related* sequence of pushes produces; the size bound instead discards old, *unrelated* entries once the history grows too long.
 _Sources: `src/history/command-stack.ts`_
 
+## Shortcut action
+A named operation an app registers with the shortcut manager (an id, a display label, and a default key combo). The manager tracks one active binding per action — the default, or a user-chosen override — and never lets two actions share the same binding silently.
+**Do not confuse with:** the binding itself — an action is the fixed identity ("Save"); its binding (which key triggers it) is the one thing that can change.
+_Sources: `src/shortcuts/shortcut-manager.ts`_
+
+## Shortcut conflict
+The state where a user tries to rebind an action to a key already bound to a different action. Never resolved by silently overwriting the other action — the conflict is surfaced by name, with a swap (trading the two actions' keys) offered as the resolution instead of a dead end.
+**Do not confuse with:** an unassignable key (a modifier pressed alone, or a browser-reserved combo) — that is rejected outright, before any other action is even considered, and has no other action to swap with.
+_Sources: `src/shortcuts/shortcut-manager.ts`, `src/shortcuts/shortcut-panel.ts`_
+
 ## Button
 A standard clickable action control with a primary/secondary/danger variant, wrapping a native button. Deliberately never synthesizes visible label text for an empty slot — an honest, visibly-flagged empty state is preferred over giving the control a false accessible name.
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.

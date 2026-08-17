@@ -13,6 +13,7 @@ This project is in early-stage development. Available now:
 - An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
 - A reusable 3D orbit/pan/zoom camera control for wrapping any 3D-rendering preview (first built for Ikemen GO 3D model-based stage previews): drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom, and a built-in reset button, all fully usable from the keyboard alone. Shows a clear message instead of a broken view when the browser doesn't support WebGL, and never hijacks the page's own scroll.
 - A reusable undo/redo history primitive: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
+- A remappable keyboard shortcut manager and a shared panel: register named actions with a default key, and let users rebind any of them through the panel, remembered across visits. Reusing a key another action already owns never silently overwrites it — the panel names the other action and offers to swap the two keys instead. A modifier pressed alone, or a combo the browser reserves for itself, is rejected with a clear message. A reset control brings a changed action back to its default key.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -173,6 +174,28 @@ history.undo(); // model.x is back to 0, not 10
 ```
 
 See [docs/api.md](docs/api.md) for the full API, including the configurable history size limit and coalesce time window.
+
+Use `ShortcutManager` together with `<wuik-shortcuts-panel>` to give your app remappable keyboard shortcuts:
+
+```js
+import { ShortcutManager } from "@openkakutou/web-ui-kit";
+
+const shortcuts = new ShortcutManager({ storageKey: "my-app-shortcuts" });
+shortcuts.register({ id: "save", label: "Save", defaultKey: "Ctrl+S" });
+shortcuts.register({ id: "export", label: "Export", defaultKey: "Ctrl+E" });
+
+shortcuts.addEventListener("change", (e) => console.log(e.detail)); // { id, key }
+```
+
+```html
+<wuik-shortcuts-panel id="shortcuts-panel"></wuik-shortcuts-panel>
+```
+
+```js
+document.getElementById("shortcuts-panel").manager = shortcuts;
+```
+
+The panel lists every registered action and lets the user rebind it: click Rebind, then press the new key combination (or Escape to cancel). Rebound keys persist automatically (via `localStorage`, under the `storageKey` you pass — use a different key per app if more than one app shares an origin) and are restored the next time the manager is created. If a key is already used by another action, the panel names it and offers to swap the two bindings instead of silently overwriting one; a modifier pressed alone or a browser-reserved combo is rejected with a message instead of being accepted. A "Reset" control appears next to any action that no longer matches its default. See [docs/api.md](docs/api.md) for the full API.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->
