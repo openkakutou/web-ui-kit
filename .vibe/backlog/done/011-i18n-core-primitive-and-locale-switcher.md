@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 # i18n Integration Layer and Locale Switcher
 
