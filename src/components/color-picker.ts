@@ -10,6 +10,7 @@
  * `.vibe/decisions/007-form-input-components-shared-conventions.md`.
  */
 
+import { onLocaleChange, t } from "../i18n/i18n.ts";
 import {
   DEFAULT_COLOR,
   normalizeHexColor,
@@ -105,6 +106,7 @@ export class WuikColorPickerElement extends HTMLElement {
   readonly #input: HTMLInputElement;
   readonly #swatches: HTMLElement;
   readonly #error: HTMLElement;
+  #unsubscribeLocaleChange: (() => void) | undefined;
 
   constructor() {
     super();
@@ -122,6 +124,12 @@ export class WuikColorPickerElement extends HTMLElement {
 
   connectedCallback(): void {
     this.#render();
+    this.#unsubscribeLocaleChange = onLocaleChange(() => this.#render());
+  }
+
+  disconnectedCallback(): void {
+    this.#unsubscribeLocaleChange?.();
+    this.#unsubscribeLocaleChange = undefined;
   }
 
   attributeChangedCallback(): void {
@@ -154,7 +162,11 @@ export class WuikColorPickerElement extends HTMLElement {
     this.#wrapper.classList.toggle("is-invalid", invalid);
     this.#input.setAttribute("aria-invalid", String(invalid));
     this.#error.textContent = invalid
-      ? `Invalid color value — showing ${DEFAULT_COLOR} instead.`
+      ? t(
+          "forms.colorPickerInvalidValue",
+          "Invalid color value — showing {{defaultColor}} instead.",
+          { defaultColor: DEFAULT_COLOR },
+        )
       : "";
 
     this.#renderSwatches();

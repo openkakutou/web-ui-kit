@@ -2,4 +2,5 @@
 **Role:** A framework-agnostic keyboard-shortcut manager (`ShortcutManager`, headless — not a Web Component) plus the shared `<wuik-shortcuts-panel>` Web Component that drives it: an app registers named actions with a default key, the manager tracks/persists overrides and rejects silent key conflicts, and the panel is the UI a user rebinds through.
 **Files:** `src/shortcuts/shortcut-manager.ts`, `src/shortcuts/shortcut-key.ts`, `src/shortcuts/shortcut-panel.ts`, `src/shortcuts/index.ts`
 **Exports:** `ShortcutManager` (class: `register`, `list`, `getBinding`, `rebind`, `resetToDefault`, dispatches `"change"`), `WuikShortcutsPanelElement` (`<wuik-shortcuts-panel>`), `ShortcutAction`/`ShortcutBinding`/`RebindOptions`/`RebindResult`/`ShortcutChangeDetail`/`ShortcutManagerOptions` (types)
-**Depends on:** `modules/tokens.md`
+**Public contract:** All of `<wuik-shortcuts-panel>`'s own visible text (button labels, aria-labels, status messages) is translated via `modules/i18n.md`'s `t()`, falling back to the existing English literal when no app has called `initI18n`. The panel re-renders on a locale change the same way it already does on the manager's own `"change"` event — both skipped while the user is mid-rebind-capture, so a locale switch never tears down the row a listening button lives in.
+**Depends on:** `modules/tokens.md`, `modules/i18n.md`

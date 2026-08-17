@@ -14,6 +14,7 @@ This project is in early-stage development. Available now:
 - A reusable 3D orbit/pan/zoom camera control for wrapping any 3D-rendering preview (first built for Ikemen GO 3D model-based stage previews): drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom, and a built-in reset button, all fully usable from the keyboard alone. Shows a clear message instead of a broken view when the browser doesn't support WebGL, and never hijacks the page's own scroll.
 - A reusable undo/redo history primitive: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
 - A remappable keyboard shortcut manager and a shared panel: register named actions with a default key, and let users rebind any of them through the panel, remembered across visits. Reusing a key another action already owns never silently overwrites it — the panel names the other action and offers to swap the two keys instead. A modifier pressed alone, or a combo the browser reserves for itself, is rejected with a clear message. A reset control brings a changed action back to its default key.
+- A shared localization (i18n) layer, set up in a few lines, plus a `<wuik-locale-switcher>` control that lists the available languages and switches the active one live, with no page reload. The language is detected from the browser by default and remembered across visits once a user picks one manually. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is translated into English and French, with a missing translation always falling back to English instead of a blank or broken label.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -196,6 +197,32 @@ document.getElementById("shortcuts-panel").manager = shortcuts;
 ```
 
 The panel lists every registered action and lets the user rebind it: click Rebind, then press the new key combination (or Escape to cancel). Rebound keys persist automatically (via `localStorage`, under the `storageKey` you pass — use a different key per app if more than one app shares an origin) and are restored the next time the manager is created. If a key is already used by another action, the panel names it and offers to swap the two bindings instead of silently overwriting one; a modifier pressed alone or a browser-reserved combo is rejected with a message instead of being accepted. A "Reset" control appears next to any action that no longer matches its default. See [docs/api.md](docs/api.md) for the full API.
+
+Use `initI18n` together with `<wuik-locale-switcher>` to give your app localized text:
+
+```js
+import { initI18n } from "@openkakutou/web-ui-kit";
+
+const i18n = await initI18n({
+  namespace: "my-app",
+  resources: {
+    en: { greeting: "Hello" },
+    fr: { greeting: "Bonjour" },
+  },
+});
+
+i18n.t("greeting"); // "Hello", or "Bonjour" once the user switches
+```
+
+```html
+<wuik-locale-switcher id="locale-switcher" label="Language"></wuik-locale-switcher>
+```
+
+```js
+document.getElementById("locale-switcher").i18n = i18n;
+```
+
+The active language is detected from the browser on first load; once the user picks one through the switcher (or you call `i18n.changeLanguage(code)` yourself), that choice persists in `localStorage` and wins over browser detection on later visits. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is merged into every `initI18n` call automatically under its own namespace — nothing extra to configure — and a key missing from either catalog always falls back to English rather than showing a blank string. See [docs/api.md](docs/api.md) for the full API.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

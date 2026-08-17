@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { initI18n } from "../i18n/i18n.ts";
 import { ShortcutManager } from "./shortcut-manager.ts";
 import { WuikShortcutsPanelElement } from "./shortcut-panel.ts";
 
@@ -185,5 +186,82 @@ describe("WuikShortcutsPanelElement", () => {
     // A stray keypress elsewhere no longer gets captured as a rebind.
     press(document.body, { key: "z" });
     expect(manager.getBinding("save")).toBe("Ctrl+S");
+  });
+});
+
+// Appended after every English-hardcoded-text test above, and each test
+// below calls initI18n itself before asserting — the i18n module's
+// module-scoped active-instance singleton (see i18n.test.ts) is therefore
+// always overwritten by the calling test before it matters, with no
+// cross-test leakage risk. (Unlike i18n.test.ts / locale-switcher.test.ts,
+// this file cannot use vi.resetModules() for isolation: a fresh module
+// graph would re-evaluate shortcut-panel.ts's own top-level
+// customElements.define call against a class object no longer identical to
+// the one already registered under that tag name — jsdom's custom element
+// registry is a real DOM API, not part of the JS module cache, so it isn't
+// reset alongside it.)
+describe("WuikShortcutsPanelElement — localization", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("renders its own strings in the active locale, and updates them live on a locale switch", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+
+    const manager = new ShortcutManager({ storage: makeMemoryStorage() });
+    manager.register({ id: "save", label: "Save", defaultKey: "Ctrl+S" });
+    const panel = new WuikShortcutsPanelElement();
+    document.body.appendChild(panel);
+    panel.manager = manager;
+
+    const rebindButton = () =>
+      panel.shadowRoot?.querySelector(
+        '[data-action-id="save"] .rebind',
+      ) as HTMLButtonElement;
+
+    expect(rebindButton().textContent).toBe("Rebind");
+
+    await instance.changeLanguage("fr");
+
+    expect(rebindButton().textContent).toBe("Réassigner");
+
+    panel.remove();
+  });
+
+  it("does not rebuild a row mid-rebind-capture when the locale changes, so focus/listening state survives", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+
+    const manager = new ShortcutManager({ storage: makeMemoryStorage() });
+    manager.register({ id: "save", label: "Save", defaultKey: "Ctrl+S" });
+    const panel = new WuikShortcutsPanelElement();
+    document.body.appendChild(panel);
+    panel.manager = manager;
+
+    const rebindButton = () =>
+      panel.shadowRoot?.querySelector(
+        '[data-action-id="save"] .rebind',
+      ) as HTMLButtonElement;
+
+    rebindButton().click(); // enters "listening" / "Press a key…" state
+    expect(rebindButton().textContent).toBe("Press a key…");
+
+    await instance.changeLanguage("fr");
+
+    // Row was not torn down and rebuilt: still listening, focus intact, and
+    // the transient "Press a key…" label is untouched (not re-rendered into
+    // its French translation) until the interaction actually ends.
+    expect(rebindButton().classList.contains("is-listening")).toBe(true);
+    expect(panel.shadowRoot?.activeElement).toBe(rebindButton());
+    expect(rebindButton().textContent).toBe("Press a key…");
+
+    panel.remove();
   });
 });

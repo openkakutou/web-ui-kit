@@ -30,6 +30,10 @@
 | `ShortcutManager` | class | `src/shortcuts/shortcut-manager.ts` |
 | `WuikShortcutsPanelElement` | custom element class (`<wuik-shortcuts-panel>`) | `src/shortcuts/shortcut-panel.ts` |
 | `ShortcutAction`, `ShortcutBinding`, `RebindOptions`, `RebindResult`, `ShortcutChangeDetail`, `ShortcutManagerOptions` | TypeScript types (type-only export) | `src/shortcuts/shortcut-manager.ts` |
+| `initI18n`, `getI18n`, `t`, `onLocaleChange`, `getSupportedLocales`, `localeDisplayName` | functions | `src/i18n/i18n.ts`, `src/i18n/locale-names.ts` |
+| `WUIK_NAMESPACE`, `DEFAULT_LOCALE`, `DEFAULT_STORAGE_KEY` | constants | `src/i18n/i18n.ts` |
+| `WuikLocaleSwitcherElement` | custom element class (`<wuik-locale-switcher>`) | `src/i18n/locale-switcher.ts` |
+| `InitI18nOptions`, `LocaleCatalog`, `LocaleCatalogs` | TypeScript types (type-only export) | `src/i18n/i18n.ts` |
 
 `src/index.ts` also has a side-effect import of `./tokens/index.css`, which is why building the package (`vite build`) produces `dist/web-ui-kit.css` alongside `dist/web-ui-kit.js` — Vite extracts CSS reached from a library entry into its own file rather than injecting it via JS at runtime. Consumers must import the CSS subpath explicitly (see below); importing the JS entry alone does **not** apply the tokens.
 
@@ -293,6 +297,44 @@ Rebind interaction, once "Rebind" is clicked for a row:
 
 A shared `role="status"` live region announces every state change (listening, invalid key, conflict, applied, reset) for screen-reader users — see the UI/UX consultation recorded for backlog item 010.
 
+## Localization (i18n) (`src/i18n/`)
+
+Depends on `i18next` + `i18next-browser-languagedetector`, bundled into `dist/web-ui-kit.js` — nothing extra for a consuming app to install. See `.vibe/decisions/013-i18n-integration-layer-architecture.md` for the full design rationale.
+
+### `initI18n(options: InitI18nOptions): Promise<i18n>`
+
+Creates and initializes a fresh i18next instance for one consuming app.
+
+| Option | Meaning |
+|---|---|
+| `namespace` | This app's own namespace — must not be `WUIK_NAMESPACE` (`"wuik"`), reserved for this kit's own catalog. |
+| `resources` | This app's own locale catalogs: `{ [localeCode]: { [key]: value, ... } }`, values may nest. |
+| `storageKey` | The `localStorage` key the manual locale override is read/written under. Default `DEFAULT_STORAGE_KEY` (`"wuik-locale"`) — override per consuming app, same reasoning as `ShortcutManager`'s own `storageKey`. |
+
+`web-ui-kit`'s own catalog (`src/i18n/locales/{en,fr}.json`) is always merged in under `WUIK_NAMESPACE`, alongside the app's own, so this kit's translated components work in every consuming app automatically. Locale resolution order is `localStorage` (a previously persisted manual override) then the browser's own language, falling back to `DEFAULT_LOCALE` (`"en"`) if neither is supported. The returned value is a real `i18next` instance (`i18n.t()`, `i18n.changeLanguage()`, `i18n.resolvedLanguage`, `i18n.on("languageChanged", ...)` — see i18next's own docs for the full instance API).
+
+### `t(key: string, defaultValue: string, vars?: Record<string, string>): string`
+
+What every component in this kit (`<wuik-shortcuts-panel>`, `<wuik-slider>`, `<wuik-color-picker>`) actually calls to render its own text. Interpolates `{{var}}` placeholders from `vars` into the result either way. Returns `defaultValue` (interpolated) verbatim whenever no app has called `initI18n` yet, or the key is missing from every catalog — never a raw i18next key, never blank. This is what keeps every component fully usable standalone, with zero i18n setup.
+
+### `onLocaleChange(callback: () => void): () => void`
+
+Subscribes to every locale change on whichever i18next instance is active at the time of the change — not tied to the instance active when subscribing. Returns an unsubscribe function. This is how the standalone components above react to a locale switch without holding a direct reference to any particular instance.
+
+### `getI18n(): i18n | undefined` / `getSupportedLocales(instance): string[]` / `localeDisplayName(code): string`
+
+`getI18n()` returns the instance the last `initI18n` call produced, or `undefined`. `getSupportedLocales(instance)` lists every locale code available on it (the union of the app's own catalog and `web-ui-kit`'s own). `localeDisplayName(code)` returns a locale's endonym (`"fr"` → `"Français"`), falling back to the raw code for one not yet known.
+
+### `<wuik-locale-switcher>`
+
+A native `<select>` in shadow DOM listing every locale from `getSupportedLocales`, labelled by `localeDisplayName`, and switching the active one via `instance.changeLanguage()` when the user picks a different option. Takes its instance through a **JS property, not an attribute** — an i18next instance can't be serialized into one:
+
+```js
+document.querySelector("wuik-locale-switcher").i18n = myI18nInstance;
+```
+
+Reassigning `i18n` re-renders the full option list; the switcher also re-renders just its current selection (not the whole list) on the instance's own `"languageChanged"` event, so a locale switch made elsewhere (another switcher instance, or `instance.changeLanguage()` called directly) stays reflected without flicker. Supports an optional `label` attribute forwarded to the select's `aria-label` (omitted → none fabricated, same convention as `<wuik-slider>`/`<wuik-color-picker>`) and a `disabled` attribute. Dispatches `wuik-change` as a `CustomEvent<{ value: string }>` (the newly selected locale code) on every user selection. `color-scheme` (light/dark, keyed off `data-theme`) is declared once in `src/tokens/colors.css` and inherits into every component's shadow tree, including this one — so the browser's own dropdown-panel chrome (outside this kit's CSS reach) doesn't render mismatched against the active theme.
+
 ## Design tokens (`src/tokens/`)
 
 Source layout: `colors.css`, `spacing.css`, `typography.css`, aggregated by `index.css` (the only supported import — the individual files are a private implementation detail and may be reorganized without notice).
@@ -323,6 +365,8 @@ Every (background, foreground) pair used by a component as rendered text — `bg
 `--wuik-color-danger` is deliberately **not** used as text color anywhere: measured as foreground-on-surface in the light theme it falls short of 4.5:1. Invalid-state message text (slider, color picker) uses `--wuik-color-text` instead, while the invalid state itself still signals non-verbally via a `--wuik-color-danger` border/outline plus `aria-invalid` — never color alone. See `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
 
 **Theme switching:** light values apply on `:root` by default. Dark values apply when an ancestor element (typically `<html>`) carries `data-theme="dark"`. An unrecognized `data-theme` value (or none) falls back to light — there is no crash or empty-value state. There is deliberately no `prefers-color-scheme` fallback; see the ADR referenced above for why.
+
+The CSS `color-scheme` property is declared alongside the color tokens (`light` by default, `dark` under `data-theme="dark"`) so browser-drawn chrome no component can style itself — a native `<select>`'s open dropdown panel, scrollbars — doesn't render mismatched against the active theme. It's inherited from `:root` into every component's shadow tree automatically; no component redeclares it.
 
 ### Spacing (`spacing.css`)
 

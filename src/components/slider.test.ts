@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initI18n } from "../i18n/i18n.ts";
 import "../tokens/index.css";
 import "./slider.ts";
 
@@ -137,5 +138,37 @@ describe("wuik-slider", () => {
       expect(errorRule).toContain("var(--wuik-color-text)");
       expect(errorRule).not.toContain("var(--wuik-color-danger)");
     });
+  });
+});
+
+// Appended after every English-hardcoded-text test above, and each test
+// below calls initI18n itself first — see the equivalent note in
+// shortcut-panel.test.ts for why that's safe against the i18n module's
+// module-scoped active-instance singleton.
+describe("wuik-slider — localization", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("shows its invalid-configuration message in the active locale, live on a locale switch", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+
+    const slider = mountSlider({ min: "10", max: "5" });
+    const error = () =>
+      slider.shadowRoot?.querySelector(".error") as HTMLElement;
+
+    expect(error().textContent).toBe(
+      "Invalid slider configuration — showing default range instead.",
+    );
+
+    await instance.changeLanguage("fr");
+
+    expect(error().textContent).toBe(
+      "Configuration du curseur invalide — affichage de la plage par défaut à la place.",
+    );
   });
 });

@@ -1,0 +1,25 @@
+{
+  "shortcuts": {
+    "rebind": "Réassigner",
+    "rebindAriaLabel": "Réassigner {{label}}",
+    "reset": "Réinitialiser",
+    "resetAriaLabel": "Réinitialiser {{label}} à sa valeur par défaut",
+    "swap": "Échanger",
+    "cancel": "Annuler",
+    "swapAriaLabel": "Échanger les touches entre {{label}} et {{otherLabel}}",
+    "cancelAriaLabel": "Annuler la réassignation de {{label}}",
+    "pressAKey": "Appuyez sur une touche…",
+    "listeningStatus": "En attente d'une touche pour {{label}}… appuyez sur Échap pour annuler.",
+    "invalidKeyStatus": "{{key}} n'est pas un raccourci valide à lui seul — appuyez sur une autre touche.",
+    "reservedKeyStatus": "{{combo}} est réservé par le navigateur — choisissez une autre touche.",
+    "boundStatus": "{{label}} associé à {{combo}}.",
+    "conflictStatus": "{{combo}} est déjà utilisé par {{conflictLabel}}. Échangez les deux touches, ou annulez.",
+    "swappedStatus": "{{label}} et {{otherLabel}} ont échangé leurs touches.",
+    "resetStatus": "{{label}} réinitialisé à sa touche par défaut.",
+    "resetConflictStatus": "Impossible de réinitialiser {{label}} : sa touche par défaut est utilisée par {{conflictLabel}}. Échangez, ou annulez."
+  },
+  "forms": {
+    "sliderInvalidConfig": "Configuration du curseur invalide — affichage de la plage par défaut à la place.",
+    "colorPickerInvalidValue": "Valeur de couleur invalide — affichage de {{defaultColor}} à la place."
+  }
+}

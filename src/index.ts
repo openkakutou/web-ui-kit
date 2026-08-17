@@ -5,4 +5,5 @@ export * from "./components/index.ts";
 export * from "./canvas/index.ts";
 export * from "./canvas3d/index.ts";
 export * from "./history/index.ts";
+export * from "./i18n/index.ts";
 export * from "./shortcuts/index.ts";

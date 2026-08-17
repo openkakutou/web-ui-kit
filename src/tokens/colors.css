@@ -29,6 +29,14 @@
   --wuik-color-success: #16a34a;
   --wuik-color-warning: #d97706;
   --wuik-color-focus-ring: #2563eb;
+  /* Tells the browser which palette this app is actually showing, so
+   * OS-drawn chrome a component can't style itself (a native <select>'s
+   * open dropdown panel, scrollbars, …) doesn't render mismatched against
+   * an explicit data-theme choice — keyed off that same attribute, not
+   * `prefers-color-scheme`, consistent with this file's own switching
+   * mechanism (see the file header and decision 001). Inherits into every
+   * component's shadow tree from here; no component needs to redeclare it. */
+  color-scheme: light;
 }
 
 :root[data-theme="dark"] {
@@ -44,4 +52,5 @@
   --wuik-color-success: #4ade80;
   --wuik-color-warning: #fbbf24;
   --wuik-color-focus-ring: #60a5fa;
+  color-scheme: dark;
 }

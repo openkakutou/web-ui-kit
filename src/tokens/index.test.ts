@@ -130,6 +130,12 @@ describe("design tokens — light theme (default, no data-theme attribute)", () 
     expect(readToken("--wuik-color-bg")).toBe("#ffffff");
   });
 
+  it("declares the light color-scheme, so OS-drawn chrome (a native <select>'s dropdown panel, scrollbars) matches", () => {
+    expect(getComputedStyle(document.documentElement).colorScheme).toBe(
+      "light",
+    );
+  });
+
   it("meets WCAG AA contrast (4.5:1) for every semantic pair", () => {
     for (const [bg, fg] of CONTRAST_PAIRS) {
       const ratio = contrastRatio(readToken(bg), readToken(fg));
@@ -167,6 +173,10 @@ describe('design tokens — dark theme (data-theme="dark")', () => {
   it("switches text and accent tokens away from their light values", () => {
     expect(readToken("--wuik-color-text")).not.toBe("#18181b");
     expect(readToken("--wuik-color-accent")).not.toBe("#2563eb");
+  });
+
+  it("declares the dark color-scheme, so OS-drawn chrome (a native <select>'s dropdown panel, scrollbars) matches", () => {
+    expect(getComputedStyle(document.documentElement).colorScheme).toBe("dark");
   });
 
   it("meets WCAG AA contrast (4.5:1) for every semantic pair", () => {
@@ -213,6 +223,9 @@ describe("design tokens — invalid data-theme value", () => {
     try {
       expect(readToken("--wuik-color-bg")).toBe("#ffffff");
       expect(readToken("--wuik-color-text")).toBe("#18181b");
+      expect(getComputedStyle(document.documentElement).colorScheme).toBe(
+        "light",
+      );
     } finally {
       document.documentElement.removeAttribute("data-theme");
     }

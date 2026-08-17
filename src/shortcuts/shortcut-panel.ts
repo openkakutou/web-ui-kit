@@ -8,6 +8,7 @@
  * See `.vibe/decisions/012-shortcut-conflict-resolution-and-panel-contract.md`.
  */
 
+import { onLocaleChange, t } from "../i18n/i18n.ts";
 import { isReservedCombo, normalizeKeyCombo } from "./shortcut-key.ts";
 import type { ShortcutManager } from "./shortcut-manager.ts";
 
@@ -98,12 +99,17 @@ export class WuikShortcutsPanelElement extends HTMLElement {
   #listeningActionId: string | null = null;
   #pendingConflict: PendingConflict | null = null;
   readonly #handleManagerChange = (): void => {
-    // Ignore external changes while the user is mid-interaction here —
-    // the next definitive local action re-reads fresh manager state anyway.
-    if (this.#listeningActionId === null && this.#pendingConflict === null) {
-      this.#renderRows();
-    }
+    this.#renderRowsIfIdle();
   };
+
+  // Same "ignore while mid-interaction" reasoning as #handleManagerChange —
+  // a locale switch mid-rebind-capture must not rebuild the row DOM out
+  // from under the button that currently holds focus/listeners.
+  readonly #handleLocaleChange = (): void => {
+    this.#renderRowsIfIdle();
+  };
+
+  #unsubscribeLocaleChange: (() => void) | undefined;
 
   constructor() {
     super();
@@ -111,6 +117,15 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     shadow.appendChild(TEMPLATE.content.cloneNode(true));
     this.#rows = shadow.querySelector(".rows") as HTMLElement;
     this.#status = shadow.querySelector(".status") as HTMLElement;
+  }
+
+  connectedCallback(): void {
+    this.#unsubscribeLocaleChange = onLocaleChange(this.#handleLocaleChange);
+  }
+
+  disconnectedCallback(): void {
+    this.#unsubscribeLocaleChange?.();
+    this.#unsubscribeLocaleChange = undefined;
   }
 
   get manager(): ShortcutManager | undefined {
@@ -125,6 +140,14 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     this.#pendingConflict = null;
     this.#status.textContent = "";
     this.#renderRows();
+  }
+
+  #renderRowsIfIdle(): void {
+    // Ignore external changes while the user is mid-interaction here —
+    // the next definitive local action re-reads fresh state anyway.
+    if (this.#listeningActionId === null && this.#pendingConflict === null) {
+      this.#renderRows();
+    }
   }
 
   #renderRows(): void {
@@ -149,8 +172,13 @@ export class WuikShortcutsPanelElement extends HTMLElement {
       const rebindButton = document.createElement("button");
       rebindButton.type = "button";
       rebindButton.className = "rebind";
-      rebindButton.textContent = "Rebind";
-      rebindButton.setAttribute("aria-label", `Rebind ${binding.label}`);
+      rebindButton.textContent = t("shortcuts.rebind", "Rebind");
+      rebindButton.setAttribute(
+        "aria-label",
+        t("shortcuts.rebindAriaLabel", "Rebind {{label}}", {
+          label: binding.label,
+        }),
+      );
       rebindButton.addEventListener("click", () =>
         this.#startListening(binding.id, binding.label),
       );
@@ -160,10 +188,12 @@ export class WuikShortcutsPanelElement extends HTMLElement {
         resetButton = document.createElement("button");
         resetButton.type = "button";
         resetButton.className = "reset";
-        resetButton.textContent = "Reset";
+        resetButton.textContent = t("shortcuts.reset", "Reset");
         resetButton.setAttribute(
           "aria-label",
-          `Reset ${binding.label} to default`,
+          t("shortcuts.resetAriaLabel", "Reset {{label}} to default", {
+            label: binding.label,
+          }),
         );
         resetButton.addEventListener("click", () =>
           this.#resetToDefault(binding.id, binding.label),
@@ -178,11 +208,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
       const swapButton = document.createElement("button");
       swapButton.type = "button";
       swapButton.className = "swap";
-      swapButton.textContent = "Swap";
+      swapButton.textContent = t("shortcuts.swap", "Swap");
       const cancelButton = document.createElement("button");
       cancelButton.type = "button";
       cancelButton.className = "cancel-conflict";
-      cancelButton.textContent = "Cancel";
+      cancelButton.textContent = t("shortcuts.cancel", "Cancel");
 
       if (isPendingHere && this.#pendingConflict) {
         const pending = this.#pendingConflict;
@@ -190,11 +220,17 @@ export class WuikShortcutsPanelElement extends HTMLElement {
           this.#labelFor(pending.conflictWith) ?? pending.conflictWith;
         swapButton.setAttribute(
           "aria-label",
-          `Swap keys between ${binding.label} and ${conflictLabel}`,
+          t(
+            "shortcuts.swapAriaLabel",
+            "Swap keys between {{label}} and {{otherLabel}}",
+            { label: binding.label, otherLabel: conflictLabel },
+          ),
         );
         cancelButton.setAttribute(
           "aria-label",
-          `Cancel rebinding ${binding.label}`,
+          t("shortcuts.cancelAriaLabel", "Cancel rebinding {{label}}", {
+            label: binding.label,
+          }),
         );
         swapButton.addEventListener("click", () => this.#confirmSwap(pending));
         cancelButton.addEventListener("click", () => this.#cancelConflict());
@@ -226,11 +262,15 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     }
     button.classList.add("is-listening");
     button.closest(".row")?.classList.add("is-listening");
-    button.textContent = "Press a key…";
+    button.textContent = t("shortcuts.pressAKey", "Press a key…");
     button.focus();
     button.addEventListener("keydown", this.#handleListeningKeydown);
     button.addEventListener("focusout", this.#handleListeningFocusOut);
-    this.#status.textContent = `Listening for a key for ${label}… press Escape to cancel.`;
+    this.#status.textContent = t(
+      "shortcuts.listeningStatus",
+      "Listening for a key for {{label}}… press Escape to cancel.",
+      { label },
+    );
   }
 
   readonly #handleListeningKeydown = (event: Event): void => {
@@ -250,11 +290,19 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     const label = this.#labelFor(actionId);
 
     if (combo === undefined) {
-      this.#status.textContent = `${keyboardEvent.key} is not a valid shortcut on its own — press another key.`;
+      this.#status.textContent = t(
+        "shortcuts.invalidKeyStatus",
+        "{{key}} is not a valid shortcut on its own — press another key.",
+        { key: keyboardEvent.key },
+      );
       return;
     }
     if (isReservedCombo(combo)) {
-      this.#status.textContent = `${combo} is reserved by the browser — choose another key.`;
+      this.#status.textContent = t(
+        "shortcuts.reservedKeyStatus",
+        "{{combo}} is reserved by the browser — choose another key.",
+        { combo },
+      );
       return;
     }
 
@@ -262,7 +310,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     this.#stopListening();
 
     if (result.ok) {
-      this.#status.textContent = `${label} bound to ${combo}.`;
+      this.#status.textContent = t(
+        "shortcuts.boundStatus",
+        "{{label}} bound to {{combo}}.",
+        { label: label ?? "", combo },
+      );
       this.#renderRows();
       return;
     }
@@ -274,7 +326,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
         key: combo,
         conflictWith: result.conflictWith,
       };
-      this.#status.textContent = `${combo} is already used by ${conflictLabel}. Swap the two keys, or cancel.`;
+      this.#status.textContent = t(
+        "shortcuts.conflictStatus",
+        "{{combo}} is already used by {{conflictLabel}}. Swap the two keys, or cancel.",
+        { combo, conflictLabel },
+      );
       this.#renderRows();
     }
   };
@@ -328,7 +384,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     const otherLabel = this.#labelFor(pending.conflictWith);
     this.#pendingConflict = null;
     if (result.ok) {
-      this.#status.textContent = `${label} and ${otherLabel} swapped keys.`;
+      this.#status.textContent = t(
+        "shortcuts.swappedStatus",
+        "{{label}} and {{otherLabel}} swapped keys.",
+        { label: label ?? "", otherLabel: otherLabel ?? "" },
+      );
     }
     this.#renderRows();
   }
@@ -348,7 +408,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
     }
     const result = this.#manager.resetToDefault(actionId);
     if (result.ok) {
-      this.#status.textContent = `${label} reset to its default key.`;
+      this.#status.textContent = t(
+        "shortcuts.resetStatus",
+        "{{label}} reset to its default key.",
+        { label },
+      );
       this.#renderRows();
     } else if (result.reason === "conflict") {
       const conflictLabel =
@@ -358,7 +422,11 @@ export class WuikShortcutsPanelElement extends HTMLElement {
         key: this.#manager.list().find((b) => b.id === actionId)?.key ?? "",
         conflictWith: result.conflictWith,
       };
-      this.#status.textContent = `Can't reset ${label}: its default key is used by ${conflictLabel}. Swap, or cancel.`;
+      this.#status.textContent = t(
+        "shortcuts.resetConflictStatus",
+        "Can't reset {{label}}: its default key is used by {{conflictLabel}}. Swap, or cancel.",
+        { label, conflictLabel },
+      );
       this.#renderRows();
     }
   }

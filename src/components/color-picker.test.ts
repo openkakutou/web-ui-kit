@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initI18n } from "../i18n/i18n.ts";
 import "../tokens/index.css";
 import "./color-picker.ts";
 
@@ -133,5 +134,37 @@ describe("wuik-color-picker", () => {
       expect(errorRule).toContain("var(--wuik-color-text)");
       expect(errorRule).not.toContain("var(--wuik-color-danger)");
     });
+  });
+});
+
+// Appended after every English-hardcoded-text test above, and each test
+// below calls initI18n itself first — see the equivalent note in
+// shortcut-panel.test.ts for why that's safe against the i18n module's
+// module-scoped active-instance singleton.
+describe("wuik-color-picker — localization", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("shows its invalid-value message in the active locale, live on a locale switch", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+
+    const picker = mountColorPicker({ value: "not-a-color" });
+    const error = () =>
+      picker.shadowRoot?.querySelector(".error") as HTMLElement;
+
+    expect(error().textContent).toBe(
+      "Invalid color value — showing #000000 instead.",
+    );
+
+    await instance.changeLanguage("fr");
+
+    expect(error().textContent).toBe(
+      "Valeur de couleur invalide — affichage de #000000 à la place.",
+    );
   });
 });

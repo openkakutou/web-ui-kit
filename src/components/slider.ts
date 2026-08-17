@@ -13,6 +13,7 @@
  * `.vibe/decisions/007-form-input-components-shared-conventions.md`.
  */
 
+import { onLocaleChange, t } from "../i18n/i18n.ts";
 import { resolveSliderConfig } from "./slider-config.ts";
 
 const TEMPLATE = document.createElement("template");
@@ -87,6 +88,7 @@ export class WuikSliderElement extends HTMLElement {
   readonly #input: HTMLInputElement;
   readonly #readout: HTMLElement;
   readonly #error: HTMLElement;
+  #unsubscribeLocaleChange: (() => void) | undefined;
 
   constructor() {
     super();
@@ -105,6 +107,12 @@ export class WuikSliderElement extends HTMLElement {
 
   connectedCallback(): void {
     this.#render();
+    this.#unsubscribeLocaleChange = onLocaleChange(() => this.#render());
+  }
+
+  disconnectedCallback(): void {
+    this.#unsubscribeLocaleChange?.();
+    this.#unsubscribeLocaleChange = undefined;
   }
 
   attributeChangedCallback(): void {
@@ -143,7 +151,10 @@ export class WuikSliderElement extends HTMLElement {
     this.#wrapper.classList.toggle("is-invalid", config.invalid);
     this.#input.setAttribute("aria-invalid", String(config.invalid));
     this.#error.textContent = config.invalid
-      ? "Invalid slider configuration — showing default range instead."
+      ? t(
+          "forms.sliderInvalidConfig",
+          "Invalid slider configuration — showing default range instead.",
+        )
       : "";
 
     const disabled = this.hasAttribute("disabled");

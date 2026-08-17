@@ -78,3 +78,8 @@ _Sources: `src/shortcuts/shortcut-manager.ts`, `src/shortcuts/shortcut-panel.ts`
 A standard clickable action control with a primary/secondary/danger variant, wrapping a native button. Deliberately never synthesizes visible label text for an empty slot — an honest, visibly-flagged empty state is preferred over giving the control a false accessible name.
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.
 _Sources: `src/components/button.ts`_
+
+## Locale switcher
+A control that lists every language a consuming app (plus this kit's own translated text) is available in and switches the active one when the user picks a different option, with no page reload. The active selection always reflects a previously persisted manual choice over the browser's own auto-detected language, and stays in sync with a switch made anywhere else (another switcher instance, or the app itself) without rebuilding its own option list.
+**Do not confuse with:** the underlying localization setup a consuming app performs once — the switcher is only the UI on top of it; a consuming app never needs one to have working translated text.
+_Sources: `src/i18n/locale-switcher.ts`_

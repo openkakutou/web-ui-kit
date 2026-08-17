@@ -1,0 +1,25 @@
+{
+  "shortcuts": {
+    "rebind": "Rebind",
+    "rebindAriaLabel": "Rebind {{label}}",
+    "reset": "Reset",
+    "resetAriaLabel": "Reset {{label}} to default",
+    "swap": "Swap",
+    "cancel": "Cancel",
+    "swapAriaLabel": "Swap keys between {{label}} and {{otherLabel}}",
+    "cancelAriaLabel": "Cancel rebinding {{label}}",
+    "pressAKey": "Press a key…",
+    "listeningStatus": "Listening for a key for {{label}}… press Escape to cancel.",
+    "invalidKeyStatus": "{{key}} is not a valid shortcut on its own — press another key.",
+    "reservedKeyStatus": "{{combo}} is reserved by the browser — choose another key.",
+    "boundStatus": "{{label}} bound to {{combo}}.",
+    "conflictStatus": "{{combo}} is already used by {{conflictLabel}}. Swap the two keys, or cancel.",
+    "swappedStatus": "{{label}} and {{otherLabel}} swapped keys.",
+    "resetStatus": "{{label}} reset to its default key.",
+    "resetConflictStatus": "Can't reset {{label}}: its default key is used by {{conflictLabel}}. Swap, or cancel."
+  },
+  "forms": {
+    "sliderInvalidConfig": "Invalid slider configuration — showing default range instead.",
+    "colorPickerInvalidValue": "Invalid color value — showing {{defaultColor}} instead."
+  }
+}
