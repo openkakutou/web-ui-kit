@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 ---
 # Remappable Keyboard Shortcut Manager
 
