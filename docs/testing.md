@@ -35,7 +35,33 @@ The token tests cover:
 - Whether a component uses the right design tokens is asserted against the component's own shadow stylesheet **text** — the expected `var(--wuik-*)` names must appear, and no literal hex color may appear anywhere in it.
 - `slotchange` fires as a queued microtask; tests that mutate a component's children after the initial mount (e.g. adding/removing a `<wuik-tab-panel>`) await one tick (`new Promise(r => setTimeout(r, 0))`) before asserting on the result.
 
-Real rendered appearance — including that hiding/showing and light/dark theme switching actually show up on screen, and that CSS Grid/slot layout composes correctly — is confirmed once per component by a runtime smoke check in a real browser (Playwright) during development, not by this unit test suite. That check caught a real bug this way: an unstyled `<slot>` defaults to `display: contents` in real browsers, so `grid-area` set on the `<slot>` selector had no effect until `display: block` was added — `jsdom` could not have surfaced this.
+Real rendered appearance — including that hiding/showing and light/dark theme switching actually show up on screen, and that CSS Grid/slot layout composes correctly — is not covered by this unit test suite. That gap used to be closed by an ad hoc, uncommitted runtime smoke check in a real browser during development; it caught a real bug once this way (an unstyled `<slot>` defaults to `display: contents` in real browsers, so `grid-area` set on the `<slot>` selector had no effect until `display: block` was added — `jsdom` could not have surfaced this). It is now a real, committed, automated suite instead — see "Visual regression testing" below.
+
+## Visual regression testing
+
+Real browser rendering (layout, colors, theme switching) is checked with Playwright's built-in screenshot comparison (`toHaveScreenshot()`), not the Vitest suite above — see roadmap decision `024-visual-regression-testing-via-playwright-screenshots.md` and `.vibe/decisions/015-visual-regression-shared-preset-shape.md`. This repo's own suite (`tests/visual/dev-preview.visual.spec.ts`) takes one baseline screenshot per component group, rendered on `dev-preview/` (now a committed fixture, not a throwaway harness) via a dedicated dev server (`npm run dev-preview`, `vite.dev-preview.config.ts`).
+
+Run it:
+
+```sh
+npm run test:visual           # compares against the committed baselines
+npm run test:visual:update    # regenerates baselines after a deliberate visual change
+```
+
+A failing comparison attaches the actual/expected/diff images to the run (`test-results/`, gitignored). Baselines are only ever regenerated deliberately and reviewed like any other diff — never silently. This suite runs as its own step in `.github/workflows/release.yml`, separate from `npm test`, and blocks `npm publish` on a real diff.
+
+### The shared preset (`src/testing/visual-preset.ts`)
+
+Published as its own package export, `@openkakutou/web-ui-kit/testing/visual-preset` (built from a separate Vite lib entry, `dist/visual-preset.js` — kept out of the main bundle since a Node-side `playwright.config.ts` has no use for the browser component bundle or its CSS import):
+
+- `createVisualProjectConfig(overrides?)` returns a fixed viewport (1280×800), a pinned `en-US` locale, and a default diff threshold (`maxDiffPixelRatio: 0.02`), to spread into a consuming app's own `defineConfig({...})`. Each field is replaced wholesale by an override, never deep-merged past one level — an app either takes the shared default or fully owns that field.
+- `waitForVisualReady(page)` disables every CSS animation/transition (`animation-duration`/`transition-duration` forced to `0s` via an injected style tag — unconditional, not dependent on a component honoring `prefers-reduced-motion`) and waits for `document.fonts.ready`, so a screenshot is never taken mid-transition or before a web font swaps in.
+
+Both are duck-typed against Playwright's own shapes (a minimal `{ addStyleTag, evaluate }` interface for `waitForVisualReady`, plain data for `createVisualProjectConfig`) rather than importing `@playwright/test` — this package has no version-locked dependency on it, so each consuming app keeps its own installed Playwright version. This also keeps both functions plain-Vitest-testable (`src/testing/visual-preset.test.ts`) with no browser involved.
+
+### Why the locale is pinned
+
+A headless browser's default `navigator.language` is not guaranteed to be English — confirmed directly while building this suite, where it resolved to French in the CI-like sandbox used for development. Any locale-aware component (`<wuik-locale-switcher>`, or any i18n-driven text) would otherwise render different text, and so produce a different screenshot, on a different machine for no real regression. `createVisualProjectConfig`'s default `use.locale` pins this the same way the fixed viewport pins layout.
 
 ### Simulating drag-and-drop in jsdom
 

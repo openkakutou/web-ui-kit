@@ -4,6 +4,7 @@ import { validatePackFileList } from "./validate-pack-file-list.ts";
 const EXACT_EXPECTED_FILES = [
   "LICENSE",
   "README.md",
+  "dist/visual-preset.js",
   "dist/web-ui-kit.css",
   "dist/web-ui-kit.js",
   "package.json",
@@ -37,6 +38,7 @@ describe("validatePackFileList", () => {
     expect(result).not.toBeNull();
     expect(result).toContain("LICENSE");
     expect(result).toContain("README.md");
+    expect(result).toContain("dist/visual-preset.js");
     expect(result).toContain("dist/web-ui-kit.css");
     expect(result).toContain("dist/web-ui-kit.js");
     expect(result).toContain("package.json");

@@ -19,21 +19,26 @@
   "files": ["dist"],
   "exports": {
     ".": "./dist/web-ui-kit.js",
-    "./tokens.css": "./dist/web-ui-kit.css"
+    "./tokens.css": "./dist/web-ui-kit.css",
+    "./testing/visual-preset": "./dist/visual-preset.js"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
     "dev": "vite build --watch",
+    "dev-preview": "vite --config vite.dev-preview.config.ts",
     "build": "tsc && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
     "lint": "biome check --write .",
     "verify-pack": "node --experimental-strip-types src/publish/verify-pack.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "1.62.1",
     "@types/node": "^22.13.1",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.3",

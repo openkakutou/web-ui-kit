@@ -15,6 +15,7 @@ This project is in early-stage development. Available now:
 - A reusable undo/redo history primitive: register an action's do/undo pair, then undo or redo it, including a long chain of consecutive actions in the right order. Rapid repeated edits of the same kind (like dragging a value) merge into a single undo step instead of one per intermediate change, and the history size is capped so it can't grow without bound during a long editing session.
 - A remappable keyboard shortcut manager and a shared panel: register named actions with a default key, and let users rebind any of them through the panel, remembered across visits. Reusing a key another action already owns never silently overwrites it — the panel names the other action and offers to swap the two keys instead. A modifier pressed alone, or a combo the browser reserves for itself, is rejected with a clear message. A reset control brings a changed action back to its default key.
 - A shared localization (i18n) layer, set up in a few lines, plus a `<wuik-locale-switcher>` control that lists the available languages and switches the active one live, with no page reload. The language is detected from the browser by default and remembered across visits once a user picks one manually. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is translated into English and French, with a missing translation always falling back to English instead of a blank or broken label.
+- A shared visual-regression testing setup: a ready-made screenshot-comparison configuration (fixed viewport, locale, and diff threshold) and a helper that settles animations and fonts before a screenshot, so any consuming app can catch a broken layout or color change automatically instead of relying on someone noticing it by eye. This kit's own components are covered by it, checked before every release.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -223,6 +224,33 @@ document.getElementById("locale-switcher").i18n = i18n;
 ```
 
 The active language is detected from the browser on first load; once the user picks one through the switcher (or you call `i18n.changeLanguage(code)` yourself), that choice persists in `localStorage` and wins over browser detection on later visits. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is merged into every `initI18n` call automatically under its own namespace — nothing extra to configure — and a key missing from either catalog always falls back to English rather than showing a blank string. See [docs/api.md](docs/api.md) for the full API.
+
+Set up visual-regression tests for your own app on top of this kit's shared Playwright preset:
+
+```ts
+// playwright.config.ts
+import { defineConfig } from "@playwright/test";
+import { createVisualProjectConfig } from "@openkakutou/web-ui-kit/testing/visual-preset";
+
+export default defineConfig({
+  ...createVisualProjectConfig({ use: { baseURL: "http://localhost:4173" } }),
+  testDir: "./tests/visual",
+});
+```
+
+```ts
+// tests/visual/example.spec.ts
+import { expect, test } from "@playwright/test";
+import { waitForVisualReady } from "@openkakutou/web-ui-kit/testing/visual-preset";
+
+test("home page matches its baseline", async ({ page }) => {
+  await page.goto("/");
+  await waitForVisualReady(page); // settles fonts/animations before the screenshot
+  await expect(page).toHaveScreenshot("home.png");
+});
+```
+
+`createVisualProjectConfig` returns a fixed viewport (1280×800), a pinned `en-US` locale, and a default diff threshold — spread it into your own `defineConfig`, then override any field (e.g. `use.baseURL`, or `use.viewport`/`expect.toHaveScreenshot` to depart from the shared default) as needed. See [docs/testing.md](docs/testing.md) for the full approach, including this kit's own suite as a working example.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

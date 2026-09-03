@@ -3,6 +3,9 @@ dist/
 *.local
 .DS_Store
 
-# Throwaway local harness used only to exercise components in a real browser
-# during development (Step 4b runtime smoke checks) — never published, never committed.
-dev-preview/
+# Visual-regression test artifacts (playwright.config.ts's `outputDir`/
+# `snapshotDir` failure output) — the committed baselines themselves live
+# under tests/visual/**/*-snapshots/ and are tracked normally.
+test-results/
+playwright-report/
+blob-report/

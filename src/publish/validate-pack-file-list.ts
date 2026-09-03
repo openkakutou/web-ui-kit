@@ -6,6 +6,7 @@
 const EXPECTED_FILES = [
   "LICENSE",
   "README.md",
+  "dist/visual-preset.js",
   "dist/web-ui-kit.css",
   "dist/web-ui-kit.js",
   "package.json",
