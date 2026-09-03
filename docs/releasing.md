@@ -10,11 +10,15 @@ Publishing to the public npm registry is fully automated, triggered by pushing a
 
 ## What the workflow does, in order
 
-1. Install, test, lint, build.
-2. **Tag/version guard** — fails immediately if the pushed tag's version doesn't exactly match `package.json`'s `version` field. Publishing the wrong version is a mistake worth catching before it's irreversible, not after.
-3. **Pack-content guard** (`npm run verify-pack`, backed by `src/publish/validate-pack-file-list.ts`) — fails if the tarball `npm publish` would ship doesn't contain exactly the expected files (built output + `package.json`/`README.md`/`LICENSE`), catching any accidental leak of source or test files.
-4. **Smoke build** — packs the tarball for real, installs it into the `smoke/` fixture (a throwaway, unpublished Vite app that exists only for this check), and runs a real `vite build` against it. This is what actually proves a fresh Vite app can install and import the package with zero extra configuration — inspecting `package.json`'s `exports`/`files` fields alone can't catch every way that claim could be wrong.
-5. `npm publish --provenance`, authenticated via npm **Trusted Publishing** — no token secret exists in this repo at all. npmjs.org is configured to trust this exact repository + workflow file; the job exchanges its own GitHub Actions OIDC identity for a short-lived, single-run publish grant. See `.vibe/decisions/003-npm-trusted-publishing-over-token.md` for why this replaced an `NPM_TOKEN` secret. Provenance (the same OIDC identity, used for supply-chain attestation) is enabled from the first publish onward, since it can't be retrofitted onto versions already on the registry.
+1. Install, test, lint.
+2. **Visual regression tests** (`npm run test:visual`, `.vibe/decisions/015-visual-regression-shared-preset-shape.md`) — a Playwright screenshot comparison against this repo's own component baselines, gating the release on a real rendered-output diff before anything is built or published. Playwright's Chromium browser is cached, and the runner image (`ubuntu-24.04`, not `ubuntu-latest`) is pinned so a periodic image bump can't silently invalidate every baseline. A failing diff attaches the actual/expected/diff images to the run.
+3. Build.
+4. **Tag/version guard** — fails immediately if the pushed tag's version doesn't exactly match `package.json`'s `version` field. Publishing the wrong version is a mistake worth catching before it's irreversible, not after.
+5. **Pack-content guard** (`npm run verify-pack`, backed by `src/publish/validate-pack-file-list.ts`) — fails if the tarball `npm publish` would ship doesn't contain exactly the expected files (built output + `package.json`/`README.md`/`LICENSE`), catching any accidental leak of source or test files.
+6. **Smoke build** — packs the tarball for real, installs it into the `smoke/` fixture (a throwaway, unpublished Vite app that exists only for this check), and runs a real `vite build` against it. This is what actually proves a fresh Vite app can install and import the package with zero extra configuration — inspecting `package.json`'s `exports`/`files` fields alone can't catch every way that claim could be wrong.
+7. `npm publish --provenance`, authenticated via npm **Trusted Publishing** — no token secret exists in this repo at all. npmjs.org is configured to trust this exact repository + workflow file; the job exchanges its own GitHub Actions OIDC identity for a short-lived, single-run publish grant. See `.vibe/decisions/003-npm-trusted-publishing-over-token.md` for why this replaced an `NPM_TOKEN` secret. Provenance (the same OIDC identity, used for supply-chain attestation) is enabled from the first publish onward, since it can't be retrofitted onto versions already on the registry.
+
+Release-time-only gate: this repo has no push/PR-triggered CI, so a visual regression can land on `main` and only surface here, at release time — an accepted limitation, not an oversight (`.vibe/decisions/015`).
 
 Why the guards run in that specific order — before the actually-irreversible step, not after — is recorded in `.vibe/decisions/002-publish-pipeline-safety-gates.md`.
 

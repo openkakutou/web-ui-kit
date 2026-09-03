@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-03
+
 ### Added
 
 - A shared visual-regression testing setup any consuming app can build its own suite on top of: a fixed viewport, browser locale, and screenshot diff threshold, plus a small helper that forces animations and fonts to settle before a screenshot is taken — so a diff is a real visual change, not machine-to-machine noise. This kit's own components now have a baseline screenshot each, checked automatically before every release; a real visual regression fails the release instead of silently shipping.
@@ -56,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.7.0
 [0.6.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.6.0
 [0.5.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.5.0
 [0.4.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.4.0
