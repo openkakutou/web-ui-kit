@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 # Visual Regression: Shared Playwright Config and Component Snapshots
 
