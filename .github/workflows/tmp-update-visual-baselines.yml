@@ -1,0 +1,29 @@
+name: tmp-update-visual-baselines
+
+# Throwaway, manually-triggered workflow: regenerates visual-regression
+# baselines on the real runner image release.yml uses, since a local/Docker
+# approximation was confirmed not to match it closely enough (a few px off
+# per screenshot). Deleted once the baselines are copied back and committed
+# — see .vibe/decisions/015-visual-regression-shared-preset-shape.md.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:visual:update
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-baselines
+          path: tests/visual/dev-preview.visual.spec.ts-snapshots/
