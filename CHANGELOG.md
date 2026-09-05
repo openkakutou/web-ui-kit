@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated the buttons demo section's visual-regression baseline to reflect the new pressed-state example buttons added in the previous release; the button component itself did not change.
+
 ## [0.9.0] - 2026-09-05
 
 ### Added
