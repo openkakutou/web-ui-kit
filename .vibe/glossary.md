@@ -44,6 +44,11 @@ A control for choosing a color, combining a native color picker with an optional
 **Do not confuse with:** the palette itself, which is just the list of preset swatch colors — not the currently selected value.
 _Sources: `src/components/color-picker.ts`, `src/components/color-picker-color.ts`_
 
+## Radio group
+A control for choosing exactly one option from a labelled list, wrapping one native radio input per option. Options are declared individually (a value plus a display label) rather than configured as a single attribute, since a label is arbitrary end-user-visible text (e.g. a file name). A value that matches no option just leaves nothing selected, like a slider value merely outside its range; two options sharing the same value is instead treated as a broken configuration and shown as a visible invalid state, keeping only the first of the colliding options so the group stays usable.
+**Do not confuse with:** the malformed-option case, which drops one bad option silently — the invalid state is reserved for the group-level ambiguity of a duplicated value, not for an individual missing one.
+_Sources: `src/components/radio-group.ts`, `src/components/radio-group-options.ts`_
+
 ## Viewport
 A control that lets the user zoom, pan, and reset-to-fit a wrapped piece of content — typically a `<canvas>`-based preview (a sprite, a stage background, an animation frame) — without knowing or touching how that content renders its own pixels. Distinguishes the current transform's scale from its pan offset, both exposed together as a single read value and change event.
 **Do not confuse with:** the wrapped content itself — the viewport only ever moves/scales it as an opaque box; drawing the content is entirely the wrapped element's own responsibility.

@@ -22,6 +22,8 @@
 | `WuikFileDropZoneElement` | custom element class (`<wuik-file-drop-zone>`) | `src/components/file-drop-zone.ts` |
 | `WuikSliderElement` | custom element class (`<wuik-slider>`) | `src/components/slider.ts` |
 | `WuikColorPickerElement` | custom element class (`<wuik-color-picker>`) | `src/components/color-picker.ts` |
+| `WuikRadioGroupElement` | custom element class (`<wuik-radio-group>`) | `src/components/radio-group.ts` |
+| `WuikRadioOptionElement` | custom element class (`<wuik-radio-option>`) | `src/components/radio-group.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
@@ -132,6 +134,24 @@ Wraps a native `<input type="color">` plus optional preset swatch buttons.
 | Event | Detail | Fired when |
 |---|---|---|
 | `wuik-change` | `{ value: string }` | The native picker's value changes, or a swatch is clicked. |
+
+### `<wuik-radio-group>` + `<wuik-radio-option>`
+
+Wraps one native `<input type="radio">` per option, one option selectable at a time. Options are declared as `<wuik-radio-option value="…">Display label</wuik-radio-option>` light-DOM children (read reactively, like `<wuik-tabs>`/`<wuik-tab-panel>`) rather than an attribute, since a label is arbitrary end-user-visible text — see `.vibe/decisions/016-radio-group-options-as-light-dom-children.md`.
+
+| Attribute | Meaning |
+|---|---|
+| `value` | The selected option's value. A value matching no option just leaves nothing checked (like a well-formed but out-of-range slider value); the group stays keyboard-reachable via the first option in that case. |
+| `label` | Sets an accessible name (`aria-label`) on the `role="radiogroup"` container. |
+| `disabled` | Forwarded to every native radio; removes the whole group from the tab order and ignores clicks/keys. |
+
+An individual `<wuik-radio-option>` with a missing/blank `value` is dropped silently (like a malformed `<wuik-color-picker>` palette entry). Two options sharing the same `value` is instead a group-level configuration error: shown with a visible invalid indicator (red outline, inline error text naming the duplicated value) while keeping only the first occurrence, so the group stays usable.
+
+Arrow keys (Up/Down/Left/Right) move focus **and** commit the selection to the adjacent option in one step, wrapping past either end — a custom keydown handler over the real native radios, not native shadow-DOM radiogroup navigation.
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-change` | `{ value: string }` | A different option is selected, by click or arrow key. |
 
 ### `<wuik-button>`
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A radio group component for picking exactly one option from a labelled list, keyboard-operable with arrow keys (wrapping past either end) and a visible focus indicator, following the light/dark theme automatically. Two options accidentally sharing the same value show a clear error instead of silently picking the wrong one.
+
 ## [0.7.0] - 2026-09-03
 
 ### Added

@@ -8,7 +8,7 @@ This project is in early-stage development. Available now:
 - Design tokens: a color palette with matching light and dark values, a spacing scale, and a typography scale, delivered as CSS custom properties from a single stylesheet. Dark mode is switched by setting `data-theme="dark"` on the page; every color pairing meets WCAG AA contrast in both themes.
 - Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
 - A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
-- Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range) instead of failing silently.
+- Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, a radio group for picking exactly one option from a labelled list, and a button with primary/secondary/danger variants. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range, two options sharing the same value) instead of failing silently.
 - A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
 - An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
 - A reusable 3D orbit/pan/zoom camera control for wrapping any 3D-rendering preview (first built for Ikemen GO 3D model-based stage previews): drag to orbit around the model, Shift-drag or right-drag to pan, mouse wheel to zoom, and a built-in reset button, all fully usable from the keyboard alone. Shows a clear message instead of a broken view when the browser doesn't support WebGL, and never hijacks the page's own scroll.
@@ -106,6 +106,10 @@ The form/input components work standalone too, and each emits a typed `CustomEve
 <wuik-file-drop-zone accept=".png,.jpg" multiple>Drop images here</wuik-file-drop-zone>
 <wuik-slider min="0" max="100" value="50" label="Volume"></wuik-slider>
 <wuik-color-picker value="#2563eb" palette="#dc2626,#16a34a,#2563eb" label="Highlight color"></wuik-color-picker>
+<wuik-radio-group label="Which file is the lifebar?" value="fight.def">
+  <wuik-radio-option value="fight.def">fight.def</wuik-radio-option>
+  <wuik-radio-option value="fight2.def">fight2.def</wuik-radio-option>
+</wuik-radio-group>
 <wuik-button variant="primary">Save</wuik-button>
 ```
 
@@ -113,7 +117,10 @@ The form/input components work standalone too, and each emits a typed `CustomEve
 dropZone.addEventListener("wuik-files-selected", (e) => console.log(e.detail.files));
 slider.addEventListener("wuik-change", (e) => console.log(e.detail.value)); // also emits wuik-input live, during drag
 colorPicker.addEventListener("wuik-change", (e) => console.log(e.detail.value));
+radioGroup.addEventListener("wuik-change", (e) => console.log(e.detail.value));
 ```
+
+Options are declared declaratively as `<wuik-radio-option>` children rather than an attribute — arrow keys move and commit the selection between them (wrapping past either end), and two options accidentally sharing the same `value` show a visible error instead of silently picking one.
 
 See [docs/api.md](docs/api.md) for the full event/attribute contract, including how each component shows an invalid/empty input state.
 
