@@ -193,6 +193,95 @@ describe("wuik-tabs + wuik-tab-panel", () => {
     expect(tabButtons(tabs)).toHaveLength(0);
   });
 
+  describe("vertical orientation (backlog item 017)", () => {
+    it("sets aria-orientation on the tablist and moves selection with ArrowDown/ArrowUp, wrapping at the ends (nominal)", () => {
+      const tabs = mountTabs(THREE_TABS);
+      tabs.setAttribute("orientation", "vertical");
+      const tablist = tabs.shadowRoot?.querySelector('[role="tablist"]');
+      const buttons = tabButtons(tabs);
+
+      expect(tablist?.getAttribute("aria-orientation")).toBe("vertical");
+
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      expect(buttons[1].getAttribute("aria-selected")).toBe("true");
+
+      buttons[1].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      expect(buttons[2].getAttribute("aria-selected")).toBe("true");
+
+      buttons[2].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      expect(buttons[0].getAttribute("aria-selected")).toBe("true");
+
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }),
+      );
+      expect(buttons[2].getAttribute("aria-selected")).toBe("true");
+    });
+
+    it("still jumps to the first/last tab with Home/End in vertical orientation (edge case)", () => {
+      const tabs = mountTabs(THREE_TABS);
+      tabs.setAttribute("orientation", "vertical");
+      const buttons = tabButtons(tabs);
+
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "End", bubbles: true }),
+      );
+      expect(buttons[2].getAttribute("aria-selected")).toBe("true");
+
+      buttons[2].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Home", bubbles: true }),
+      );
+      expect(buttons[0].getAttribute("aria-selected")).toBe("true");
+    });
+
+    it("ignores ArrowLeft/ArrowRight in vertical orientation and ignores ArrowUp/ArrowDown in horizontal orientation (edge case)", () => {
+      const verticalTabs = mountTabs(THREE_TABS);
+      verticalTabs.setAttribute("orientation", "vertical");
+      const verticalButtons = tabButtons(verticalTabs);
+      verticalButtons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+      );
+      expect(verticalButtons[0].getAttribute("aria-selected")).toBe("true");
+
+      const horizontalTabs = mountTabs(THREE_TABS);
+      const horizontalButtons = tabButtons(horizontalTabs);
+      horizontalButtons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      expect(horizontalButtons[0].getAttribute("aria-selected")).toBe("true");
+    });
+
+    it("falls back to horizontal layout and keyboard behavior for an invalid orientation value (error case)", () => {
+      const tabs = mountTabs(THREE_TABS);
+      tabs.setAttribute("orientation", "diagonal");
+      const tablist = tabs.shadowRoot?.querySelector('[role="tablist"]');
+      const buttons = tabButtons(tabs);
+
+      expect(tablist?.hasAttribute("aria-orientation")).toBe(false);
+
+      buttons[0].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+      );
+      expect(buttons[1].getAttribute("aria-selected")).toBe("true");
+
+      buttons[1].dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+      );
+      expect(buttons[1].getAttribute("aria-selected")).toBe("true");
+    });
+
+    it("does not set aria-orientation by default (horizontal)", () => {
+      const tabs = mountTabs(TWO_TABS);
+      const tablist = tabs.shadowRoot?.querySelector('[role="tablist"]');
+      expect(tablist?.hasAttribute("aria-orientation")).toBe(false);
+    });
+  });
+
   describe("token-based styling (no consumer CSS required, verified structurally — see decision 006)", () => {
     it("references the accent, text-secondary and focus-ring tokens", () => {
       const tabs = mountTabs(TWO_TABS);

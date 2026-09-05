@@ -20,8 +20,8 @@ A horizontal container for actions (typically buttons) whose content scrolls hor
 _Sources: `src/components/toolbar.ts`_
 
 ## Tab strip
-The keyboard-navigable row of tab buttons that `<wuik-tabs>` builds from its `<wuik-tab-panel>` children, one button per panel. Activation is automatic: moving focus to a tab with the keyboard selects it and shows its panel immediately.
-**Do not confuse with:** a tab panel — the tab strip is the row of controls; a tab panel is the content one control reveals.
+The keyboard-navigable strip of tab buttons that `<wuik-tabs>` builds from its `<wuik-tab-panel>` children, one button per panel. Activation is automatic: moving focus to a tab with the keyboard selects it and shows its panel immediately. Laid out as a row by default (ArrowLeft/ArrowRight move selection) or, with `orientation="vertical"`, as a column for a sidebar tab list (ArrowUp/ArrowDown move selection instead).
+**Do not confuse with:** a tab panel — the tab strip is the row/column of controls; a tab panel is the content one control reveals.
 _Sources: `src/components/tabs.ts`_
 
 ## App shell

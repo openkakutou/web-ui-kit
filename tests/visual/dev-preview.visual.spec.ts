@@ -23,6 +23,10 @@ const SECTIONS = [
   "section-viewport-3d",
   "section-shortcuts",
   "section-locale",
+  // Appended last, deliberately: it is the newest section on the page and
+  // must never be inserted above an existing one — see
+  // .vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md.
+  "section-tabs-vertical",
 ];
 
 test.beforeEach(async ({ page }) => {

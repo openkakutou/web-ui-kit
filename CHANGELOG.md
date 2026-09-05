@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-tabs orientation="vertical">` lays its tabs out as a column instead of a row, for use as a sidebar section list. Up/Down arrow keys move the selection in this mode instead of Left/Right; Home/End still jump to the first/last tab either way. Default (horizontal) tabs are unchanged.
+
 ## [0.10.1] - 2026-09-05
 
 ### Fixed

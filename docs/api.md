@@ -65,12 +65,13 @@ A keyboard-accessible tab strip. `<wuik-tabs>` builds its tab buttons from its l
 
 | Element | Attribute | Meaning |
 |---|---|---|
+| `<wuik-tabs>` | `orientation` | `"horizontal"` (default) lays tabs out in a row; `"vertical"` lays them out in a column, for a sidebar tab list. Any other value falls back to horizontal. |
 | `<wuik-tab-panel>` | `label` | The text shown on the corresponding tab button. |
 
 Behavior:
 - Activation is automatic: moving focus to a tab with the keyboard immediately selects it and shows its panel — see `.vibe/decisions/004-tabs-automatic-activation.md` for why.
-- Keyboard: `ArrowLeft`/`ArrowRight` move selection with wrap-around at the ends; `Home`/`End` jump to the first/last tab. Roving tabindex — only the selected tab button is in the page's tab order.
-- Full ARIA tabs pattern: `role="tablist"`/`"tab"`/`"tabpanel"`, `aria-selected`, `aria-controls`/`aria-labelledby` pairing each tab to its panel.
+- Keyboard in horizontal orientation (default): `ArrowLeft`/`ArrowRight` move selection with wrap-around at the ends. Keyboard in vertical orientation: `ArrowUp`/`ArrowDown` move selection instead, with the same wrap-around; `ArrowLeft`/`ArrowRight` do nothing. `Home`/`End` jump to the first/last tab in either orientation. Roving tabindex — only the selected tab button is in the page's tab order.
+- Full ARIA tabs pattern: `role="tablist"`/`"tab"`/`"tabpanel"`, `aria-selected`, `aria-controls`/`aria-labelledby` pairing each tab to its panel. `aria-orientation="vertical"` is set on the tablist in vertical orientation and omitted otherwise (the ARIA default for a tablist is already horizontal) — see `.vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md`.
 - If the tab or its panel held focus when the selection changes, focus follows to the newly selected tab button rather than being lost.
 
 ### `<wuik-app-shell>`

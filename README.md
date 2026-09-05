@@ -7,7 +7,7 @@ This project is in early-stage development. Available now:
 
 - Design tokens: a color palette with matching light and dark values, a spacing scale, and a typography scale, delivered as CSS custom properties from a single stylesheet. Dark mode is switched by setting `data-theme="dark"` on the page; every color pairing meets WCAG AA contrast in both themes.
 - Published to the public npm registry on every tagged release — any Vite app can add it as a normal dependency with a standard semver range, no extra build configuration needed.
-- A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically.
+- A shared layout shell: a titled panel, a toolbar, a keyboard-accessible tab strip, and a root app frame (toolbar + sidebar + main content) that any of the other three can be placed into — usable together or on their own, with no CSS of your own required. All follow the light/dark theme automatically. The tab strip can also lay itself out as a vertical sidebar list instead of a horizontal row, with matching arrow-key navigation.
 - Core form/input components: a keyboard-operable drag-and-drop file drop-zone, a slider with a live value readout, a color picker with an optional preset swatch palette, a radio group for picking exactly one option from a labelled list, and a button with primary/secondary/danger variants that can also show a toggled-on "pressed" state (for a selectable list item or an on/off toggle), announced to assistive technology automatically. Each shows a clearly visible error state for invalid input (a rejected file, a malformed color, a broken slider range, two options sharing the same value) instead of failing silently.
 - A reusable zoom/pan viewport control for wrapping any canvas-based preview (sprite viewers, stage backgrounds, animation playback): mouse wheel zoom, drag-to-pan, and a reset-to-fit action, all fully usable from the keyboard alone with screen-reader feedback on zoom changes. Never hijacks the page's own scroll, and works with any wrapped content since it never touches its pixels.
 - An accessibility baseline verified and locked in across every component: full keyboard operability, an always-visible focus indicator readable in both themes, and text colors checked for comfortable reading contrast. The color picker also gained an optional accessible label, matching the slider.
@@ -100,6 +100,15 @@ import "@openkakutou/web-ui-kit/tokens.css";
 ```
 
 Each of `<wuik-panel>`, `<wuik-toolbar>`, and `<wuik-tabs>` also works standalone, without `<wuik-app-shell>` or each other. See [docs/api.md](docs/api.md) for the full slot/attribute reference of every component.
+
+Add `orientation="vertical"` to lay `<wuik-tabs>` out as a sidebar list instead of a horizontal strip — Up/Down arrow keys move the selection instead of Left/Right:
+
+```html
+<wuik-tabs orientation="vertical">
+  <wuik-tab-panel label="Details">...</wuik-tab-panel>
+  <wuik-tab-panel label="History">...</wuik-tab-panel>
+</wuik-tabs>
+```
 
 The form/input components work standalone too, and each emits a typed `CustomEvent` instead of relying on native form events:
 

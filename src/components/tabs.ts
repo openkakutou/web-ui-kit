@@ -5,6 +5,14 @@
  * first-class case) and builds the actual tab buttons itself. Activation is
  * automatic: moving focus with the arrow keys immediately selects the
  * corresponding panel — see `.vibe/decisions/004-tabs-automatic-activation.md`.
+ *
+ * An `orientation="vertical"` attribute lays the tab strip out as a column
+ * (for a sidebar tab list) and swaps the active arrow-key pair to
+ * ArrowUp/ArrowDown, per the ARIA APG; any other value (including omitted)
+ * falls back to the default horizontal layout and ArrowLeft/ArrowRight, both
+ * visually and behaviorally — see
+ * `.vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md`.
+ * Home/End are orientation-independent in both modes.
  */
 
 let nextPanelId = 0;
@@ -42,6 +50,14 @@ TEMPLATE.innerHTML = `
       border-bottom: 1px solid var(--wuik-color-border);
     }
 
+    :host([orientation="vertical"]) [role="tablist"] {
+      flex-direction: column;
+      overflow-x: visible;
+      overflow-y: auto;
+      border-bottom: none;
+      border-right: 1px solid var(--wuik-color-border);
+    }
+
     [role="tab"] {
       appearance: none;
       background: none;
@@ -54,10 +70,23 @@ TEMPLATE.innerHTML = `
       white-space: nowrap;
     }
 
+    :host([orientation="vertical"]) [role="tab"] {
+      border-bottom: none;
+      border-right: 2px solid transparent;
+      text-align: left;
+      white-space: normal;
+      word-break: break-word;
+    }
+
     [role="tab"][aria-selected="true"] {
       color: var(--wuik-color-text);
       border-bottom-color: var(--wuik-color-accent);
       font-weight: var(--wuik-font-weight-medium);
+    }
+
+    :host([orientation="vertical"]) [role="tab"][aria-selected="true"] {
+      border-bottom-color: transparent;
+      border-right-color: var(--wuik-color-accent);
     }
 
     [role="tab"]:focus-visible {
@@ -70,6 +99,10 @@ TEMPLATE.innerHTML = `
 `;
 
 export class WuikTabsElement extends HTMLElement {
+  static get observedAttributes(): string[] {
+    return ["orientation"];
+  }
+
   readonly #tablist: HTMLElement;
   readonly #slot: HTMLSlotElement;
   #panels: WuikTabPanelElement[] = [];
@@ -88,7 +121,30 @@ export class WuikTabsElement extends HTMLElement {
   }
 
   connectedCallback(): void {
+    this.#syncOrientationAria();
     this.#handleSlotChange();
+  }
+
+  attributeChangedCallback(): void {
+    this.#syncOrientationAria();
+  }
+
+  /**
+   * Any attribute value other than the literal "vertical" (including
+   * omitted or malformed values) resolves to "horizontal" — the same value
+   * both the CSS attribute selectors and the keydown handler read, so
+   * layout and keyboard behavior can never disagree on a fallback.
+   */
+  #isVertical(): boolean {
+    return this.getAttribute("orientation") === "vertical";
+  }
+
+  #syncOrientationAria(): void {
+    if (this.#isVertical()) {
+      this.#tablist.setAttribute("aria-orientation", "vertical");
+    } else {
+      this.#tablist.removeAttribute("aria-orientation");
+    }
   }
 
   readonly #handleSlotChange = (): void => {
@@ -132,14 +188,31 @@ export class WuikTabsElement extends HTMLElement {
     if (target.getAttribute("role") !== "tab") {
       return;
     }
+    const vertical = this.#isVertical();
     switch (keyboardEvent.key) {
       case "ArrowRight":
-        this.#selectIndex(this.#selectedIndex + 1);
-        keyboardEvent.preventDefault();
+        if (!vertical) {
+          this.#selectIndex(this.#selectedIndex + 1);
+          keyboardEvent.preventDefault();
+        }
         break;
       case "ArrowLeft":
-        this.#selectIndex(this.#selectedIndex - 1);
-        keyboardEvent.preventDefault();
+        if (!vertical) {
+          this.#selectIndex(this.#selectedIndex - 1);
+          keyboardEvent.preventDefault();
+        }
+        break;
+      case "ArrowDown":
+        if (vertical) {
+          this.#selectIndex(this.#selectedIndex + 1);
+          keyboardEvent.preventDefault();
+        }
+        break;
+      case "ArrowUp":
+        if (vertical) {
+          this.#selectIndex(this.#selectedIndex - 1);
+          keyboardEvent.preventDefault();
+        }
         break;
       case "Home":
         this.#selectIndex(0);

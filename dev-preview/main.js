@@ -198,6 +198,22 @@ app.insertAdjacentHTML(
   <div id="section-locale">
     <wuik-locale-switcher id="locale-demo"></wuik-locale-switcher>
   </div>
+
+  <h2>Tabs (vertical orientation, sidebar-style)</h2>
+  <!--
+    Appended as the very last section on the page, not next to the existing
+    horizontal "Tabs" demo above: a Playwright element screenshot only
+    depends on that element's own position/size, so nothing above this
+    point in the page is affected. See
+    .vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md.
+  -->
+  <div id="section-tabs-vertical" style="max-width: 200px;">
+    <wuik-tabs id="tabs-vertical-demo" orientation="vertical">
+      <wuik-tab-panel label="Details">Details content</wuik-tab-panel>
+      <wuik-tab-panel label="History">History content</wuik-tab-panel>
+      <wuik-tab-panel label="Long section name that wraps">Settings content</wuik-tab-panel>
+    </wuik-tabs>
+  </div>
   `,
 );
 
