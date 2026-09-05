@@ -1,6 +1,6 @@
 {
   "name": "@openkakutou/web-ui-kit",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Shared design system (Web Components + CSS custom-property tokens) for every OpenKakutou viewer/editor/mode web app.",
   "type": "module",
   "license": "MIT",

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-05
+
 ### Added
 
 - `<wuik-button>` accepts a `pressed` attribute to show a toggle-style/selectable button in a visually distinct "pressed" state (a token-driven color shift plus a subtle inset shadow, working on top of any variant), automatically exposing `aria-pressed="true"` to assistive technology so consumers no longer need to set it by hand.
@@ -74,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.9.0
 [0.8.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.8.1
 [0.8.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.8.0
 [0.7.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.7.0
