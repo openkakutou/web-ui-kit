@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated the viewport-3d and shortcuts demo sections' visual-regression baselines to reflect the layout shift caused by the new dialogs demo section added in the previous release; neither component itself changed.
+
 ## [0.10.0] - 2026-09-05
 
 ### Added
