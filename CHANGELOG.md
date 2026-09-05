@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-05
+
 ### Added
 
 - `<wuik-dialog>` gives consuming apps a shared modal dialog/popup: a dimmed backdrop, focus moved inside on open and trapped there while open, Esc/backdrop-click/close-button all closing it, and focus returned to whatever triggered it once closed. A slotted heading provides its accessible name; a `wuik-close` event tells a consumer why it closed (Esc, backdrop, close button, or the `close()` method).
@@ -86,7 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.0
 [0.9.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.9.1
 [0.9.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.9.0
 [0.8.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.8.1
