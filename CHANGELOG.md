@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-09-05
+
 ### Fixed
 
 - Updated the viewport-3d and shortcuts demo sections' visual-regression baselines to reflect the layout shift caused by the new dialogs demo section added in the previous release; neither component itself changed.
@@ -92,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.1
 [0.10.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.0
 [0.9.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.9.1
 [0.9.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.9.0
