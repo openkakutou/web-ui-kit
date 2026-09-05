@@ -84,6 +84,11 @@ A standard clickable action control with a primary/secondary/danger variant, wra
 **Do not confuse with:** a native `<button>` — the component always wraps one internally but adds the variant styling and the empty-label safeguard.
 _Sources: `src/components/button.ts`_
 
+## Dialog
+A modal overlay surface (a confirmation, a preferences panel, or any content that must be addressed before returning to the page) that captures focus while open, closes on Escape/backdrop click/its own close control, and returns focus to whatever opened it. Reports why it closed (cancelled vs. an explicit close) so a consumer can react differently to each.
+**Do not confuse with:** Panel — a panel is inline page content with no focus-capturing or backdrop behavior; a dialog interrupts the page until addressed.
+_Sources: `src/components/dialog.ts`_
+
 ## Locale switcher
 A control that lists every language a consuming app (plus this kit's own translated text) is available in and switches the active one when the user picks a different option, with no page reload. The active selection always reflects a previously persisted manual choice over the browser's own auto-detected language, and stays in sync with a switch made anywhere else (another switcher instance, or the app itself) without rebuilding its own option list.
 **Do not confuse with:** the underlying localization setup a consuming app performs once — the switcher is only the UI on top of it; a consuming app never needs one to have working translated text.

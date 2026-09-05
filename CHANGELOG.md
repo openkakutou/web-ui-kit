@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-dialog>` gives consuming apps a shared modal dialog/popup: a dimmed backdrop, focus moved inside on open and trapped there while open, Esc/backdrop-click/close-button all closing it, and focus returned to whatever triggered it once closed. A slotted heading provides its accessible name; a `wuik-close` event tells a consumer why it closed (Esc, backdrop, close button, or the `close()` method).
+
 ## [0.9.1] - 2026-09-05
 
 ### Fixed

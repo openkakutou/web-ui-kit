@@ -16,6 +16,7 @@ This project is in early-stage development. Available now:
 - A remappable keyboard shortcut manager and a shared panel: register named actions with a default key, and let users rebind any of them through the panel, remembered across visits. Reusing a key another action already owns never silently overwrites it — the panel names the other action and offers to swap the two keys instead. A modifier pressed alone, or a combo the browser reserves for itself, is rejected with a clear message. A reset control brings a changed action back to its default key.
 - A shared localization (i18n) layer, set up in a few lines, plus a `<wuik-locale-switcher>` control that lists the available languages and switches the active one live, with no page reload. The language is detected from the browser by default and remembered across visits once a user picks one manually. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is translated into English and French, with a missing translation always falling back to English instead of a blank or broken label.
 - A shared visual-regression testing setup: a ready-made screenshot-comparison configuration (fixed viewport, locale, and diff threshold) and a helper that settles animations and fonts before a screenshot, so any consuming app can catch a broken layout or color change automatically instead of relying on someone noticing it by eye. This kit's own components are covered by it, checked before every release.
+- A modal dialog/popup for a confirmation, a preferences panel, or any overlay surface: a dimmed backdrop, focus moved inside and kept there while it's open, and closing on Escape, a click outside it, or its own close button — always returning focus to whatever opened it. Tells your app why it closed, so you can react differently to a cancel than to an explicit close.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -258,6 +259,27 @@ test("home page matches its baseline", async ({ page }) => {
 ```
 
 `createVisualProjectConfig` returns a fixed viewport (1280×800), a pinned `en-US` locale, and a default diff threshold — spread it into your own `defineConfig`, then override any field (e.g. `use.baseURL`, or `use.viewport`/`expect.toHaveScreenshot` to depart from the shared default) as needed. See [docs/testing.md](docs/testing.md) for the full approach, including this kit's own suite as a working example.
+
+Use `<wuik-dialog>` for a confirmation, a preferences panel, or any overlay surface:
+
+```html
+<button type="button" id="open-preferences">Preferences</button>
+<wuik-dialog id="preferences-dialog">
+  <span slot="heading">Preferences</span>
+  <p>...</p>
+</wuik-dialog>
+```
+
+```js
+document.getElementById("open-preferences").addEventListener("click", () => {
+  document.getElementById("preferences-dialog").showModal();
+});
+document.getElementById("preferences-dialog").addEventListener("wuik-close", (e) => {
+  console.log(e.detail.reason); // "escape" | "backdrop" | "close-button" | "api"
+});
+```
+
+It opens with a dimmed backdrop, moves focus inside and traps `Tab` there, and closes on `Escape`, a click outside it, or its own close button, always returning focus to the button that opened it. The `heading` slot doubles as its accessible name — see [docs/api.md](docs/api.md) for the full attribute/method/event reference.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

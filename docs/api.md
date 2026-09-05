@@ -22,6 +22,7 @@
 | `WuikFileDropZoneElement` | custom element class (`<wuik-file-drop-zone>`) | `src/components/file-drop-zone.ts` |
 | `WuikSliderElement` | custom element class (`<wuik-slider>`) | `src/components/slider.ts` |
 | `WuikColorPickerElement` | custom element class (`<wuik-color-picker>`) | `src/components/color-picker.ts` |
+| `WuikDialogElement` | custom element class (`<wuik-dialog>`) | `src/components/dialog.ts` |
 | `WuikRadioGroupElement` | custom element class (`<wuik-radio-group>`) | `src/components/radio-group.ts` |
 | `WuikRadioOptionElement` | custom element class (`<wuik-radio-option>`) | `src/components/radio-group.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
@@ -165,6 +166,34 @@ Wraps a native `<button>`.
 | `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
+
+## Overlay components (`src/components/`)
+
+### `<wuik-dialog>`
+
+A modal dialog/popup built on a real `<dialog>` element. Calls the browser's native `showModal()`/`close()` when available (real `::backdrop` paint and top-layer stacking), but every acceptance behavior below is the component's own JS — not left to the browser alone — so it behaves identically everywhere. See `.vibe/decisions/019-dialog-manual-behavior-over-native-showmodal.md`.
+
+| Slot | Content |
+|---|---|
+| `heading` (named) | The dialog's accessible name, via an auto-assigned `id` + `aria-labelledby` on the internal `<dialog>`. Omitting it logs a development-time `console.warn` and leaves the dialog with no accessible name. |
+| (default) | The dialog's body content. |
+
+| Attribute/property | Meaning |
+|---|---|
+| `open` (attribute, reflected) / `.open` (property) | Whether the dialog is open. Setting it directly is equivalent to calling `showModal()`/`close()`. |
+
+| Method | Effect |
+|---|---|
+| `showModal()` | Opens the dialog: captures the currently focused element (to restore focus to on close), moves focus to the first focusable element inside (the built-in close button if there is nothing else), and traps `Tab`/`Shift+Tab` within the dialog's own controls. |
+| `close()` | Closes the dialog and returns focus to whatever element triggered the open (skipped if that element is no longer in the document). |
+
+Also closes on `Escape`, on a click of the built-in close button, and on a genuine backdrop click (a `mousedown` and `click` both landing on the backdrop — a drag started inside the content and released outside it is not mistaken for one).
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-close` | `{ reason: "escape" \| "backdrop" \| "close-button" \| "api" }` | The dialog closes, for any of the four causes above (`"api"` is the `close()` method). |
+
+The built-in close button ("×", labelled via `t("dialog.close", "Close")`) is last in the dialog's own tab order — a dialog's real content is reached before it — but stays visually pinned to its conventional top-right spot.
 
 ## Canvas/viewport controls (`src/canvas/`)
 

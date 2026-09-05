@@ -8,6 +8,7 @@ import "../src/components/radio-group.ts";
 import "../src/components/slider.ts";
 import "../src/components/color-picker.ts";
 import "../src/components/button.ts";
+import "../src/components/dialog.ts";
 import "../src/canvas/viewport.ts";
 import "../src/canvas3d/viewport-3d.ts";
 import "../src/shortcuts/shortcut-panel.ts";
@@ -153,6 +154,29 @@ app.insertAdjacentHTML(
     <p id="button-click-result"></p>
   </div>
 
+  <h2>Dialogs</h2>
+  <div id="section-dialogs">
+    <button type="button" id="dialog-trigger-default">Open dialog</button>
+    <wuik-dialog id="dialog-default">
+      <span slot="heading">Preferences</span>
+      <p>Some preferences content.</p>
+      <label>Name <input id="dialog-default-input" /></label>
+      <button type="button" id="dialog-default-save">Save</button>
+    </wuik-dialog>
+
+    <button type="button" id="dialog-trigger-no-heading">Open dialog without heading (should warn)</button>
+    <wuik-dialog id="dialog-no-heading">
+      <p>This dialog has no slotted heading — it should log a console warning and have no aria-labelledby.</p>
+    </wuik-dialog>
+
+    <button type="button" id="dialog-trigger-confirm">Open confirmation dialog (no other focusable content)</button>
+    <wuik-dialog id="dialog-confirm">
+      <span slot="heading">Delete item?</span>
+      <p>This cannot be undone.</p>
+    </wuik-dialog>
+    <p id="dialog-result"></p>
+  </div>
+
   <h2>Viewport (2D zoom/pan control)</h2>
   <div id="section-viewport" style="width: 300px; height: 200px; border: 1px dashed gray;">
     <wuik-viewport id="viewport-demo" label="Sprite preview" style="width: 100%; height: 100%;">
@@ -216,6 +240,31 @@ document
     document.querySelector("#drop-zone-images-result").textContent =
       `Selected: ${event.detail.files.map((file) => file.name).join(", ")}`;
   });
+
+document
+  .querySelector("#dialog-trigger-default")
+  .addEventListener("click", () => {
+    document.querySelector("#dialog-default").showModal();
+  });
+document
+  .querySelector("#dialog-trigger-no-heading")
+  .addEventListener("click", () => {
+    document.querySelector("#dialog-no-heading").showModal();
+  });
+document
+  .querySelector("#dialog-trigger-confirm")
+  .addEventListener("click", () => {
+    document.querySelector("#dialog-confirm").showModal();
+  });
+document.querySelector("#dialog-default-save").addEventListener("click", () => {
+  document.querySelector("#dialog-default").close();
+});
+for (const id of ["dialog-default", "dialog-no-heading", "dialog-confirm"]) {
+  document.querySelector(`#${id}`).addEventListener("wuik-close", (event) => {
+    document.querySelector("#dialog-result").textContent =
+      `${id} closed: ${event.detail.reason}`;
+  });
+}
 
 const shortcutManager = new ShortcutManager({
   storageKey: "dev-preview-shortcuts",

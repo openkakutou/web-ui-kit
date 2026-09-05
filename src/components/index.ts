@@ -6,6 +6,7 @@
 export { WuikAppShellElement } from "./app-shell.ts";
 export { WuikButtonElement } from "./button.ts";
 export { WuikColorPickerElement } from "./color-picker.ts";
+export { WuikDialogElement } from "./dialog.ts";
 export { WuikFileDropZoneElement } from "./file-drop-zone.ts";
 export { WuikPanelElement } from "./panel.ts";
 export {
