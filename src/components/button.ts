@@ -10,6 +10,13 @@
  * (non-labelling) empty-state indicator and logs a development-time
  * warning. See
  * `.vibe/decisions/007-form-input-components-shared-conventions.md`.
+ *
+ * The boolean `pressed` attribute layers a visually distinct, token-driven
+ * "pressed"/"selected" style on top of the current `variant` and sets
+ * `aria-pressed="true"` on the native button. When absent, `aria-pressed`
+ * is removed entirely (never `"false"`) so a plain, non-toggle button never
+ * gains toggle semantics — see
+ * `.vibe/decisions/018-button-pressed-state-design.md`.
  */
 
 const VARIANTS = new Set(["primary", "secondary", "danger"]);
@@ -59,6 +66,23 @@ TEMPLATE.innerHTML = `
       color: var(--wuik-color-text-on-danger);
     }
 
+    button.is-pressed {
+      box-shadow: inset 0 1px 3px
+        color-mix(in srgb, var(--wuik-color-text) 35%, transparent);
+    }
+
+    button.primary.is-pressed {
+      background: color-mix(in srgb, var(--wuik-color-accent) 85%, var(--wuik-color-text));
+    }
+
+    button.secondary.is-pressed {
+      background: color-mix(in srgb, var(--wuik-color-surface) 85%, var(--wuik-color-text));
+    }
+
+    button.danger.is-pressed {
+      background: color-mix(in srgb, var(--wuik-color-danger) 85%, var(--wuik-color-text));
+    }
+
     button.is-empty {
       border: 1px dashed var(--wuik-color-danger);
       min-width: 2rem;
@@ -80,7 +104,7 @@ TEMPLATE.innerHTML = `
 
 export class WuikButtonElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["variant", "disabled", "type"];
+    return ["variant", "disabled", "type", "pressed"];
   }
 
   readonly #button: HTMLButtonElement;
@@ -115,6 +139,14 @@ export class WuikButtonElement extends HTMLElement {
     this.#button.disabled = this.hasAttribute("disabled");
     this.#button.type =
       (this.getAttribute("type") as HTMLButtonElement["type"]) ?? "button";
+
+    const pressed = this.hasAttribute("pressed");
+    this.#button.classList.toggle("is-pressed", pressed);
+    if (pressed) {
+      this.#button.setAttribute("aria-pressed", "true");
+    } else {
+      this.#button.removeAttribute("aria-pressed");
+    }
   }
 
   #syncEmptyState(): void {

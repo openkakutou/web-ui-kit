@@ -162,6 +162,7 @@ Wraps a native `<button>`.
 | `variant` | `primary` (default), `secondary`, or `danger`. An unrecognized value falls back to `primary`. |
 | `disabled` | Forwarded to the native button. |
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
+| `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
 

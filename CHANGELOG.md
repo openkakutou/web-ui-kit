@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-button>` accepts a `pressed` attribute to show a toggle-style/selectable button in a visually distinct "pressed" state (a token-driven color shift plus a subtle inset shadow, working on top of any variant), automatically exposing `aria-pressed="true"` to assistive technology so consumers no longer need to set it by hand.
+
 ## [0.8.1] - 2026-09-05
 
 ### Fixed

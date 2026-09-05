@@ -146,6 +146,10 @@ app.insertAdjacentHTML(
     <wuik-button id="button-danger" variant="danger">Delete</wuik-button>
     <wuik-button id="button-disabled" disabled>Disabled</wuik-button>
     <wuik-button id="button-empty"></wuik-button>
+    <wuik-button id="button-pressed-primary" pressed>Bold</wuik-button>
+    <wuik-button id="button-pressed-secondary" variant="secondary" pressed>Italic</wuik-button>
+    <wuik-button id="button-pressed-danger" variant="danger" pressed>Mute</wuik-button>
+    <wuik-button id="button-pressed-disabled" pressed disabled>Bold</wuik-button>
     <p id="button-click-result"></p>
   </div>
 

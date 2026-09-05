@@ -86,6 +86,53 @@ describe("wuik-button", () => {
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
+  describe("pressed state", () => {
+    it("applies the pressed style class and sets aria-pressed=true when the pressed attribute is set", () => {
+      const host = mountButton("Bold", { pressed: "" });
+      const button = nativeButton(host);
+      expect(button.classList.contains("is-pressed")).toBe(true);
+      expect(button.getAttribute("aria-pressed")).toBe("true");
+    });
+
+    it("does not apply the pressed style and has no aria-pressed attribute by default (nominal case)", () => {
+      const host = mountButton("Save");
+      const button = nativeButton(host);
+      expect(button.classList.contains("is-pressed")).toBe(false);
+      expect(button.hasAttribute("aria-pressed")).toBe(false);
+    });
+
+    it("removes aria-pressed and the pressed style when the attribute is removed at runtime (edge case)", () => {
+      const host = mountButton("Bold", { pressed: "" });
+      host.removeAttribute("pressed");
+      const button = nativeButton(host);
+      expect(button.classList.contains("is-pressed")).toBe(false);
+      expect(button.hasAttribute("aria-pressed")).toBe(false);
+    });
+
+    it("re-applies the pressed style when the attribute is added back at runtime (edge case)", () => {
+      const host = mountButton("Bold");
+      host.setAttribute("pressed", "");
+      const button = nativeButton(host);
+      expect(button.classList.contains("is-pressed")).toBe(true);
+      expect(button.getAttribute("aria-pressed")).toBe("true");
+    });
+
+    it("keeps the pressed style while also forwarding disabled, without duplicating aria-pressed handling (error/edge path: combined state)", () => {
+      const host = mountButton("Bold", { pressed: "", disabled: "" });
+      const button = nativeButton(host);
+      expect(button.classList.contains("is-pressed")).toBe(true);
+      expect(button.getAttribute("aria-pressed")).toBe("true");
+      expect(button.disabled).toBe(true);
+    });
+
+    it("applies the pressed class on top of any variant (edge case: secondary)", () => {
+      const host = mountButton("Bold", { pressed: "", variant: "secondary" });
+      const button = nativeButton(host);
+      expect(button.classList.contains("secondary")).toBe(true);
+      expect(button.classList.contains("is-pressed")).toBe(true);
+    });
+  });
+
   describe("token-based styling (verified structurally — see decision 006)", () => {
     it("references the accent color tokens for the primary variant", () => {
       const host = mountButton("Save");
@@ -111,6 +158,14 @@ describe("wuik-button", () => {
       const host = mountButton("Save");
       const css = hostStyleText(host);
       expect(css).not.toMatch(/#[0-9a-f]{3,8}/i);
+    });
+
+    it("derives the pressed background from color-mix over design tokens, not a literal color", () => {
+      const host = mountButton("Save");
+      const css = hostStyleText(host);
+      expect(css).toContain("is-pressed");
+      expect(css).toMatch(/color-mix\(in srgb, var\(--wuik-color-accent\)/);
+      expect(css).toMatch(/var\(--wuik-color-text\)/);
     });
   });
 });
