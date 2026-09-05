@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-05
+
 ### Added
 
 - A radio group component for picking exactly one option from a labelled list, keyboard-operable with arrow keys (wrapping past either end) and a visible focus indicator, following the light/dark theme automatically. Two options accidentally sharing the same value show a clear error instead of silently picking the wrong one.
@@ -62,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.8.0
 [0.7.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.7.0
 [0.6.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.6.0
 [0.5.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.5.0
