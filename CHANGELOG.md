@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-09-05
+
 ### Fixed
 
 - Updated the vertical-orientation tabs demo section's visual-regression baseline, which was only a local placeholder in the previous release; the component itself did not change.
@@ -104,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.1
 [0.11.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.0
 [0.10.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.1
 [0.10.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.0
