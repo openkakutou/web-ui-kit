@@ -20,6 +20,7 @@
   },
   "forms": {
     "sliderInvalidConfig": "Configuration du curseur invalide — affichage de la plage par défaut à la place.",
-    "colorPickerInvalidValue": "Valeur de couleur invalide — affichage de {{defaultColor}} à la place."
+    "colorPickerInvalidValue": "Valeur de couleur invalide — affichage de {{defaultColor}} à la place.",
+    "radioGroupInvalidOptions": "Valeur d'option en double « {{value}} » — seule la première correspondance est affichée."
   }
 }

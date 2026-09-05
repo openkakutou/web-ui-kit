@@ -4,6 +4,7 @@ import "../src/components/toolbar.ts";
 import "../src/components/tabs.ts";
 import "../src/components/app-shell.ts";
 import "../src/components/file-drop-zone.ts";
+import "../src/components/radio-group.ts";
 import "../src/components/slider.ts";
 import "../src/components/color-picker.ts";
 import "../src/components/button.ts";
@@ -99,6 +100,26 @@ app.insertAdjacentHTML(
     <wuik-file-drop-zone id="drop-zone-disabled" disabled style="max-width: 400px;"></wuik-file-drop-zone>
   </div>
 
+  <h2>Radio groups</h2>
+  <div id="section-radio-groups">
+    <wuik-radio-group id="radio-group-default" label="Which file is the lifebar?" value="fight.def" style="max-width: 400px;">
+      <wuik-radio-option value="fight.def">fight.def</wuik-radio-option>
+      <wuik-radio-option value="fight2.def">fight2.def</wuik-radio-option>
+      <wuik-radio-option value="fight3.def">fight3.def</wuik-radio-option>
+    </wuik-radio-group>
+    <p id="radio-group-default-result"></p>
+
+    <wuik-radio-group id="radio-group-invalid" label="Duplicate values demo" style="max-width: 400px;">
+      <wuik-radio-option value="a">Option A</wuik-radio-option>
+      <wuik-radio-option value="a">Option A (duplicate)</wuik-radio-option>
+    </wuik-radio-group>
+
+    <wuik-radio-group id="radio-group-disabled" label="Disabled demo" value="b" disabled style="max-width: 400px;">
+      <wuik-radio-option value="a">Option A</wuik-radio-option>
+      <wuik-radio-option value="b">Option B</wuik-radio-option>
+    </wuik-radio-group>
+  </div>
+
   <h2>Sliders</h2>
   <div id="section-sliders">
     <wuik-slider id="slider-default" style="max-width: 400px;"></wuik-slider>
@@ -161,6 +182,13 @@ document
   .querySelector("#color-picker-default")
   .addEventListener("wuik-change", (event) => {
     document.querySelector("#color-picker-result").textContent =
+      `Selected: ${event.detail.value}`;
+  });
+
+document
+  .querySelector("#radio-group-default")
+  .addEventListener("wuik-change", (event) => {
+    document.querySelector("#radio-group-default-result").textContent =
       `Selected: ${event.detail.value}`;
   });
 

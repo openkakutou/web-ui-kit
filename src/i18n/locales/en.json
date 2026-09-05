@@ -20,6 +20,7 @@
   },
   "forms": {
     "sliderInvalidConfig": "Invalid slider configuration — showing default range instead.",
-    "colorPickerInvalidValue": "Invalid color value — showing {{defaultColor}} instead."
+    "colorPickerInvalidValue": "Invalid color value — showing {{defaultColor}} instead.",
+    "radioGroupInvalidOptions": "Duplicate option value \"{{value}}\" — showing only the first match."
   }
 }

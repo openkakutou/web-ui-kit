@@ -15,6 +15,7 @@ const SECTIONS = [
   "section-tabs",
   "section-panels",
   "section-drop-zones",
+  "section-radio-groups",
   "section-sliders",
   "section-color-pickers",
   "section-buttons",
