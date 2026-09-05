@@ -4,20 +4,19 @@ name: Throwaway repro — backlog item 018
 # (flaky buttons visual baseline) directly on the real ubuntu-24.04 CI
 # runner — the only environment this repo's visual baselines are ever
 # trusted from (.vibe/decisions/015). Deleted once 018 is resolved.
+#
+# Final step of the investigation: confirms the regenerated
+# `section-buttons` baseline now committed passes the *whole* visual
+# suite cleanly (not just that one section) on the real runner.
 
 on:
   workflow_dispatch:
-    inputs:
-      iterations:
-        description: 'Number of capture iterations'
-        required: false
-        default: '10'
 
 permissions:
   contents: read
 
 jobs:
-  repro:
+  verify-full-visual-suite:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
@@ -42,145 +41,13 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Start dev-preview server
-        run: |
-          npm run dev-preview -- --port 4173 &
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:4173 > /dev/null; then
-              echo "server is up"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "::error::dev-preview server did not come up in time"
-          exit 1
+      - name: Visual regression tests (no update — must pass against committed baselines)
+        run: npm run test:visual
 
-      - name: Capture repeated screenshots
-        env:
-          REPRO_ITERATIONS: ${{ inputs.iterations }}
-        run: node --experimental-strip-types scripts/repro-018-capture.mjs
-
-      - name: Hash each screenshot
-        run: sha256sum repro-018-output/*.png | tee repro-018-output/hashes.txt
-
-      - name: Upload capture artifacts
-        if: always()
+      - name: Upload diff on failure
+        if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: repro-018-output
-          path: repro-018-output/
-          retention-days: 3
-
-  repro-real-path:
-    # Regenerates the section-buttons baseline through the exact same
-    # production path (`playwright test --update-snapshots`) used by the
-    # real baseline-regeneration technique in .vibe/decisions/015, rather
-    # than the standalone capture script above — in case the discrepancy
-    # is specific to the Playwright Test runner's own screenshot-assertion
-    # pipeline (stability polling, retries) instead of raw rendering.
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Regenerate section-buttons baseline via the real path
-        run: npx playwright test -g "section-buttons" --update-snapshots
-
-      - name: Hash the regenerated baseline
-        run: sha256sum tests/visual/dev-preview.visual.spec.ts-snapshots/section-buttons-chromium-linux.png | tee regenerated-hash.txt
-
-      - name: Upload regenerated baseline
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: repro-018-real-path
-          path: |
-            tests/visual/dev-preview.visual.spec.ts-snapshots/section-buttons-chromium-linux.png
-            regenerated-hash.txt
-          retention-days: 3
-
-  repro-pre-radio-groups-page:
-    # Controls for one specific hypothesis: that backlog item 014's own
-    # dev-preview markup change (inserting a new "Radio groups" section
-    # *above* "Buttons" in `dev-preview/main.js`, commit 59300e0) shifted
-    # the page layout enough to move the buttons section's own box by a
-    # sub-pixel amount — a real, deterministic effect of adding content
-    # above it, not a paint-timing race — rather than reverting any
-    # committed file, this job overlays the pre-014 `main.js` on top of
-    # the current checkout purely in the runner's working copy.
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: '22'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Overlay the pre-radio-groups dev-preview page (working copy only)
-        run: git show f74344c:dev-preview/main.js > dev-preview/main.js
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      - name: Start dev-preview server
-        run: |
-          npm run dev-preview -- --port 4173 &
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:4173 > /dev/null; then
-              echo "server is up"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "::error::dev-preview server did not come up in time"
-          exit 1
-
-      - name: Capture the buttons section on the pre-014 page
-        env:
-          REPRO_ITERATIONS: '2'
-        run: node --experimental-strip-types scripts/repro-018-capture.mjs
-
-      - name: Hash each screenshot
-        run: sha256sum repro-018-output/*.png | tee repro-018-output/hashes.txt
-
-      - name: Upload capture artifacts
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: repro-018-pre-radio-groups
-          path: repro-018-output/
+          name: verify-018-diff
+          path: test-results/
           retention-days: 3
