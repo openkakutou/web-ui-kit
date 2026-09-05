@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: done
 depends_on: [017]
 ---
 # Regenerate `section-tabs-vertical` Visual Baseline
@@ -13,9 +13,9 @@ This is the well-known local-vs-real-runner font rendering divergence, not a rea
 This repo's own sandbox Chromium cannot be used to regenerate a trustworthy baseline, so this needs the dedicated real-runner regeneration technique from decisions `015`/`017` rather than a local `npm run test:visual:update`.
 
 ## Acceptance Criteria
-- [ ] `section-tabs-vertical`'s baseline screenshot reflects the current `dev-preview/main.js`, captured on the real `ubuntu-24.04` GitHub Actions runner
-- [ ] Any other section baseline that shifted as a byproduct (per decision 017's documented risk) is identified by running the full visual suite on that same runner, and regenerated too if it changed
-- [ ] `npm run test:visual` passes against the freshly regenerated baseline(s) in CI (`release.yml`'s existing step), confirmed via a fresh real-runner job
+- [x] `section-tabs-vertical`'s baseline screenshot reflects the current `dev-preview/main.js`, captured on the real `ubuntu-24.04` GitHub Actions runner
+- [x] Any other section baseline that shifted as a byproduct (per decision 017's documented risk) is identified by running the full visual suite on that same runner, and regenerated too if it changed
+- [x] `npm run test:visual` passes against the freshly regenerated baseline(s) in CI (`release.yml`'s existing step), confirmed via a fresh real-runner job
 
 ## Notes
 This is routine baseline maintenance triggered by backlog item 017's dev-preview changes, not a product bug — mirrors exactly the situation investigated in backlog item `018`/decision `017` after backlog item `014`, and already fixed for the same reason in backlog items `019` (after `015`) and `020` (after `016`). Discovered because it broke the real tag-triggered `v0.11.0` Release workflow at the visual-regression step, before npm publish could run — the tag `v0.11.0` already exists and must not be touched; re-publishing `v0.11.0` once `main` is green again is handled separately, outside this item's scope.

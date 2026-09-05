@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated the vertical-orientation tabs demo section's visual-regression baseline, which was only a local placeholder in the previous release; the component itself did not change.
+
 ## [0.11.0] - 2026-09-05
 
 ### Added
