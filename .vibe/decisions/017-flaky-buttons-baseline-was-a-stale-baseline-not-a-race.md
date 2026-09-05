@@ -1,0 +1,25 @@
+---
+date: 2026-09-05
+status: accepted
+---
+# The "flaky" buttons visual baseline was a stale baseline, not a rendering race
+
+**Context:** Backlog item `018` reported that regenerating the `section-buttons` visual-regression baseline on the real `ubuntu-24.04` CI runner (the established technique from `.vibe/decisions/015`) sometimes produced a screenshot where the empty `<wuik-button>`'s dashed invalid-state border was missing, versus the committed baseline where it is present — suspected to be a rendering/paint-timing race in that button's empty-state indicator.
+
+**Investigation:** A throwaway `workflow_dispatch` workflow (deleted after this item closed, per the `.vibe/decisions/015` technique) captured the buttons section repeatedly on the real runner, both with a standalone Playwright script and through the actual `playwright test --update-snapshots` path:
+- 8 separate fresh-runner CI jobs, 36 total captures of the current `dev-preview` page — every single one byte-identical (same screenshot hash, same `is-empty` class state, same computed border style, same element bounding box). No in-process or cross-run nondeterminism found at all.
+- That stable hash does not match the currently committed baseline.
+- Re-running the capture against the `dev-preview/main.js` from just before backlog item `014` (commit `f74344c`, the last commit to touch this baseline, versus `59300e0`/`8fe5193` which added the new "Radio groups" section *above* "Buttons" in the page) reproduced the committed baseline byte-for-byte.
+
+**Root cause:** Item `014` inserted a new page section above the buttons section. The buttons section sits far enough down the page to be off-screen at the fixed 1280×800 viewport, so Playwright must scroll it into view before taking its element screenshot. Adding content above it changed the scroll offset needed to do that. The button's own CSS box (width, height, position relative to its container) is unaffected — but the *sub-pixel* fraction of that scroll offset changed, which changes how the browser rasterizes the empty button's 1px dashed border (a hairline stroke at a small size is exactly the kind of detail sensitive to sub-pixel scroll rounding). This is a real, fully deterministic effect of real-runner rendering, not a timing race — the "flakiness" was actually two different, individually-deterministic page states (before and after item `014` landed) being compared as if they were the same page. The pixel delta is small enough to sit under the suite's `maxDiffPixelRatio` (2%) — which is why the release pipeline for `v0.8.0` (which shipped item `014`'s change) never flagged a regression — but large enough to be visible when the two raw baselines are compared side by side, which is how this was first noticed.
+
+**Decision:**
+- The `section-buttons` baseline is regenerated against the current (post-`014`) page and recommitted. No product or component code changed — `<wuik-button>` itself was never at fault.
+- **Adding or reordering a `dev-preview/main.js` section can silently perturb the rendered baseline of every section below it**, even one whose own markup and component code are untouched, whenever that section's screenshot requires scrolling. This is now a named risk for future dev-preview changes, not just a one-off. A future addition above an existing section should re-run the full visual suite (not just eyeball a diff) and treat *any* other section flipping — even a small, sub-threshold one — as expected fallout to regenerate, not as flakiness to investigate from scratch.
+- No code change to the visual-regression harness (`waitForVisualReady`, the preset) was needed or made — the harness was never the source of the discrepancy.
+
+**Reason:** The acceptance criteria asked to either reproduce the flakiness reliably or show it does not reproduce, with evidence. 36 identical captures across 8 independent real-runner jobs for the current page, plus an exact byte-for-byte match to the committed baseline when replaying the pre-`014` page, is conclusive: there is no nondeterminism to fix, only a baseline that needed regenerating after an unrelated page-content addition shifted it.
+
+**Rejected alternatives:**
+- **Treating this as "accepted nondeterminism" per the item's third acceptance-criteria option** — rejected: the investigation found no nondeterminism at all (every capture of a given page state was identical), so there is nothing to accept as flaky; the correct action is the ordinary one (regenerate a stale baseline), not a documented tolerance for randomness.
+- **Making the buttons section screenshot scroll-position-independent** (e.g. forcing a fixed scroll position, or capturing via a full-page screenshot instead of a locator screenshot) — rejected as disproportionate: this is the only baseline out of thirteen sensitive to this effect (a 1px hairline border on a very small element), and changing the shared screenshot technique for every consuming app's own suite over one hairline-border edge case is a much larger change than the problem warrants.

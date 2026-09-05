@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Corrected the buttons demo section's visual-regression baseline, which had gone stale after an unrelated page addition shifted its rendering by a hairline; it is not a real product change and the button component itself is unaffected.
+
 ## [0.8.0] - 2026-09-05
 
 ### Added
