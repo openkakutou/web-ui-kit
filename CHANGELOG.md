@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-09
+
 ### Added
 
 - `<wuik-spinner>` gives consuming apps a shared loading indicator: a rotating ring in `sm`/`md`/`lg` sizes, decorative by default so it can be dropped inside an app's own status region without a duplicate screen-reader announcement, or given an accessible `label` for standalone use. Its rotation slows down (rather than stopping) when the user's system has reduced motion enabled.
@@ -116,7 +118,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.13.0
 [0.12.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.12.0
 [0.11.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.1
 [0.11.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.0
