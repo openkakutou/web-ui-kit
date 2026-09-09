@@ -43,6 +43,13 @@ Planned, as features land (not yet present):
 <!-- The import below loads the compact codebase map into every session. It is maintained by /vibe:sync; details (modules/, models.md, glossary.md) stay on-demand. -->
 @.vibe/index.md
 
+## CI
+
+Three GitHub Actions workflows, all real-`ubuntu-24.04`-runner (never `ubuntu-latest`, per `.vibe/decisions/015`):
+- `.github/workflows/verify.yml` — reusable (`workflow_call` only, never triggered directly): `npm test`, lint, `npm run test:visual`. The single source of truth for this check, called by both workflows below so they can never drift apart (`.vibe/decisions/021`).
+- `.github/workflows/ci.yml` — runs `verify.yml` on every push (any branch) and pull request. This is the earlier gate: a stale/provisional `dev-preview` baseline is caught here, long before any tag is ever pushed.
+- `.github/workflows/release.yml` — tag-triggered; its `release` job (`needs: verify`) only builds/packs/publishes to npm once `verify.yml` has passed for that exact commit.
+
 ## Development workflow (Vibe Coding)
 
 The user is the **Product Owner only**. They describe requirements and evaluate outcomes — they do NOT write or manually test code.
@@ -57,6 +64,7 @@ A task is complete ONLY when ALL of the following are true:
 - [ ] Lint exits with code 0 — `npm run lint` (Biome)
 - [ ] All tests pass — `npm test` (Vitest)
 - [ ] No debug artifacts left in code (`console.log` debug calls, commented-out code, etc.)
+- [ ] If the change touches `dev-preview/` or a visual-regression baseline: the push/PR-triggered `ci.yml` workflow (which calls `.github/workflows/verify.yml`, the same real-`ubuntu-24.04`-runner check `release.yml` calls) has run green for the pushed commit — never trust a locally/sandbox-generated baseline as final (`.vibe/decisions/015`, `.vibe/decisions/021`)
 
 **Never present a result to the user if tests are failing.**
 

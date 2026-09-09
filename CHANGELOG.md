@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CI now runs the full test, lint, and visual-regression suite on the real `ubuntu-24.04` runner on every push and pull request, not only when a version is tagged for release — a stale or provisional visual-regression baseline is caught immediately instead of only being discovered by the release pipeline after a version has already been tagged.
+
 ## [0.11.1] - 2026-09-05
 
 ### Fixed

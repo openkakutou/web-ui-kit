@@ -9,7 +9,19 @@ permissions:
   contents: read
 
 jobs:
+  # Same real-runner test/lint/visual-regression check as the push/PR-
+  # triggered ci.yml — calling the shared verify.yml reusable workflow
+  # (instead of keeping its own copy of the steps) means this can never
+  # drift into checking something different than what already ran on this
+  # exact commit before it was tagged. See backlog item 022 /
+  # .vibe/decisions/021-real-runner-check-via-reusable-workflow-not-branch-protection.md.
+  verify:
+    uses: ./.github/workflows/verify.yml
+    permissions:
+      contents: read
+
   release:
+    needs: verify
     # Pinned to a specific image, not `ubuntu-latest` — a periodic runner
     # image bump changes fontconfig/freetype and silently invalidates every
     # committed visual-regression baseline with no code change on our side.
@@ -46,39 +58,6 @@ jobs:
       # above.
       - name: Update npm
         run: npm install -g npm@latest
-
-      - name: Test
-        run: npm test
-
-      - name: Lint
-        run: npx biome check .
-
-      # Keyed on the pinned @playwright/test version (package-lock.json) so
-      # a version bump busts the cache instead of silently reusing a
-      # mismatched browser build.
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-
-      # Own CI job/script, separate from `npm test` (roadmap decision
-      # `024`): a diff here fails the release before anything is published.
-      - name: Visual regression tests
-        run: npm run test:visual
-
-      - name: Upload visual regression diff
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: visual-regression-diff
-          path: test-results/
-          retention-days: 14
 
       - name: Build
         run: npm run build

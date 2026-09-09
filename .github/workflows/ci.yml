@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Runs the same real-runner test/lint/visual-regression check as the
+  # tag-triggered Release workflow (.github/workflows/verify.yml), but on
+  # every push and pull request instead — so a stale or provisional
+  # dev-preview baseline is caught immediately, long before a version is
+  # ever tagged, instead of only being discovered by the Release workflow
+  # after the fact. See backlog item 022 /
+  # .vibe/decisions/021-real-runner-check-via-reusable-workflow-not-branch-protection.md.
+  #
+  # Not filtered to dev-preview/component paths on purpose: a baseline can
+  # shift from a change to an unrelated page section (scroll offset), per
+  # .vibe/decisions/017-flaky-buttons-baseline-was-a-stale-baseline-not-a-race.md.
+  verify:
+    uses: ./.github/workflows/verify.yml
+    permissions:
+      contents: read

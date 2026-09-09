@@ -47,11 +47,32 @@ describe("release workflow", () => {
     expect(workflow).not.toContain("ACTIONS_STEP_DEBUG");
   });
 
-  it("pins every action to a commit SHA, not a floating tag", () => {
+  it("pins every external action to a commit SHA, not a floating tag", () => {
     const usesLines = workflow.match(/uses:\s*\S+/g) ?? [];
     expect(usesLines.length).toBeGreaterThan(0);
     for (const line of usesLines) {
+      // A local reusable-workflow reference (`./...`) has no external
+      // action version to drift — it always resolves to this exact
+      // commit's copy of the file, so it is exempt from SHA pinning.
+      if (line.includes("uses: ./")) continue;
       expect(line).toMatch(/uses:\s*[^@]+@[0-9a-f]{40}/);
     }
+  });
+
+  it("does not run its own copy of the test/lint/visual-regression check", () => {
+    // Those steps live solely in the shared verify.yml reusable workflow
+    // (backlog item 022) so this file and ci.yml can never drift apart.
+    expect(workflow).not.toContain("run: npm test");
+    expect(workflow).not.toContain("run: npm run test:visual");
+  });
+
+  it("calls the shared verify reusable workflow before the release job runs", () => {
+    const verifyCallIndex = workflow.indexOf(
+      "uses: ./.github/workflows/verify.yml",
+    );
+    const publishIndex = workflow.indexOf("run: npm publish");
+    expect(verifyCallIndex).toBeGreaterThan(-1);
+    expect(verifyCallIndex).toBeLessThan(publishIndex);
+    expect(workflow).toMatch(/needs:\s*verify/);
   });
 });
