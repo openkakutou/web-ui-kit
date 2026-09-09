@@ -17,6 +17,7 @@ This project is in early-stage development. Available now:
 - A shared localization (i18n) layer, set up in a few lines, plus a `<wuik-locale-switcher>` control that lists the available languages and switches the active one live, with no page reload. The language is detected from the browser by default and remembered across visits once a user picks one manually. This kit's own text (the shortcut panel, and the slider/color picker's invalid-value messages) is translated into English and French, with a missing translation always falling back to English instead of a blank or broken label.
 - A shared visual-regression testing setup: a ready-made screenshot-comparison configuration (fixed viewport, locale, and diff threshold) and a helper that settles animations and fonts before a screenshot, so any consuming app can catch a broken layout or color change automatically instead of relying on someone noticing it by eye. This kit's own components are covered by it, checked before every release.
 - A modal dialog/popup for a confirmation, a preferences panel, or any overlay surface: a dimmed backdrop, focus moved inside and kept there while it's open, and closing on Escape, a click outside it, or its own close button — always returning focus to whatever opened it. Tells your app why it closed, so you can react differently to a cancel than to an explicit close.
+- A loading spinner: an animated rotating ring in three sizes. Stays invisible to screen readers by default, so it drops into your own existing loading message without a duplicate announcement, or takes an accessible label of its own for standalone use. Keeps spinning, just more slowly, for anyone with reduced-motion turned on, instead of freezing and looking stuck.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -289,6 +290,21 @@ document.getElementById("preferences-dialog").addEventListener("wuik-close", (e)
 ```
 
 It opens with a dimmed backdrop, moves focus inside and traps `Tab` there, and closes on `Escape`, a click outside it, or its own close button, always returning focus to the button that opened it. The `heading` slot doubles as its accessible name — see [docs/api.md](docs/api.md) for the full attribute/method/event reference.
+
+Use `<wuik-spinner>` to show a loading state:
+
+```html
+<!-- Decorative, inside your own status message (default: hidden from screen readers) -->
+<p role="status">
+  <wuik-spinner></wuik-spinner>
+  Loading characters…
+</p>
+
+<!-- Standalone, with its own accessible name -->
+<wuik-spinner label="Loading characters" size="lg"></wuik-spinner>
+```
+
+`size` is `sm`, `md` (default), or `lg`. See [docs/api.md](docs/api.md) for the full attribute reference.
 <!-- vibe:end:usage -->
 
 <!-- vibe:begin:docs-index -->

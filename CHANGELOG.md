@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-spinner>` gives consuming apps a shared loading indicator: a rotating ring in `sm`/`md`/`lg` sizes, decorative by default so it can be dropped inside an app's own status region without a duplicate screen-reader announcement, or given an accessible `label` for standalone use. Its rotation slows down (rather than stopping) when the user's system has reduced motion enabled.
+
 ## [0.12.0] - 2026-09-09
 
 ### Added

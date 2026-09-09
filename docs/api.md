@@ -26,6 +26,7 @@
 | `WuikRadioGroupElement` | custom element class (`<wuik-radio-group>`) | `src/components/radio-group.ts` |
 | `WuikRadioOptionElement` | custom element class (`<wuik-radio-option>`) | `src/components/radio-group.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
+| `WuikSpinnerElement` | custom element class (`<wuik-spinner>`) | `src/components/spinner.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
 | `CommandStack` | class | `src/history/command-stack.ts` |
@@ -195,6 +196,19 @@ Also closes on `Escape`, on a click of the built-in close button, and on a genui
 | `wuik-close` | `{ reason: "escape" \| "backdrop" \| "close-button" \| "api" }` | The dialog closes, for any of the four causes above (`"api"` is the `close()` method). |
 
 The built-in close button ("×", labelled via `t("dialog.close", "Close")`) is last in the dialog's own tab order — a dialog's real content is reached before it — but stays visually pinned to its conventional top-right spot.
+
+## Feedback components (`src/components/`)
+
+### `<wuik-spinner>`
+
+A CSS-animated rotating ring, used as a loading indicator.
+
+| Attribute | Meaning |
+|---|---|
+| `size` | `sm`, `md` (default), or `lg`. An unrecognized value falls back to `md`. |
+| `label` | Optional accessible name. Omitted (or empty/whitespace-only): the host is `aria-hidden="true"` and exposes no accessible name — this is the default, meant for dropping the spinner inside your own existing `role="status"` region without a duplicate announcement. Set: `aria-hidden` is removed and `aria-label` is set to it, for standalone use with no surrounding status region. |
+
+The ring's rotation slows down (rather than stopping) under the user's `prefers-reduced-motion: reduce` setting, so it keeps signalling "loading" without the fast motion. See `.vibe/decisions/022-spinner-empty-label-treated-as-absent.md` and `.vibe/decisions/023-spinner-reduced-motion-slows-not-freezes.md`.
 
 ## Canvas/viewport controls (`src/canvas/`)
 

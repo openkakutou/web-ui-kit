@@ -14,5 +14,6 @@ export {
   WuikRadioOptionElement,
 } from "./radio-group.ts";
 export { WuikSliderElement } from "./slider.ts";
+export { WuikSpinnerElement } from "./spinner.ts";
 export { WuikTabPanelElement, WuikTabsElement } from "./tabs.ts";
 export { WuikToolbarElement } from "./toolbar.ts";
