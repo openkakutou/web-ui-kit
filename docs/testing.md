@@ -48,7 +48,7 @@ npm run test:visual           # compares against the committed baselines
 npm run test:visual:update    # regenerates baselines after a deliberate visual change
 ```
 
-A failing comparison attaches the actual/expected/diff images to the run (`test-results/`, gitignored). Baselines are only ever regenerated deliberately and reviewed like any other diff — never silently. This suite runs as its own step in `.github/workflows/release.yml`, separate from `npm test`, and blocks `npm publish` on a real diff.
+A failing comparison attaches the actual/expected/diff images to the run (`test-results/`, gitignored). Baselines are only ever regenerated deliberately and reviewed like any other diff — never silently. This suite runs as its own step in `.github/workflows/verify.yml` — a reusable workflow called by both `ci.yml` (every push and pull request) and `release.yml` (before publishing), so a stale or provisional baseline is caught on the very push that introduced it, not only when a version is later tagged. See `docs/releasing.md` for how the three workflow files fit together.
 
 ### The shared preset (`src/testing/visual-preset.ts`)
 

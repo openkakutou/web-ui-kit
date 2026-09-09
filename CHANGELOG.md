@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-09-09
+
 ### Added
 
 - CI now runs the full test, lint, and visual-regression suite on the real `ubuntu-24.04` runner on every push and pull request, not only when a version is tagged for release — a stale or provisional visual-regression baseline is caught immediately instead of only being discovered by the release pipeline after a version has already been tagged.
@@ -110,7 +112,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.11.1...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.12.0
 [0.11.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.1
 [0.11.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.0
 [0.10.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.10.1
