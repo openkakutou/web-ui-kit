@@ -21,7 +21,8 @@
   "forms": {
     "sliderInvalidConfig": "Invalid slider configuration — showing default range instead.",
     "colorPickerInvalidValue": "Invalid color value — showing {{defaultColor}} instead.",
-    "radioGroupInvalidOptions": "Duplicate option value \"{{value}}\" — showing only the first match."
+    "radioGroupInvalidOptions": "Duplicate option value \"{{value}}\" — showing only the first match.",
+    "textInputRequired": "This field is required."
   },
   "dialog": {
     "close": "Close"

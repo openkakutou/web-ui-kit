@@ -27,6 +27,8 @@ const SECTIONS = [
   // must never be inserted above an existing one — see
   // .vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md.
   "section-tabs-vertical",
+  // Also appended last, for the same reason.
+  "section-text-inputs",
 ];
 
 test.beforeEach(async ({ page }) => {

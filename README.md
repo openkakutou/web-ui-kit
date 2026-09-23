@@ -18,6 +18,7 @@ This project is in early-stage development. Available now:
 - A shared visual-regression testing setup: a ready-made screenshot-comparison configuration (fixed viewport, locale, and diff threshold) and a helper that settles animations and fonts before a screenshot, so any consuming app can catch a broken layout or color change automatically instead of relying on someone noticing it by eye. This kit's own components are covered by it, checked before every release.
 - A modal dialog/popup for a confirmation, a preferences panel, or any overlay surface: a dimmed backdrop, focus moved inside and kept there while it's open, and closing on Escape, a click outside it, or its own close button — always returning focus to whatever opened it. Tells your app why it closed, so you can react differently to a cancel than to an explicit close.
 - A loading spinner: an animated rotating ring in three sizes. Stays invisible to screen readers by default, so it drops into your own existing loading message without a duplicate announcement, or takes an accessible label of its own for standalone use. Keeps spinning, just more slowly, for anyone with reduced-motion turned on, instead of freezing and looking stuck.
+- A generic text-input/form-field component with a visible label, placeholder, and required state. A required field left empty only shows an error once the user has actually left it, not on a freshly-loaded form, and clears live as soon as a value is typed. Any app can also show its own validation message (for example, a name already taken) at any time.
 <!-- vibe:end:features -->
 
 <!-- vibe:begin:install -->
@@ -122,6 +123,7 @@ The form/input components work standalone too, and each emits a typed `CustomEve
   <wuik-radio-option value="fight2.def">fight2.def</wuik-radio-option>
 </wuik-radio-group>
 <wuik-button variant="primary">Save</wuik-button>
+<wuik-text-input label="Character name" placeholder="e.g. Ryu" required></wuik-text-input>
 ```
 
 ```js
@@ -129,6 +131,13 @@ dropZone.addEventListener("wuik-files-selected", (e) => console.log(e.detail.fil
 slider.addEventListener("wuik-change", (e) => console.log(e.detail.value)); // also emits wuik-input live, during drag
 colorPicker.addEventListener("wuik-change", (e) => console.log(e.detail.value));
 radioGroup.addEventListener("wuik-change", (e) => console.log(e.detail.value));
+textInput.addEventListener("wuik-change", (e) => console.log(e.detail.value)); // also emits wuik-input live, per keystroke
+```
+
+`<wuik-text-input>`'s `required` field only shows its built-in "This field is required." error once the user has left it empty — never on first load. Set your own `error` attribute at any time (e.g. after a failed server-side check) to show a different message instead:
+
+```html
+<wuik-text-input label="Character name" value="Ryu" error="Name already taken."></wuik-text-input>
 ```
 
 Options are declared declaratively as `<wuik-radio-option>` children rather than an attribute — arrow keys move and commit the selection between them (wrapping past either end), and two options accidentally sharing the same `value` show a visible error instead of silently picking one.

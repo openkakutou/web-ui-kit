@@ -49,6 +49,11 @@ A control for choosing exactly one option from a labelled list, wrapping one nat
 **Do not confuse with:** the malformed-option case, which drops one bad option silently — the invalid state is reserved for the group-level ambiguity of a duplicated value, not for an individual missing one.
 _Sources: `src/components/radio-group.ts`, `src/components/radio-group-options.ts`_
 
+## Text input
+A control for entering free-form text, with a visible label, an optional placeholder, and an optional required state. A required field is never shown as invalid before the user has left it empty at least once — only after that does it show an inline error, clearing live as soon as a value is entered. A consumer can also set its own validation message directly (for something the field can't check on its own, like a name already taken elsewhere), which always takes priority over the built-in required check.
+**Do not confuse with:** Slider or Color/palette picker — those have no visible text of their own, so they only ever expose an accessible name; a text input's label is real, visible page content.
+_Sources: `src/components/text-input.ts`, `src/components/text-input-validation.ts`_
+
 ## Viewport
 A control that lets the user zoom, pan, and reset-to-fit a wrapped piece of content — typically a `<canvas>`-based preview (a sprite, a stage background, an animation frame) — without knowing or touching how that content renders its own pixels. Distinguishes the current transform's scale from its pan offset, both exposed together as a single read value and change event.
 **Do not confuse with:** the wrapped content itself — the viewport only ever moves/scales it as an opaque box; drawing the content is entirely the wrapped element's own responsibility.

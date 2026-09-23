@@ -2,6 +2,7 @@ import "../src/tokens/index.css";
 import "../src/components/panel.ts";
 import "../src/components/toolbar.ts";
 import "../src/components/tabs.ts";
+import "../src/components/text-input.ts";
 import "../src/components/app-shell.ts";
 import "../src/components/file-drop-zone.ts";
 import "../src/components/radio-group.ts";
@@ -214,6 +215,24 @@ app.insertAdjacentHTML(
       <wuik-tab-panel label="Long section name that wraps">Settings content</wuik-tab-panel>
     </wuik-tabs>
   </div>
+
+  <h2>Text inputs</h2>
+  <!--
+    Appended as the very last section on the page, matching the existing
+    "append, never insert above" convention for this fixture — see
+    .vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md.
+  -->
+  <div id="section-text-inputs" style="max-width: 320px; display: flex; flex-direction: column; gap: 1rem;">
+    <wuik-text-input id="text-input-default" label="Display name" placeholder="e.g. Ryu"></wuik-text-input>
+    <p id="text-input-default-result"></p>
+
+    <wuik-text-input id="text-input-required" label="Character name" required></wuik-text-input>
+    <p>Blur the field above while empty to see the built-in required error.</p>
+
+    <wuik-text-input id="text-input-invalid" label="Name" value="Ryu" error="Name already taken."></wuik-text-input>
+
+    <wuik-text-input id="text-input-disabled" label="Locked field" value="Cannot edit" disabled></wuik-text-input>
+  </div>
   `,
 );
 
@@ -240,6 +259,13 @@ document
   .querySelector("#slider-default")
   .addEventListener("wuik-input", (event) => {
     document.querySelector("#slider-default-result").textContent =
+      `Live value: ${event.detail.value}`;
+  });
+
+document
+  .querySelector("#text-input-default")
+  .addEventListener("wuik-input", (event) => {
+    document.querySelector("#text-input-default-result").textContent =
       `Live value: ${event.detail.value}`;
   });
 

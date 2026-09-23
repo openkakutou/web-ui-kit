@@ -27,6 +27,7 @@
 | `WuikRadioOptionElement` | custom element class (`<wuik-radio-option>`) | `src/components/radio-group.ts` |
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 | `WuikSpinnerElement` | custom element class (`<wuik-spinner>`) | `src/components/spinner.ts` |
+| `WuikTextInputElement` | custom element class (`<wuik-text-input>`) | `src/components/text-input.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
 | `CommandStack` | class | `src/history/command-stack.ts` |
@@ -166,6 +167,26 @@ Wraps a native `<button>`.
 | `disabled` | Forwarded to the native button. |
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
 | `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |
+
+### `<wuik-text-input>`
+
+Wraps a native `<input type="text">` with a real, visible `<label>` — unlike `<wuik-slider>`/`<wuik-color-picker>`, which only forward an `aria-label` since they have no visible text of their own. See `.vibe/decisions/024-text-input-visible-label-and-blur-validation.md`.
+
+| Attribute | Meaning |
+|---|---|
+| `label` | Visible label text, associated with the input via `for`/`id`. Omitted = the label element is hidden, matching the app-shell "collapse when empty" convention — no accessible name is fabricated. |
+| `placeholder` | Forwarded to the native input. |
+| `required` | Forwarded to the native input (`required` + `aria-required="true"`) and shows a visual asterisk next to the label (wrapped in `aria-hidden="true"`, so it is never read aloud — the native attribute is what announces "required"). Does **not** show the built-in invalid state immediately: only once the field has been blurred at least once while empty, so a freshly-loaded, untouched form never looks pre-broken. Once shown, it re-validates live on every keystroke. |
+| `value` | The field's current value. Setting this attribute (or the `.value` property, which reflects onto it) resets the touched state, so a programmatic reset clears any stale invalid state too. |
+| `error` | A consumer-supplied validation message (e.g. a server-side rejection). Shown immediately regardless of touched state, and always takes priority over the built-in required check. An empty/blank value falls back to the built-in check. |
+| `disabled` | Forwarded to the native input. A disabled field never shows the invalid state, even if required and empty. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-input` | `{ value: string }` | Continuously, as the value changes (live preview) — mirrors the native `input` event. |
+| `wuik-change` | `{ value: string }` | Once, when the change is committed — mirrors the native `change` event. |
+
+The invalid state (`is-invalid` class, `aria-invalid="true"`, danger-colored border, inline error text) is the same shared contract every other form/input component uses, plus `aria-describedby` linking the input to its error message text for screen-reader users.
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
 

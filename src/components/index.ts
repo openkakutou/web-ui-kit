@@ -16,4 +16,5 @@ export {
 export { WuikSliderElement } from "./slider.ts";
 export { WuikSpinnerElement } from "./spinner.ts";
 export { WuikTabPanelElement, WuikTabsElement } from "./tabs.ts";
+export { WuikTextInputElement } from "./text-input.ts";
 export { WuikToolbarElement } from "./toolbar.ts";

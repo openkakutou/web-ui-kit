@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-text-input>` gives consuming apps a shared text-input/form-field component: a visible label, placeholder, and required state, with a built-in invalid/error state (danger-colored border, inline message, `aria-invalid`/`aria-describedby`) that only appears once the user has actually left a required field empty — never on a freshly-loaded, untouched form. An `error` attribute lets an app show its own validation message (e.g. a server-side rejection) at any time.
+
 ## [0.13.0] - 2026-09-09
 
 ### Added
