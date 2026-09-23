@@ -16,9 +16,7 @@
     "access": "public",
     "provenance": true
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "exports": {
     ".": "./dist/web-ui-kit.js",
     "./tokens.css": "./dist/web-ui-kit.css",
