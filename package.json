@@ -1,6 +1,6 @@
 {
   "name": "@openkakutou/web-ui-kit",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Shared design system (Web Components + CSS custom-property tokens) for every OpenKakutou viewer/editor/mode web app.",
   "type": "module",
   "license": "MIT",
@@ -16,7 +16,9 @@
     "access": "public",
     "provenance": true
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": "./dist/web-ui-kit.js",
     "./tokens.css": "./dist/web-ui-kit.css",

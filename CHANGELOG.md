@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-09-23
+
 ### Added
 
 - `<wuik-text-input>` gives consuming apps a shared text-input/form-field component: a visible label, placeholder, and required state, with a built-in invalid/error state (danger-colored border, inline message, `aria-invalid`/`aria-describedby`) that only appears once the user has actually left a required field empty — never on a freshly-loaded, untouched form. An `error` attribute lets an app show its own validation message (e.g. a server-side rejection) at any time.
@@ -122,7 +124,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.13.0
 [0.12.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.12.0
 [0.11.1]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.11.1
