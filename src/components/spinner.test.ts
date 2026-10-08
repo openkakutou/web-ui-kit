@@ -103,7 +103,7 @@ describe("wuik-spinner", () => {
       const spinner = mountSpinner();
       const css = hostStyleText(spinner);
       expect(css).toContain("var(--wuik-color-border)");
-      expect(css).toContain("var(--wuik-color-accent)");
+      expect(css).toContain("var(--wuik-color-primary)");
     });
 
     it("never hardcodes a literal color, so it follows the active theme automatically", () => {

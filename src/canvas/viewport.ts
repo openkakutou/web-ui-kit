@@ -66,8 +66,8 @@ TEMPLATE.innerHTML = `
     }
 
     .stage:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
     .stage.is-panning {
@@ -99,8 +99,8 @@ TEMPLATE.innerHTML = `
       top: var(--wuik-space-2);
       left: var(--wuik-space-2);
       padding: var(--wuik-space-1) var(--wuik-space-2);
-      background: var(--wuik-color-danger);
-      color: var(--wuik-color-text-on-danger);
+      background: var(--wuik-color-error);
+      color: var(--wuik-color-on-error);
       font-family: var(--wuik-font-family-base);
       font-size: var(--wuik-font-size-sm);
       border-radius: 2px;

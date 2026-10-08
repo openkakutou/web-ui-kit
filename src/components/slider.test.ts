@@ -116,13 +116,13 @@ describe("wuik-slider", () => {
     it("references the danger color token for the invalid state", () => {
       const slider = mountSlider();
       const css = hostStyleText(slider);
-      expect(css).toContain("--wuik-color-danger");
+      expect(css).toContain("--wuik-color-error");
     });
 
     it("references the focus ring token", () => {
       const slider = mountSlider();
       const css = hostStyleText(slider);
-      expect(css).toContain("--wuik-color-focus-ring");
+      expect(css).toContain("--wuik-color-focus");
     });
 
     it("never hardcodes a literal color", () => {
@@ -136,7 +136,7 @@ describe("wuik-slider", () => {
       const css = hostStyleText(slider);
       const errorRule = css.match(/\.error\s*{[^}]*}/)?.[0] ?? "";
       expect(errorRule).toContain("var(--wuik-color-text)");
-      expect(errorRule).not.toContain("var(--wuik-color-danger)");
+      expect(errorRule).not.toContain("var(--wuik-color-error)");
     });
   });
 });

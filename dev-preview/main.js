@@ -18,10 +18,11 @@ import { initI18n } from "../src/i18n/i18n.ts";
 import { ShortcutManager } from "../src/shortcuts/shortcut-manager.ts";
 
 document.querySelector("#theme-toggle").addEventListener("click", () => {
-  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const isLight =
+    document.documentElement.getAttribute("data-theme") === "light";
   document.documentElement.setAttribute(
     "data-theme",
-    isDark ? "light" : "dark",
+    isLight ? "dark" : "light",
   );
 });
 

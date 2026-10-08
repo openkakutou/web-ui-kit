@@ -50,6 +50,11 @@ describe("wuik-button", () => {
     expect(nativeButton(host).classList.contains("secondary")).toBe(true);
   });
 
+  it("applies the ghost variant class for low-emphasis toolbar actions", () => {
+    const host = mountButton("Undo", { variant: "ghost" });
+    expect(nativeButton(host).classList.contains("ghost")).toBe(true);
+  });
+
   it("falls back to the primary variant for an unrecognized variant value (error path)", () => {
     const host = mountButton("Go", { variant: "not-a-real-variant" });
     const button = nativeButton(host);
@@ -134,24 +139,39 @@ describe("wuik-button", () => {
   });
 
   describe("token-based styling (verified structurally — see decision 006)", () => {
-    it("references the accent color tokens for the primary variant", () => {
+    it("references the primary color tokens for the primary variant", () => {
       const host = mountButton("Save");
       const css = hostStyleText(host);
-      expect(css).toContain("--wuik-color-accent");
-      expect(css).toContain("--wuik-color-text-on-accent");
+      expect(css).toContain("--wuik-color-primary");
+      expect(css).toContain("--wuik-color-on-primary");
     });
 
-    it("references the danger color tokens for the danger variant", () => {
+    it("references the error color tokens for the danger variant", () => {
       const host = mountButton("Delete", { variant: "danger" });
       const css = hostStyleText(host);
-      expect(css).toContain("--wuik-color-danger");
-      expect(css).toContain("--wuik-color-text-on-danger");
+      expect(css).toContain("--wuik-color-error");
+      expect(css).toContain("--wuik-color-on-error");
     });
 
     it("references the focus ring token", () => {
       const host = mountButton("Save");
       const css = hostStyleText(host);
-      expect(css).toContain("--wuik-color-focus-ring");
+      expect(css).toContain("--wuik-color-focus");
+      expect(css).toContain("--wuik-focus-ring-width");
+    });
+
+    it("draws the secondary edge with the control-border token, not the decorative border", () => {
+      const css = hostStyleText(
+        mountButton("Cancel", { variant: "secondary" }),
+      );
+      expect(css).toContain("--wuik-color-border-control");
+    });
+
+    it("takes its shape from the radius, height and motion tokens", () => {
+      const css = hostStyleText(mountButton("Save"));
+      expect(css).toContain("--wuik-radius-button");
+      expect(css).toContain("--wuik-control-height");
+      expect(css).toContain("--wuik-motion-fast");
     });
 
     it("never hardcodes a literal color", () => {
@@ -164,7 +184,7 @@ describe("wuik-button", () => {
       const host = mountButton("Save");
       const css = hostStyleText(host);
       expect(css).toContain("is-pressed");
-      expect(css).toMatch(/color-mix\(in srgb, var\(--wuik-color-accent\)/);
+      expect(css).toMatch(/color-mix\(in srgb, var\(--wuik-color-primary\)/);
       expect(css).toMatch(/var\(--wuik-color-text\)/);
     });
   });

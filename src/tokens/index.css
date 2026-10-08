@@ -2,10 +2,16 @@
  * Design tokens — single entrypoint.
  *
  * This is the only supported import path for tokens; the individual files
- * (`colors.css`, `spacing.css`, `typography.css`) are an internal split and
- * may change shape without notice.
+ * (`fonts.css`, `colors.css`, `spacing.css`, `typography.css`, `radius.css`,
+ * `elevation.css`, `motion.css`, `sizing.css`) are an internal split and may
+ * change shape without notice.
  */
 
+@import "./fonts.css";
 @import "./colors.css";
 @import "./spacing.css";
 @import "./typography.css";
+@import "./radius.css";
+@import "./elevation.css";
+@import "./motion.css";
+@import "./sizing.css";

@@ -167,19 +167,19 @@ describe("wuik-file-drop-zone", () => {
     it("references the danger color token for the rejected state", () => {
       const zone = mountDropZone();
       const css = hostStyleText(zone);
-      expect(css).toContain("--wuik-color-danger");
+      expect(css).toContain("--wuik-color-error");
     });
 
     it("references the accent color token for the drag-over state", () => {
       const zone = mountDropZone();
       const css = hostStyleText(zone);
-      expect(css).toContain("--wuik-color-accent");
+      expect(css).toContain("--wuik-color-primary");
     });
 
     it("references the focus ring token", () => {
       const zone = mountDropZone();
       const css = hostStyleText(zone);
-      expect(css).toContain("--wuik-color-focus-ring");
+      expect(css).toContain("--wuik-color-focus");
     });
 
     it("never hardcodes a literal color", () => {

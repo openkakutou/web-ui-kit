@@ -186,12 +186,12 @@ describe("wuik-text-input", () => {
   describe("token-based styling (verified structurally — see decision 006)", () => {
     it("references the danger color token for the invalid border", () => {
       const el = mountTextInput();
-      expect(hostStyleText(el)).toContain("--wuik-color-danger");
+      expect(hostStyleText(el)).toContain("--wuik-color-error");
     });
 
     it("references the focus ring token", () => {
       const el = mountTextInput();
-      expect(hostStyleText(el)).toContain("--wuik-color-focus-ring");
+      expect(hostStyleText(el)).toContain("--wuik-color-focus");
     });
 
     it("never hardcodes a literal color", () => {
@@ -204,14 +204,14 @@ describe("wuik-text-input", () => {
       const css = hostStyleText(el);
       const errorRule = css.match(/\.error\s*{[^}]*}/)?.[0] ?? "";
       expect(errorRule).toContain("var(--wuik-color-text)");
-      expect(errorRule).not.toContain("var(--wuik-color-danger)");
+      expect(errorRule).not.toContain("var(--wuik-color-error)");
     });
 
     it("never colors the required marker with the danger token (see decision 024)", () => {
       const el = mountTextInput();
       const css = hostStyleText(el);
       const markerRule = css.match(/\.required-marker\s*{[^}]*}/)?.[0] ?? "";
-      expect(markerRule).not.toContain("var(--wuik-color-danger)");
+      expect(markerRule).not.toContain("var(--wuik-color-error)");
     });
   });
 });

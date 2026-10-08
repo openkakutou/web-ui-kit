@@ -36,20 +36,23 @@ TEMPLATE.innerHTML = `
       gap: var(--wuik-space-2);
       padding: var(--wuik-space-6);
       background: var(--wuik-color-surface);
-      border: 2px dashed var(--wuik-color-border);
+      border: var(--wuik-border-width-strong) dashed var(--wuik-color-border-control);
+      border-radius: var(--wuik-radius-card);
+      transition: border-color var(--wuik-motion-fast) var(--wuik-motion-ease),
+        background var(--wuik-motion-fast) var(--wuik-motion-ease);
       box-sizing: border-box;
       text-align: center;
       cursor: pointer;
     }
 
     .zone:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
     .zone.is-dragover {
-      border-color: var(--wuik-color-accent);
-      background: color-mix(in srgb, var(--wuik-color-accent) 8%, var(--wuik-color-bg));
+      border-color: var(--wuik-color-primary);
+      background: color-mix(in srgb, var(--wuik-color-primary) 8%, var(--wuik-color-bg));
     }
 
     .zone.is-accepted {
@@ -58,8 +61,8 @@ TEMPLATE.innerHTML = `
     }
 
     .zone.is-rejected {
-      border-color: var(--wuik-color-danger);
-      background: color-mix(in srgb, var(--wuik-color-danger) 8%, var(--wuik-color-bg));
+      border-color: var(--wuik-color-error);
+      background: color-mix(in srgb, var(--wuik-color-error) 8%, var(--wuik-color-bg));
     }
 
     .zone.is-disabled {
@@ -69,7 +72,7 @@ TEMPLATE.innerHTML = `
     }
 
     .prompt {
-      color: var(--wuik-color-text-secondary);
+      color: var(--wuik-color-text-muted);
     }
 
     .status {

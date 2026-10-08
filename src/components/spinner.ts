@@ -43,7 +43,7 @@ TEMPLATE.innerHTML = `
       border-radius: 50%;
       border-style: solid;
       border-color: var(--wuik-color-border);
-      border-top-color: var(--wuik-color-accent);
+      border-top-color: var(--wuik-color-primary);
       animation: wuik-spinner-rotate 0.8s linear infinite;
     }
 

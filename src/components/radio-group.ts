@@ -68,8 +68,8 @@ TEMPLATE.innerHTML = `
     }
 
     .group.is-invalid {
-      outline: 2px solid var(--wuik-color-danger);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-error);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .group.is-disabled {
@@ -95,12 +95,12 @@ TEMPLATE.innerHTML = `
     input[type="radio"] {
       flex-shrink: 0;
       margin-top: 0.2em;
-      accent-color: var(--wuik-color-accent);
+      accent-color: var(--wuik-color-primary);
     }
 
     input[type="radio"]:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     input[type="radio"]:disabled {

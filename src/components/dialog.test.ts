@@ -274,7 +274,7 @@ describe("wuik-dialog", () => {
       expect(css).toContain("var(--wuik-color-surface)");
       expect(css).toContain("var(--wuik-color-border)");
       expect(css).toContain("var(--wuik-color-text)");
-      expect(css).toContain("var(--wuik-color-focus-ring)");
+      expect(css).toContain("var(--wuik-color-focus)");
     });
 
     it("never hardcodes a literal color, so it follows the active theme automatically", () => {

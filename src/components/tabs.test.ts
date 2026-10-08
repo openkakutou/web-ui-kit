@@ -286,9 +286,9 @@ describe("wuik-tabs + wuik-tab-panel", () => {
     it("references the accent, text-secondary and focus-ring tokens", () => {
       const tabs = mountTabs(TWO_TABS);
       const css = hostStyleText(tabs);
-      expect(css).toContain("var(--wuik-color-accent)");
-      expect(css).toContain("var(--wuik-color-text-secondary)");
-      expect(css).toContain("var(--wuik-color-focus-ring)");
+      expect(css).toContain("var(--wuik-color-primary)");
+      expect(css).toContain("var(--wuik-color-text-muted)");
+      expect(css).toContain("var(--wuik-color-focus)");
     });
 
     it("never hardcodes a literal color, so it follows the active theme automatically", () => {

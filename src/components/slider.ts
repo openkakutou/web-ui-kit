@@ -34,12 +34,12 @@ TEMPLATE.innerHTML = `
 
     input[type="range"] {
       flex: 1;
-      accent-color: var(--wuik-color-accent);
+      accent-color: var(--wuik-color-primary);
     }
 
     input[type="range"]:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
     input[type="range"]:disabled {
@@ -54,12 +54,12 @@ TEMPLATE.innerHTML = `
     .readout {
       min-width: 3ch;
       text-align: right;
-      color: var(--wuik-color-text-secondary);
+      color: var(--wuik-color-text-muted);
     }
 
     .wrapper.is-invalid input[type="range"] {
-      outline: 2px solid var(--wuik-color-danger);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-error);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .error {

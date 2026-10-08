@@ -16,6 +16,7 @@ TEMPLATE.innerHTML = `
       display: flex;
       align-items: center;
       gap: var(--wuik-space-2);
+      min-height: var(--wuik-control-height-lg);
       padding: var(--wuik-space-2) var(--wuik-space-3);
       background: var(--wuik-color-surface);
       border-bottom: 1px solid var(--wuik-color-border);

@@ -13,7 +13,8 @@ TEMPLATE.innerHTML = `
     :host {
       display: block;
       background: var(--wuik-color-surface);
-      border: 1px solid var(--wuik-color-border);
+      border: var(--wuik-border-width) solid var(--wuik-color-border);
+      border-radius: var(--wuik-radius-card);
       color: var(--wuik-color-text);
       font-family: var(--wuik-font-family-base);
       font-size: var(--wuik-font-size-base);

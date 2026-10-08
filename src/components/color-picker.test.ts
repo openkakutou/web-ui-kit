@@ -118,13 +118,13 @@ describe("wuik-color-picker", () => {
     it("references the danger color token for the invalid state", () => {
       const picker = mountColorPicker();
       const css = hostStyleText(picker);
-      expect(css).toContain("--wuik-color-danger");
+      expect(css).toContain("--wuik-color-error");
     });
 
     it("references the focus ring token", () => {
       const picker = mountColorPicker();
       const css = hostStyleText(picker);
-      expect(css).toContain("--wuik-color-focus-ring");
+      expect(css).toContain("--wuik-color-focus");
     });
 
     it("colors the invalid-state message text with the always-accessible text token, not danger (see decision 009)", () => {
@@ -132,7 +132,7 @@ describe("wuik-color-picker", () => {
       const css = hostStyleText(picker);
       const errorRule = css.match(/\.error\s*{[^}]*}/)?.[0] ?? "";
       expect(errorRule).toContain("var(--wuik-color-text)");
-      expect(errorRule).not.toContain("var(--wuik-color-danger)");
+      expect(errorRule).not.toContain("var(--wuik-color-error)");
     });
   });
 });

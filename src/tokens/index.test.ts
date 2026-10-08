@@ -6,53 +6,63 @@ import "./index.css";
  * meet WCAG AA for normal text (4.5:1) in both themes. Every token that is
  * ever used as real rendered text in a component (see
  * `.vibe/modules/components.md`) must have its actual on-screen background(s)
- * listed here — backlog item 005 (accessibility baseline) added the
- * `text-secondary` pair, which was previously used by components but never
- * formally verified. `--wuik-color-danger` is deliberately NOT listed as text
- * here: measured against `--wuik-color-surface` in the light theme it falls
- * short (4.39:1) of the 4.5:1 text threshold, so components use
- * `--wuik-color-text` for invalid-state message text instead and keep
- * `--wuik-color-danger` only for its verified uses — solid fills paired with
- * `--wuik-color-text-on-danger`, and borders/outlines (non-text, 3:1 rule).
- * See `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
+ * listed here. `--wuik-color-error` is deliberately NOT listed as text:
+ * components use `--wuik-color-text` for invalid-state message text and keep
+ * `--wuik-color-error` for solid fills paired with `--wuik-color-on-error`
+ * and for borders/icons (non-text, 3:1 rule). See
+ * `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
  */
 const CONTRAST_PAIRS: Array<[background: string, foreground: string]> = [
   ["--wuik-color-bg", "--wuik-color-text"],
   ["--wuik-color-surface", "--wuik-color-text"],
-  ["--wuik-color-bg", "--wuik-color-text-secondary"],
-  ["--wuik-color-surface", "--wuik-color-text-secondary"],
-  ["--wuik-color-accent", "--wuik-color-text-on-accent"],
-  ["--wuik-color-danger", "--wuik-color-text-on-danger"],
+  ["--wuik-color-surface-raised", "--wuik-color-text"],
+  ["--wuik-color-bg", "--wuik-color-text-muted"],
+  ["--wuik-color-surface", "--wuik-color-text-muted"],
+  ["--wuik-color-surface-raised", "--wuik-color-text-muted"],
+  ["--wuik-color-primary", "--wuik-color-on-primary"],
+  ["--wuik-color-error", "--wuik-color-on-error"],
+  ["--wuik-color-surface", "--wuik-color-primary"],
+  ["--wuik-color-surface", "--wuik-color-success"],
+  ["--wuik-color-surface", "--wuik-color-warning"],
 ];
 
 /**
  * Semantic color token pairs whose contrast must meet WCAG AA for non-text
- * UI components (3:1 — WCAG 1.4.11), used here for the focus indicator
- * against every ambient surface it can visibly render against. See
- * `.vibe/decisions/007-form-input-components-shared-conventions.md` for why
- * the focus ring only ever sits against `--wuik-color-bg`/`--wuik-color-surface`
- * (inset rings sit inside a transparent-background control; outset rings sit
- * just outside it) and never against a solid accent/danger fill.
+ * UI components (3:1 — WCAG 1.4.11): the focus indicator against every
+ * ambient surface it can render against, and the control edge
+ * (`border-control`) against the surfaces a control sits on. The decorative
+ * `--wuik-color-border` is deliberately not listed: it only draws dividers.
+ * See `.vibe/decisions/007-form-input-components-shared-conventions.md` and
+ * `.vibe/decisions/025-studio-visual-direction-and-token-redesign.md`.
  */
 const NON_TEXT_CONTRAST_PAIRS: Array<[background: string, foreground: string]> =
   [
-    ["--wuik-color-bg", "--wuik-color-focus-ring"],
-    ["--wuik-color-surface", "--wuik-color-focus-ring"],
+    ["--wuik-color-bg", "--wuik-color-focus"],
+    ["--wuik-color-surface", "--wuik-color-focus"],
+    ["--wuik-color-surface-raised", "--wuik-color-focus"],
+    ["--wuik-color-bg", "--wuik-color-border-control"],
+    ["--wuik-color-surface", "--wuik-color-border-control"],
+    ["--wuik-color-surface", "--wuik-color-primary"],
+    ["--wuik-color-surface", "--wuik-color-error"],
   ];
 
 const SEMANTIC_COLOR_TOKENS = [
   "--wuik-color-bg",
   "--wuik-color-surface",
+  "--wuik-color-surface-raised",
   "--wuik-color-border",
+  "--wuik-color-border-control",
   "--wuik-color-text",
-  "--wuik-color-text-secondary",
-  "--wuik-color-accent",
-  "--wuik-color-text-on-accent",
-  "--wuik-color-danger",
-  "--wuik-color-text-on-danger",
+  "--wuik-color-text-muted",
+  "--wuik-color-primary",
+  "--wuik-color-on-primary",
+  "--wuik-color-error",
+  "--wuik-color-on-error",
   "--wuik-color-success",
   "--wuik-color-warning",
-  "--wuik-color-focus-ring",
+  "--wuik-color-focus",
+  "--wuik-color-annotation-1",
+  "--wuik-color-annotation-2",
 ];
 
 const SPACING_TOKENS = [
@@ -73,6 +83,7 @@ const TYPOGRAPHY_TOKENS = [
   "--wuik-font-size-xs",
   "--wuik-font-size-sm",
   "--wuik-font-size-base",
+  "--wuik-font-size-md",
   "--wuik-font-size-lg",
   "--wuik-font-size-xl",
   "--wuik-font-weight-regular",
@@ -80,6 +91,26 @@ const TYPOGRAPHY_TOKENS = [
   "--wuik-font-weight-bold",
   "--wuik-line-height-tight",
   "--wuik-line-height-base",
+];
+
+const SHAPE_AND_MOTION_TOKENS = [
+  "--wuik-radius-control",
+  "--wuik-radius-button",
+  "--wuik-radius-card",
+  "--wuik-radius-pill",
+  "--wuik-border-width",
+  "--wuik-border-width-strong",
+  "--wuik-shadow-card",
+  "--wuik-shadow-overlay",
+  "--wuik-motion-fast",
+  "--wuik-motion-panel",
+  "--wuik-motion-ease",
+  "--wuik-control-height-sm",
+  "--wuik-control-height",
+  "--wuik-control-height-lg",
+  "--wuik-target-min",
+  "--wuik-focus-ring-width",
+  "--wuik-focus-ring-offset",
 ];
 
 function readToken(name: string): string {
@@ -103,129 +134,113 @@ function contrastRatio(hexA: string, hexB: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-describe("design tokens — light theme (default, no data-theme attribute)", () => {
+function expectContrast(
+  pairs: Array<[background: string, foreground: string]>,
+  minimum: number,
+): void {
+  for (const [bg, fg] of pairs) {
+    const ratio = contrastRatio(readToken(bg), readToken(fg));
+    expect(
+      ratio,
+      `${bg}/${fg} should be >= ${minimum}:1, was ${ratio.toFixed(2)}`,
+    ).toBeGreaterThanOrEqual(minimum);
+  }
+}
+
+describe("design tokens — dark theme (default, no data-theme attribute)", () => {
   beforeEach(() => {
     document.documentElement.removeAttribute("data-theme");
   });
 
-  it("resolves every documented semantic color token to a non-empty value", () => {
-    for (const token of SEMANTIC_COLOR_TOKENS) {
+  it("resolves every documented token to a non-empty value", () => {
+    for (const token of [
+      ...SEMANTIC_COLOR_TOKENS,
+      ...SPACING_TOKENS,
+      ...TYPOGRAPHY_TOKENS,
+      ...SHAPE_AND_MOTION_TOKENS,
+    ]) {
       expect(readToken(token), `${token} should be defined`).not.toBe("");
     }
   });
 
-  it("resolves every documented spacing token to a non-empty value", () => {
-    for (const token of SPACING_TOKENS) {
-      expect(readToken(token), `${token} should be defined`).not.toBe("");
-    }
-  });
-
-  it("resolves every documented typography token to a non-empty value", () => {
-    for (const token of TYPOGRAPHY_TOKENS) {
-      expect(readToken(token), `${token} should be defined`).not.toBe("");
-    }
-  });
-
-  it("uses the documented light background value", () => {
-    expect(readToken("--wuik-color-bg")).toBe("#ffffff");
-  });
-
-  it("declares the light color-scheme, so OS-drawn chrome (a native <select>'s dropdown panel, scrollbars) matches", () => {
-    expect(getComputedStyle(document.documentElement).colorScheme).toBe(
-      "light",
-    );
-  });
-
-  it("meets WCAG AA contrast (4.5:1) for every semantic pair", () => {
-    for (const [bg, fg] of CONTRAST_PAIRS) {
-      const ratio = contrastRatio(readToken(bg), readToken(fg));
-      expect(
-        ratio,
-        `${bg}/${fg} should be >= 4.5:1, was ${ratio.toFixed(2)}`,
-      ).toBeGreaterThanOrEqual(4.5);
-    }
-  });
-
-  it("meets WCAG non-text contrast (3:1) for the focus ring against every surface it renders on", () => {
-    for (const [bg, fg] of NON_TEXT_CONTRAST_PAIRS) {
-      const ratio = contrastRatio(readToken(bg), readToken(fg));
-      expect(
-        ratio,
-        `${bg}/${fg} should be >= 3:1, was ${ratio.toFixed(2)}`,
-      ).toBeGreaterThanOrEqual(3);
-    }
-  });
-});
-
-describe('design tokens — dark theme (data-theme="dark")', () => {
-  beforeEach(() => {
-    document.documentElement.setAttribute("data-theme", "dark");
-  });
-
-  afterEach(() => {
-    document.documentElement.removeAttribute("data-theme");
-  });
-
-  it("switches the background token to the documented dark value", () => {
-    expect(readToken("--wuik-color-bg")).toBe("#09090b");
-  });
-
-  it("switches text and accent tokens away from their light values", () => {
-    expect(readToken("--wuik-color-text")).not.toBe("#18181b");
-    expect(readToken("--wuik-color-accent")).not.toBe("#2563eb");
+  it("uses the documented dark background value", () => {
+    expect(readToken("--wuik-color-bg")).toBe("#121214");
   });
 
   it("declares the dark color-scheme, so OS-drawn chrome (a native <select>'s dropdown panel, scrollbars) matches", () => {
     expect(getComputedStyle(document.documentElement).colorScheme).toBe("dark");
   });
 
-  it("meets WCAG AA contrast (4.5:1) for every semantic pair", () => {
-    for (const [bg, fg] of CONTRAST_PAIRS) {
-      const ratio = contrastRatio(readToken(bg), readToken(fg));
-      expect(
-        ratio,
-        `${bg}/${fg} should be >= 4.5:1, was ${ratio.toFixed(2)}`,
-      ).toBeGreaterThanOrEqual(4.5);
-    }
+  it("meets WCAG AA contrast (4.5:1) for every semantic text pair", () => {
+    expectContrast(CONTRAST_PAIRS, 4.5);
   });
 
-  it("meets WCAG non-text contrast (3:1) for the focus ring against every surface it renders on", () => {
-    for (const [bg, fg] of NON_TEXT_CONTRAST_PAIRS) {
-      const ratio = contrastRatio(readToken(bg), readToken(fg));
-      expect(
-        ratio,
-        `${bg}/${fg} should be >= 3:1, was ${ratio.toFixed(2)}`,
-      ).toBeGreaterThanOrEqual(3);
-    }
-  });
-
-  it("leaves spacing and typography tokens unchanged (theme-independent)", () => {
-    expect(readToken("--wuik-space-4")).toBe("1rem");
-    expect(readToken("--wuik-font-size-base")).toBe("1rem");
+  it("meets WCAG non-text contrast (3:1) for the focus ring and control borders", () => {
+    expectContrast(NON_TEXT_CONTRAST_PAIRS, 3);
   });
 });
 
-describe('design tokens — explicit data-theme="light"', () => {
-  it("resolves to the same values as the default (no attribute)", () => {
+describe('design tokens — light theme (data-theme="light")', () => {
+  beforeEach(() => {
     document.documentElement.setAttribute("data-theme", "light");
+  });
+
+  afterEach(() => {
+    document.documentElement.removeAttribute("data-theme");
+  });
+
+  it("switches the background token to the documented light value", () => {
+    expect(readToken("--wuik-color-bg")).toBe("#f3f2f0");
+  });
+
+  it("is a full twin, not an inversion: text, primary and borders differ from dark", () => {
+    expect(readToken("--wuik-color-text")).toBe("#1c1b1a");
+    expect(readToken("--wuik-color-primary")).toBe("#b45309");
+    expect(readToken("--wuik-color-border-control")).toBe("#85817c");
+  });
+
+  it("declares the light color-scheme", () => {
+    expect(getComputedStyle(document.documentElement).colorScheme).toBe(
+      "light",
+    );
+  });
+
+  it("meets WCAG AA contrast (4.5:1) for every semantic text pair", () => {
+    expectContrast(CONTRAST_PAIRS, 4.5);
+  });
+
+  it("meets WCAG non-text contrast (3:1) for the focus ring and control borders", () => {
+    expectContrast(NON_TEXT_CONTRAST_PAIRS, 3);
+  });
+
+  it("leaves spacing, typography and shape tokens unchanged (theme-independent)", () => {
+    expect(readToken("--wuik-space-4")).toBe("1rem");
+    expect(readToken("--wuik-font-size-base")).toBe("0.875rem");
+    expect(readToken("--wuik-radius-card")).toBe("0.75rem");
+  });
+});
+
+describe("design tokens — invalid data-theme value", () => {
+  it("degrades to the dark theme instead of crashing or resolving empty", () => {
+    document.documentElement.setAttribute("data-theme", "not-a-real-theme");
     try {
-      expect(readToken("--wuik-color-bg")).toBe("#ffffff");
-      expect(readToken("--wuik-color-text")).toBe("#18181b");
+      expect(readToken("--wuik-color-bg")).toBe("#121214");
+      expect(readToken("--wuik-color-text")).toBe("#ececf0");
+      expect(getComputedStyle(document.documentElement).colorScheme).toBe(
+        "dark",
+      );
     } finally {
       document.documentElement.removeAttribute("data-theme");
     }
   });
 });
 
-describe("design tokens — invalid data-theme value", () => {
-  it("degrades to the light theme instead of crashing or resolving empty", () => {
-    document.documentElement.setAttribute("data-theme", "not-a-real-theme");
+describe("design tokens — elevation", () => {
+  it("uses a lighter shadow in the light theme than in the dark one", () => {
+    const dark = readToken("--wuik-shadow-card");
+    document.documentElement.setAttribute("data-theme", "light");
     try {
-      expect(readToken("--wuik-color-bg")).toBe("#ffffff");
-      expect(readToken("--wuik-color-text")).toBe("#18181b");
-      expect(getComputedStyle(document.documentElement).colorScheme).toBe(
-        "light",
-      );
+      expect(readToken("--wuik-shadow-card")).not.toBe(dark);
     } finally {
       document.documentElement.removeAttribute("data-theme");
     }

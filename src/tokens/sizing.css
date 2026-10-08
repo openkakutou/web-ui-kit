@@ -1,0 +1,16 @@
+/**
+ * Control sizing tokens. `control-height` is the default row height of a
+ * field or button; `-sm` is for compact rows (tables, toolbars), `-lg` for a
+ * view's primary action. `target-min` is the smallest pointer target (WCAG 2.2
+ * 2.5.8), also applied to the hit area of anything drawn smaller than that.
+ */
+
+:root {
+  --wuik-control-height-sm: 1.75rem;
+  --wuik-control-height: 2.125rem;
+  --wuik-control-height-lg: 2.5rem;
+  --wuik-target-min: 1.5rem;
+
+  --wuik-focus-ring-width: 2px;
+  --wuik-focus-ring-offset: 1px;
+}

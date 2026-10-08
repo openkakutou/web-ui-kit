@@ -163,7 +163,7 @@ Wraps a native `<button>`.
 
 | Attribute | Meaning |
 |---|---|
-| `variant` | `primary` (default), `secondary`, or `danger`. An unrecognized value falls back to `primary`. |
+| `variant` | `primary` (default), `secondary`, `ghost`, or `danger`. An unrecognized value falls back to `primary`. |
 | `disabled` | Forwarded to the native button. |
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
 | `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |
@@ -423,7 +423,7 @@ Reassigning `i18n` re-renders the full option list; the switcher also re-renders
 
 ## Design tokens (`src/tokens/`)
 
-Source layout: `colors.css`, `spacing.css`, `typography.css`, aggregated by `index.css` (the only supported import — the individual files are a private implementation detail and may be reorganized without notice).
+Source layout: `fonts.css`, `colors.css`, `spacing.css`, `typography.css`, `radius.css`, `elevation.css`, `motion.css`, `sizing.css`, aggregated by `index.css` (the only supported import — the individual files are a private implementation detail and may be reorganized without notice).
 
 All tokens are plain CSS custom properties, namespaced with a `--wuik-` prefix to avoid collisions with a consuming app's own tokens.
 
@@ -433,26 +433,30 @@ Semantic tokens only — no separate primitive/raw-hue layer exists yet (kept ou
 
 | Token | Light | Dark |
 |---|---|---|
-| `--wuik-color-bg` | `#ffffff` | `#09090b` |
-| `--wuik-color-surface` | `#f4f4f5` | `#18181b` |
-| `--wuik-color-border` | `#e4e4e7` | `#27272a` |
-| `--wuik-color-text` | `#18181b` | `#f4f4f5` |
-| `--wuik-color-text-secondary` | `#52525b` | `#a1a1aa` |
-| `--wuik-color-accent` | `#2563eb` | `#60a5fa` |
-| `--wuik-color-text-on-accent` | `#ffffff` | `#09090b` |
-| `--wuik-color-danger` | `#dc2626` | `#f87171` |
-| `--wuik-color-text-on-danger` | `#ffffff` | `#09090b` |
-| `--wuik-color-success` | `#16a34a` | `#4ade80` |
-| `--wuik-color-warning` | `#d97706` | `#fbbf24` |
-| `--wuik-color-focus-ring` | `#2563eb` | `#60a5fa` |
+| `--wuik-color-bg` | `#f3f2f0` | `#121214` |
+| `--wuik-color-surface` | `#fffefd` | `#1a1a1e` |
+| `--wuik-color-surface-raised` | `#ebe9e6` | `#232328` |
+| `--wuik-color-border` | `#d9d6d2` | `#33333a` |
+| `--wuik-color-border-control` | `#85817c` | `#6c6c78` |
+| `--wuik-color-text` | `#1c1b1a` | `#ececf0` |
+| `--wuik-color-text-muted` | `#5f5b57` | `#a4a4b0` |
+| `--wuik-color-primary` | `#b45309` | `#f59e0b` |
+| `--wuik-color-on-primary` | `#ffffff` | `#1a1200` |
+| `--wuik-color-error` | `#b91c1c` | `#f87171` |
+| `--wuik-color-on-error` | `#ffffff` | `#09090b` |
+| `--wuik-color-success` | `#15803d` | `#4ade80` |
+| `--wuik-color-warning` | `#8a4b00` | `#fcd34d` |
+| `--wuik-color-focus` | `#b45309` | `#f59e0b` |
+| `--wuik-color-annotation-1` | `#c2181b` | `#ff6b6b` |
+| `--wuik-color-annotation-2` | `#0b6fa4` | `#4cc9f0` |
 
 Every (background, foreground) pair used by a component as rendered text — `bg`/`text`, `surface`/`text`, `bg`/`text-secondary`, `surface`/`text-secondary`, `accent`/`text-on-accent`, `danger`/`text-on-danger` — is verified in `src/tokens/index.test.ts` to meet WCAG AA contrast (>= 4.5:1) for normal text, in both themes. The focus ring is separately verified for non-text contrast (>= 3:1) against `bg` and `surface`, the only ambient backgrounds it renders against.
 
-`--wuik-color-danger` is deliberately **not** used as text color anywhere: measured as foreground-on-surface in the light theme it falls short of 4.5:1. Invalid-state message text (slider, color picker) uses `--wuik-color-text` instead, while the invalid state itself still signals non-verbally via a `--wuik-color-danger` border/outline plus `aria-invalid` — never color alone. See `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
+`--wuik-color-error` is deliberately **not** used as text color anywhere: measured as foreground-on-surface in the light theme it falls short of 4.5:1. Invalid-state message text (slider, color picker) uses `--wuik-color-text` instead, while the invalid state itself still signals non-verbally via a `--wuik-color-error` border/outline plus `aria-invalid` — never color alone. See `.vibe/decisions/009-error-text-uses-text-token-not-danger.md`.
 
-**Theme switching:** light values apply on `:root` by default. Dark values apply when an ancestor element (typically `<html>`) carries `data-theme="dark"`. An unrecognized `data-theme` value (or none) falls back to light — there is no crash or empty-value state. There is deliberately no `prefers-color-scheme` fallback; see the ADR referenced above for why.
+**Theme switching:** dark values apply on `:root` by default. Light values apply when an ancestor element (typically `<html>`) carries `data-theme="light"`. An unrecognized `data-theme` value (or none) falls back to dark — there is no crash or empty-value state. There is deliberately no `prefers-color-scheme` fallback; see the ADR referenced above for why.
 
-The CSS `color-scheme` property is declared alongside the color tokens (`light` by default, `dark` under `data-theme="dark"`) so browser-drawn chrome no component can style itself — a native `<select>`'s open dropdown panel, scrollbars — doesn't render mismatched against the active theme. It's inherited from `:root` into every component's shadow tree automatically; no component redeclares it.
+The CSS `color-scheme` property is declared alongside the color tokens (`dark` by default, `light` under `data-theme="light"`) so browser-drawn chrome no component can style itself — a native `<select>`'s open dropdown panel, scrollbars — doesn't render mismatched against the active theme. It's inherited from `:root` into every component's shadow tree automatically; no component redeclares it.
 
 ### Spacing (`spacing.css`)
 

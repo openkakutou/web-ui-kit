@@ -46,8 +46,8 @@ TEMPLATE.innerHTML = `
     }
 
     select:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     select:disabled {

@@ -3,9 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <title>web-ui-kit dev preview</title>
+    <style>
+      body {
+        margin: 0;
+        padding: var(--wuik-space-4);
+        background: var(--wuik-color-bg);
+        color: var(--wuik-color-text);
+        font-family: var(--wuik-font-family-base);
+        font-size: var(--wuik-font-size-base);
+        line-height: var(--wuik-line-height-base);
+      }
+
+      h2 {
+        margin: var(--wuik-space-6) 0 var(--wuik-space-3);
+        font-size: var(--wuik-font-size-lg);
+        font-weight: var(--wuik-font-weight-bold);
+      }
+    </style>
   </head>
   <body>
-    <button id="theme-toggle" type="button">Toggle dark theme</button>
+    <button id="theme-toggle" type="button">Toggle light theme</button>
     <div id="app"></div>
     <script type="module" src="./main.js"></script>
   </body>

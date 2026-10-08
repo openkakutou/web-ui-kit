@@ -54,15 +54,17 @@ TEMPLATE.innerHTML = `
     input[type="text"] {
       font: inherit;
       color: var(--wuik-color-text);
-      background: var(--wuik-color-surface);
-      border: 1px solid var(--wuik-color-border);
-      padding: var(--wuik-space-2);
+      background: var(--wuik-color-bg);
+      border: var(--wuik-border-width) solid var(--wuik-color-border-control);
+      border-radius: var(--wuik-radius-control);
+      min-height: var(--wuik-control-height);
+      padding: 0 var(--wuik-space-3);
       box-sizing: border-box;
     }
 
     input[type="text"]:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
     input[type="text"]:disabled {
@@ -75,8 +77,8 @@ TEMPLATE.innerHTML = `
     }
 
     .wrapper.is-invalid input[type="text"] {
-      outline: 2px solid var(--wuik-color-danger);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-error);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .error {

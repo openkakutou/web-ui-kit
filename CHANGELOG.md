@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking — new visual identity ("Studio").** Every component now uses a warm, dark-first look: an amber accent, rounded corners, a comfortable 34 px control height, a 2 px focus ring, and DM Sans / IBM Plex Mono embedded in the package (no external font request). The light theme is a full twin of the dark one.
+- **Breaking — dark is now the default theme.** Without a `data-theme` attribute the kit renders dark; set `data-theme="light"` for light. An unknown value now falls back to dark. `prefers-color-scheme` is still not consulted.
+- **Breaking — color tokens renamed**: `--wuik-color-accent` → `--wuik-color-primary`, `--wuik-color-text-on-accent` → `--wuik-color-on-primary`, `--wuik-color-danger` → `--wuik-color-error`, `--wuik-color-text-on-danger` → `--wuik-color-on-error`, `--wuik-color-text-secondary` → `--wuik-color-text-muted`, `--wuik-color-focus-ring` → `--wuik-color-focus`. See `docs/migrating-to-0.15.md`.
+- The type scale is now 12 / 13 / 14 / 16 / 20 / 28 px and the default body size is 14 px (`--wuik-font-size-base`); `--wuik-font-size-md` is new.
+- Control edges (inputs, secondary buttons, drop zones, swatches) use a stronger border that meets 3:1 contrast against the surfaces they sit on; the old border color is now for dividers only.
+
+### Added
+
+- New tokens: `--wuik-color-surface-raised`, `--wuik-color-border-control`, `--wuik-color-annotation-1/2` (canvas overlays such as collision boxes), radii (`--wuik-radius-*`), border widths, two elevation levels (`--wuik-shadow-card`, `--wuik-shadow-overlay`), motion durations that drop to zero under reduced motion, control heights, a minimum pointer target and focus-ring width/offset.
+- `<wuik-button>` has a `ghost` variant for low-emphasis toolbar actions.
+
 ## [0.14.1] - 2026-09-23
 
 ### Added

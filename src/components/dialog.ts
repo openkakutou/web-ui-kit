@@ -49,7 +49,9 @@ TEMPLATE.innerHTML = `
     dialog {
       background: var(--wuik-color-surface);
       color: var(--wuik-color-text);
-      border: 1px solid var(--wuik-color-border);
+      border: var(--wuik-border-width) solid var(--wuik-color-border);
+      border-radius: var(--wuik-radius-card);
+      box-shadow: var(--wuik-shadow-overlay);
       padding: 0;
       box-sizing: border-box;
     }
@@ -85,8 +87,8 @@ TEMPLATE.innerHTML = `
       justify-content: center;
       background: none;
       border: none;
-      border-radius: var(--wuik-space-1);
-      color: var(--wuik-color-text-secondary);
+      border-radius: var(--wuik-radius-control);
+      color: var(--wuik-color-text-muted);
       font: inherit;
       font-size: var(--wuik-font-size-lg);
       line-height: 1;
@@ -99,8 +101,8 @@ TEMPLATE.innerHTML = `
     }
 
     .close:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
   </style>
   <dialog>

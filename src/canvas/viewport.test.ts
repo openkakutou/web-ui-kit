@@ -314,7 +314,7 @@ describe("wuik-viewport", () => {
       const viewport = mountViewport();
       const css =
         viewport.shadowRoot?.querySelector("style")?.textContent ?? "";
-      expect(css).toContain("--wuik-color-focus-ring");
+      expect(css).toContain("--wuik-color-focus");
     });
 
     it("never hardcodes a literal color", () => {

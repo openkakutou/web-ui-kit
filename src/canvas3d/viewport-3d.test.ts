@@ -390,7 +390,7 @@ describe("wuik-viewport-3d", () => {
         const viewport = mountViewport3D();
         const css =
           viewport.shadowRoot?.querySelector("style")?.textContent ?? "";
-        expect(css).toContain("--wuik-color-focus-ring");
+        expect(css).toContain("--wuik-color-focus");
       });
 
       it("never hardcodes a literal color", () => {

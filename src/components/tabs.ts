@@ -64,8 +64,10 @@ TEMPLATE.innerHTML = `
       border: none;
       border-bottom: 2px solid transparent;
       padding: var(--wuik-space-2) var(--wuik-space-3);
+      min-height: var(--wuik-control-height);
+      transition: border-color var(--wuik-motion-fast) var(--wuik-motion-ease);
       font: inherit;
-      color: var(--wuik-color-text-secondary);
+      color: var(--wuik-color-text-muted);
       cursor: pointer;
       white-space: nowrap;
     }
@@ -80,18 +82,18 @@ TEMPLATE.innerHTML = `
 
     [role="tab"][aria-selected="true"] {
       color: var(--wuik-color-text);
-      border-bottom-color: var(--wuik-color-accent);
+      border-bottom-color: var(--wuik-color-primary);
       font-weight: var(--wuik-font-weight-medium);
     }
 
     :host([orientation="vertical"]) [role="tab"][aria-selected="true"] {
       border-bottom-color: transparent;
-      border-right-color: var(--wuik-color-accent);
+      border-right-color: var(--wuik-color-primary);
     }
 
     [role="tab"]:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
   </style>
   <div role="tablist"></div>

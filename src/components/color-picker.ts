@@ -36,15 +36,16 @@ TEMPLATE.innerHTML = `
     input[type="color"] {
       width: 2.5rem;
       height: 2rem;
-      border: 1px solid var(--wuik-color-border);
+      border: var(--wuik-border-width) solid var(--wuik-color-border-control);
+      border-radius: var(--wuik-radius-control);
       padding: 0;
       background: none;
       cursor: pointer;
     }
 
     input[type="color"]:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: -2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
     input[type="color"]:disabled {
@@ -65,19 +66,20 @@ TEMPLATE.innerHTML = `
     .swatch {
       width: 1.5rem;
       height: 1.5rem;
-      border: 1px solid var(--wuik-color-border);
+      border: var(--wuik-border-width) solid var(--wuik-color-border-control);
+      border-radius: var(--wuik-radius-control);
       padding: 0;
       cursor: pointer;
     }
 
     .swatch:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .wrapper.is-invalid input[type="color"] {
-      outline: 2px solid var(--wuik-color-danger);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-error);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .error {

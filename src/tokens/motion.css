@@ -1,0 +1,18 @@
+/**
+ * Motion tokens. Under `prefers-reduced-motion: reduce` the durations drop to
+ * zero, so any transition that reads them is removed without per-component
+ * media queries.
+ */
+
+:root {
+  --wuik-motion-fast: 160ms;
+  --wuik-motion-panel: 200ms;
+  --wuik-motion-ease: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --wuik-motion-fast: 0ms;
+    --wuik-motion-panel: 0ms;
+  }
+}

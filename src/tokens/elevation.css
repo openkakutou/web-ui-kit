@@ -1,0 +1,15 @@
+/**
+ * Elevation tokens: two levels only. `card` lifts a panel off the page,
+ * `overlay` is for dialogs, menus and popovers. Shadows are heavier in the
+ * dark theme, where a soft shadow would otherwise vanish.
+ */
+
+:root {
+  --wuik-shadow-card: 0 4px 14px rgb(0 0 0 / 0.28);
+  --wuik-shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.45);
+}
+
+:root[data-theme="light"] {
+  --wuik-shadow-card: 0 2px 8px rgb(28 27 26 / 0.1);
+  --wuik-shadow-overlay: 0 12px 32px rgb(28 27 26 / 0.2);
+}

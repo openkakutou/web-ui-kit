@@ -43,7 +43,7 @@ TEMPLATE.innerHTML = `
 
     .key {
       font-family: var(--wuik-font-family-mono);
-      color: var(--wuik-color-text-secondary);
+      color: var(--wuik-color-text-muted);
       background: var(--wuik-color-surface);
       padding: var(--wuik-space-1) var(--wuik-space-2);
       border-radius: 4px;
@@ -61,13 +61,13 @@ TEMPLATE.innerHTML = `
     }
 
     button:focus-visible {
-      outline: 2px solid var(--wuik-color-focus-ring);
-      outline-offset: 2px;
+      outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
+      outline-offset: var(--wuik-focus-ring-offset);
     }
 
     .row.is-listening .rebind {
-      border-color: var(--wuik-color-accent);
-      color: var(--wuik-color-accent);
+      border-color: var(--wuik-color-primary);
+      color: var(--wuik-color-primary);
     }
 
     .conflict-actions {
@@ -77,7 +77,7 @@ TEMPLATE.innerHTML = `
 
     .status {
       margin-top: var(--wuik-space-2);
-      color: var(--wuik-color-text-secondary);
+      color: var(--wuik-color-text-muted);
       font-size: var(--wuik-font-size-sm);
       min-height: 1.2em;
     }
