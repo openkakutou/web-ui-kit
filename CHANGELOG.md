@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.15.0] - 2026-10-08
+## [0.15.1] - 2026-10-08
+
+### Fixed
+
+- Release pipeline: 0.15.0 was tagged but never published (lint failure on `package.json` formatting). 0.15.1 contains the same code; use it instead.
+
+## [0.15.0] - 2026-10-08 (not published)
 
 ### Changed
 
