@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-08
+
 ### Changed
 
 - **Breaking — new visual identity ("Studio").** Every component now uses a warm, dark-first look: an amber accent, rounded corners, a comfortable 34 px control height, a 2 px focus ring, and DM Sans / IBM Plex Mono embedded in the package (no external font request). The light theme is a full twin of the dark one.
