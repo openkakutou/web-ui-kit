@@ -26,5 +26,16 @@
   },
   "dialog": {
     "close": "Fermer"
+  },
+  "helpHint": {
+    "label": "Aide"
+  },
+  "toast": {
+    "dismiss": "Fermer"
+  },
+  "fileDropZone": {
+    "prompt": "Déposez des fichiers ici, ou cliquez pour parcourir",
+    "rejected": "Refusé, type non accepté : {{names}}",
+    "selected": "Sélectionné : {{names}}"
   }
 }

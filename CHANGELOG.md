@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New tokens: `--wuik-color-surface-raised`, `--wuik-color-border-control`, `--wuik-color-annotation-1/2` (canvas overlays such as collision boxes), radii (`--wuik-radius-*`), border widths, two elevation levels (`--wuik-shadow-card`, `--wuik-shadow-overlay`), motion durations that drop to zero under reduced motion, control heights, a minimum pointer target and focus-ring width/offset.
 - `<wuik-button>` has a `ghost` variant for low-emphasis toolbar actions.
+- Application-shell components: `<wuik-sidebar-nav>` with `<wuik-nav-group>` and `<wuik-nav-item>` (grouped section navigation, current marker, error/warning badges, Alt+digit hint, collapse to an icon rail), `<wuik-section-header>` (title card with a focusable heading, help slot and actions slot), `<wuik-list-row>` (28 px list row, selected state, optional disclosure with `aria-expanded`), `<wuik-badge>` (count/status pill that never relies on colour alone), `<wuik-tooltip>` (hover and keyboard-focus label, dismissible with Escape), `<wuik-help-hint>` (contextual "?" explanation), `<wuik-toast>` / `<wuik-toast-region>` (transient confirmations announced to assistive technology) and `<wuik-select>` (labelled native select with error and required states).
+- `<wuik-file-drop-zone>` now follows the active locale (default prompt, rejection and selection messages) and keeps a visible "Selected: file names" line after a choice.
 
 ## [0.14.1] - 2026-09-23
 

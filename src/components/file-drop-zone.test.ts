@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { initI18n } from "../i18n/i18n.ts";
 import "../tokens/index.css";
 import "./file-drop-zone.ts";
 
@@ -187,5 +188,79 @@ describe("wuik-file-drop-zone", () => {
       const css = hostStyleText(zone);
       expect(css).not.toMatch(/#[0-9a-f]{3,8}/i);
     });
+  });
+});
+
+describe("wuik-file-drop-zone — selection status and localization", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  function statusText(zone: Element): string {
+    return (zone.shadowRoot?.querySelector('[role="status"]') as HTMLElement)
+      .textContent as string;
+  }
+
+  function promptText(zone: Element): string {
+    return (zone.shadowRoot?.querySelector(".default-prompt") as HTMLElement)
+      .textContent as string;
+  }
+
+  it("names the accepted files in a persistent status line", () => {
+    const zone = mountDropZone({ multiple: "" });
+    dispatchDrop(zone, [
+      makeFile("kfm.sff", "application/octet-stream"),
+      makeFile("kfm.air", "text/plain"),
+    ]);
+    expect(statusText(zone)).toBe("Selected: kfm.sff, kfm.air");
+  });
+
+  it("reports rejected and accepted files together (edge case)", () => {
+    const zone = mountDropZone({ accept: ".png", multiple: "" });
+    dispatchDrop(zone, [
+      makeFile("a.png", "image/png"),
+      makeFile("b.pdf", "application/pdf"),
+    ]);
+    expect(statusText(zone)).toBe(
+      "Rejected, type not accepted: b.pdf Selected: a.png",
+    );
+  });
+
+  it("shows the default prompt in the active locale, live on a locale switch", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+    const zone = mountDropZone();
+    expect(promptText(zone)).toBe(
+      "Drag and drop files here, or click to browse",
+    );
+
+    await instance.changeLanguage("fr");
+    expect(promptText(zone)).toBe(
+      "Déposez des fichiers ici, ou cliquez pour parcourir",
+    );
+    await instance.changeLanguage("en");
+  });
+
+  it("re-translates an existing status without losing the selection (edge case)", async () => {
+    const instance = await initI18n({
+      namespace: "demo-app",
+      resources: { en: {}, fr: {} },
+    });
+    await instance.changeLanguage("en");
+    const zone = mountDropZone();
+    dispatchDrop(zone, [makeFile("kfm.sff", "application/octet-stream")]);
+    await instance.changeLanguage("fr");
+    expect(statusText(zone)).toBe("Sélectionné : kfm.sff");
+    await instance.changeLanguage("en");
+  });
+
+  it("clears the status when an empty selection arrives (error path)", () => {
+    const zone = mountDropZone();
+    dispatchDrop(zone, [makeFile("kfm.sff", "application/octet-stream")]);
+    dispatchDrop(zone, []);
+    expect(statusText(zone)).toBe("");
   });
 });

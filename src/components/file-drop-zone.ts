@@ -16,6 +16,7 @@
  * previous one, matching native `<input type="file">` semantics.
  */
 
+import { onLocaleChange, t } from "../i18n/i18n.ts";
 import { matchesAccept } from "./file-drop-zone-accept.ts";
 
 const TEMPLATE = document.createElement("template");
@@ -84,7 +85,7 @@ TEMPLATE.innerHTML = `
     }
   </style>
   <div class="zone" role="button" tabindex="0">
-    <span class="prompt"><slot>Drag &amp; drop files here, or click to browse</slot></span>
+    <span class="prompt"><slot><span class="default-prompt"></span></slot></span>
     <span class="status" role="status" aria-live="polite"></span>
   </div>
   <input type="file" tabindex="-1" />
@@ -98,6 +99,9 @@ export class WuikFileDropZoneElement extends HTMLElement {
   readonly #zone: HTMLElement;
   readonly #status: HTMLElement;
   readonly #input: HTMLInputElement;
+  readonly #defaultPrompt: HTMLElement;
+  #unsubscribeLocaleChange: (() => void) | undefined;
+  #lastResult: { accepted: string[]; rejected: string[] } | undefined;
 
   constructor() {
     super();
@@ -108,6 +112,9 @@ export class WuikFileDropZoneElement extends HTMLElement {
     this.#input = shadow.querySelector(
       'input[type="file"]',
     ) as HTMLInputElement;
+    this.#defaultPrompt = shadow.querySelector(
+      ".default-prompt",
+    ) as HTMLElement;
 
     this.#zone.addEventListener("click", this.#handleOpen);
     this.#zone.addEventListener("keydown", this.#handleKeydown);
@@ -119,6 +126,8 @@ export class WuikFileDropZoneElement extends HTMLElement {
   }
 
   connectedCallback(): void {
+    this.#renderStatic();
+    this.#unsubscribeLocaleChange = onLocaleChange(() => this.#renderStatic());
     this.#syncDisabled();
     if (this.hasAttribute("multiple")) {
       this.#input.setAttribute("multiple", "");
@@ -126,6 +135,44 @@ export class WuikFileDropZoneElement extends HTMLElement {
     if (this.hasAttribute("accept")) {
       this.#input.setAttribute("accept", this.getAttribute("accept") ?? "");
     }
+  }
+
+  disconnectedCallback(): void {
+    this.#unsubscribeLocaleChange?.();
+    this.#unsubscribeLocaleChange = undefined;
+  }
+
+  /** Re-resolves every localized string without touching the selection state. */
+  #renderStatic(): void {
+    this.#defaultPrompt.textContent = t(
+      "fileDropZone.prompt",
+      "Drag and drop files here, or click to browse",
+    );
+    this.#renderStatus();
+  }
+
+  #renderStatus(): void {
+    const result = this.#lastResult;
+    if (!result) {
+      this.#status.textContent = "";
+      return;
+    }
+    const parts: string[] = [];
+    if (result.rejected.length > 0) {
+      parts.push(
+        t("fileDropZone.rejected", "Rejected, type not accepted: {{names}}", {
+          names: result.rejected.join(", "),
+        }),
+      );
+    }
+    if (result.accepted.length > 0) {
+      parts.push(
+        t("fileDropZone.selected", "Selected: {{names}}", {
+          names: result.accepted.join(", "),
+        }),
+      );
+    }
+    this.#status.textContent = parts.join(" ");
   }
 
   attributeChangedCallback(name: string): void {
@@ -200,7 +247,8 @@ export class WuikFileDropZoneElement extends HTMLElement {
   #processFiles(files: File[]): void {
     this.#zone.classList.remove("is-accepted", "is-rejected");
     if (files.length === 0) {
-      this.#status.textContent = "";
+      this.#lastResult = undefined;
+      this.#renderStatus();
       return;
     }
 
@@ -217,12 +265,12 @@ export class WuikFileDropZoneElement extends HTMLElement {
 
     if (rejected.length > 0) {
       this.#zone.classList.add("is-rejected");
-      this.#status.textContent = `${rejected.length} file(s) rejected: type not accepted (${rejected
-        .map((file) => file.name)
-        .join(", ")})`;
-    } else {
-      this.#status.textContent = "";
     }
+    this.#lastResult = {
+      accepted: finalAccepted.map((file) => file.name),
+      rejected: rejected.map((file) => file.name),
+    };
+    this.#renderStatus();
 
     if (finalAccepted.length > 0) {
       this.#zone.classList.add("is-accepted");

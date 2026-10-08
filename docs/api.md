@@ -106,7 +106,7 @@ A drag-and-drop + click-to-browse file input area. Keyboard-operable first: the 
 |---|---|---|
 | `wuik-files-selected` | `{ files: File[] }` | At least one dropped/selected file matches `accept`. Only accepted files are included — rejected files are never silently dropped: the zone shows a visible rejected state and an inline status message instead. A new selection/drop always replaces the previous one. |
 
-Default slot: custom prompt content (falls back to "Drag & drop files here, or click to browse").
+Default slot: custom prompt content (falls back to a localized "Drag and drop files here, or click to browse"). After a choice, a polite status line names the selected files ("Selected: …") and any rejected ones; both follow the active locale.
 
 ### `<wuik-slider>`
 
@@ -189,6 +189,47 @@ Wraps a native `<input type="text">` with a real, visible `<label>` — unlike `
 The invalid state (`is-invalid` class, `aria-invalid="true"`, danger-colored border, inline error text) is the same shared contract every other form/input component uses, plus `aria-describedby` linking the input to its error message text for screen-reader users.
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
+
+## Application-shell components (`src/components/`)
+
+All are native Web Components styled only through `--wuik-*` tokens. Localized strings go through `t()`; consumer-facing phrases that need plurals (badge labels) are passed in by the app.
+
+### `<wuik-sidebar-nav>` + `<wuik-nav-group>` + `<wuik-nav-item>`
+
+Grouped navigation for editors with several sections.
+
+- `<wuik-sidebar-nav label="Sections" [collapsed]>` renders a `<nav>` landmark named by `label`. `collapsed` folds it to an icon rail (labels stay in the accessible name and become a native tooltip). Property `current` (`string | null`) gets or sets the current item by `value`.
+- `<wuik-nav-group label="Logic">` is a labelled group.
+- `<wuik-nav-item value="states" [current] [disabled] [shortcut="5"] [badge-error="2"] [badge-warning="1"] [badge-label="2 errors, 1 warning"]>States</wuik-nav-item>`. Slot `icon` holds an optional icon. The current item has `aria-current="page"`; `shortcut` shows the digit and sets `aria-keyshortcuts="Alt+<digit>"`; `badge-label` is spoken as part of the item's name.
+- Event `wuik-navigate` (bubbles, composed, cancelable, `detail.value`) is emitted on click; unless cancelled, the nav moves `current` to that item. Navigation is plain buttons: Tab order follows the document, there is no roving tabindex.
+
+### `<wuik-section-header>`
+
+`<wuik-section-header heading="States" description="…" [level="1"]>`. The heading is `role="heading"` with `tabindex="-1"`; call `focusHeading()` after navigating to a section. Slots: `help` (a `<wuik-help-hint>`), `actions` (buttons), default (replaces `description`).
+
+### `<wuik-list-row>`
+
+28 px list row. Attributes `selected` (→ `aria-current="true"`, accent bar), `disabled`, `expandable` (disclosure with `aria-expanded`), `expanded`. Slots: default and `end`. Event `wuik-toggle` (`detail.expanded`) when an expandable row is toggled.
+
+### `<wuik-badge>`
+
+`<wuik-badge variant="neutral|error|warning|success" count="2" label="2 errors">`. Warning shows "!" and success "✓" so meaning never relies on colour; the visible glyphs are `aria-hidden` and `label` (fallback `count`) is read instead.
+
+### `<wuik-tooltip>`
+
+`<wuik-tooltip text="Undo (Ctrl+Z)" [placement="top|bottom|right"]>` wraps one trigger. Shown on hover and keyboard focus, dismissed by Escape, and kept open while hovered. The trigger receives `aria-description`.
+
+### `<wuik-help-hint>`
+
+`<wuik-help-hint label="Help: StateDef">Explanation…</wuik-help-hint>`. A "?" button that toggles the slotted explanation (click/Enter/Space), also shown on hover and focus; Escape or an outside click closes it. `label` is the button's accessible name (default: localized "Help").
+
+### `<wuik-toast>` + `<wuik-toast-region>`
+
+`region.show({ message, variant?: "info"|"success"|"warning"|"error", duration? })` returns the toast. Toasts are `role="status"` (errors: `role="alert"`), auto-dismiss after `duration` ms (default 5000; `0` stays; errors stay unless a duration is given), pause on hover and focus, and always have a dismiss button. Event `wuik-dismiss`. Use inline status for outcomes that must persist.
+
+### `<wuik-select>`
+
+`<wuik-select label="Language" value="fr" [required] [disabled] [error="…"]>` with light-DOM `<option>`/`<optgroup>` children (mirrored when they change). Property `value`; event `wuik-change` (`detail.value`).
 
 ## Overlay components (`src/components/`)
 

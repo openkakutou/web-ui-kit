@@ -14,6 +14,14 @@ import "../src/canvas/viewport.ts";
 import "../src/canvas3d/viewport-3d.ts";
 import "../src/shortcuts/shortcut-panel.ts";
 import "../src/i18n/locale-switcher.ts";
+import "../src/components/badge.ts";
+import "../src/components/tooltip.ts";
+import "../src/components/help-hint.ts";
+import "../src/components/list-row.ts";
+import "../src/components/section-header.ts";
+import "../src/components/select.ts";
+import "../src/components/sidebar-nav.ts";
+import "../src/components/toast.ts";
 import { initI18n } from "../src/i18n/i18n.ts";
 import { ShortcutManager } from "../src/shortcuts/shortcut-manager.ts";
 
@@ -326,3 +334,59 @@ initI18n({
 }).then((instance) => {
   document.querySelector("#locale-demo").i18n = instance;
 });
+
+// Appended last, deliberately: newest sections never go above existing ones
+// (see .vibe/decisions/020).
+app.insertAdjacentHTML(
+  "beforeend",
+  `
+  <h2>Navigation and section header</h2>
+  <div id="section-navigation" style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+    <wuik-sidebar-nav label="Sections" style="width: 240px;">
+      <wuik-nav-group label="Character">
+        <wuik-nav-item value="identity" shortcut="1">Identity</wuik-nav-item>
+      </wuik-nav-group>
+      <wuik-nav-group label="Logic">
+        <wuik-nav-item value="states" shortcut="5" current>States</wuik-nav-item>
+        <wuik-nav-item value="commands" shortcut="6" badge-error="2" badge-warning="1" badge-label="2 errors, 1 warning">Commands</wuik-nav-item>
+      </wuik-nav-group>
+    </wuik-sidebar-nav>
+    <wuik-sidebar-nav label="Sections (collapsed)" collapsed style="width: 56px;">
+      <wuik-nav-group label="Logic">
+        <wuik-nav-item value="states" shortcut="5" current><span slot="icon" aria-hidden="true">◆</span>States</wuik-nav-item>
+        <wuik-nav-item value="commands" shortcut="6" badge-error="2" badge-label="2 errors"><span slot="icon" aria-hidden="true">▣</span>Commands</wuik-nav-item>
+      </wuik-nav-group>
+    </wuik-sidebar-nav>
+    <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
+      <wuik-section-header heading="States" description="What the character does at each moment.">
+        <wuik-help-hint slot="help" label="Help: StateDef">A StateDef describes what the character does in one state.</wuik-help-hint>
+        <wuik-button slot="actions" variant="secondary">Add a StateDef</wuik-button>
+      </wuik-section-header>
+      <div>
+        <wuik-list-row expandable expanded><b>StateDef 0 — Standing</b><span slot="end">3 controllers</span></wuik-list-row>
+        <wuik-list-row selected><b>StateDef 20 — Walking</b><span slot="end">2 controllers</span></wuik-list-row>
+        <wuik-list-row expandable><b>StateDef 200 — Standing punch</b><span slot="end">5 controllers</span></wuik-list-row>
+      </div>
+    </div>
+  </div>
+
+  <h2>Feedback and form parts</h2>
+  <div id="section-feedback" style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; max-width: 720px;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <wuik-badge variant="neutral" count="12" label="12 items"></wuik-badge>
+      <wuik-badge variant="error" count="2" label="2 errors"></wuik-badge>
+      <wuik-badge variant="warning" count="1" label="1 warning"></wuik-badge>
+      <wuik-badge variant="success" count="3" label="3 valid"></wuik-badge>
+    </div>
+    <wuik-tooltip text="Undo (Ctrl+Z)"><wuik-button variant="ghost" aria-label="Undo">↶</wuik-button></wuik-tooltip>
+    <wuik-select label="Language" value="fr" style="width: 200px;">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </wuik-select>
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+      <wuik-toast variant="success" duration="0">Exported 12 files.</wuik-toast>
+      <wuik-toast variant="error" duration="0">Export failed: invalid key sequence in kfm.cmd.</wuik-toast>
+    </div>
+  </div>
+`,
+);

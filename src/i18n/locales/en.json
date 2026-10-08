@@ -26,5 +26,16 @@
   },
   "dialog": {
     "close": "Close"
+  },
+  "helpHint": {
+    "label": "Help"
+  },
+  "toast": {
+    "dismiss": "Dismiss"
+  },
+  "fileDropZone": {
+    "prompt": "Drag and drop files here, or click to browse",
+    "rejected": "Rejected, type not accepted: {{names}}",
+    "selected": "Selected: {{names}}"
   }
 }

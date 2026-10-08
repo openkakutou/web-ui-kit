@@ -29,6 +29,9 @@ const SECTIONS = [
   "section-tabs-vertical",
   // Also appended last, for the same reason.
   "section-text-inputs",
+  // Appended last as well.
+  "section-navigation",
+  "section-feedback",
 ];
 
 test.beforeEach(async ({ page }) => {
