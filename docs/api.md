@@ -349,7 +349,7 @@ Default slot: the wrapped content (typically a single `<canvas>`). Named `overla
 A framework-agnostic undo/redo history — not a Web Component, a plain class any consumer (component or app code) can instantiate and drive. A consumer registers a `Command` (a `do`/`undo` pair); the stack applies `do()` immediately on `push`, then tracks how to reverse and replay it.
 
 ```ts
-new CommandStack(options?: CommandStackOptions)
+new CommandStack<M = unknown>(options?: CommandStackOptions)
 ```
 
 | Option | Meaning |
@@ -365,6 +365,9 @@ new CommandStack(options?: CommandStackOptions)
 | `clear()` | Empties both the undo and redo history. |
 | `canUndo` | `true` if `undo()` would do something. |
 | `canRedo` | `true` if `redo()` would do something. |
+| `undoMeta` / `redoMeta` | The `meta` of the entry `undo()` / `redo()` would act on (`undefined` when there is none or it has no meta). Read them *before* calling `undo()`/`redo()` to say what is about to change, or to navigate to the touched part of the app. |
+| `markSaved()` | Records the current history position as the saved one (after an export, for example). |
+| `isAtSavedState` | `true` when the history is back at the position recorded by `markSaved()` (or untouched, if never called): editing then undoing back to it reports `true` again. Coalescing into the saved entry, or pushing after undoing past it, reports `false`. A fresh or cleared stack counts as saved. |
 
 `Command` shape:
 
@@ -372,6 +375,7 @@ new CommandStack(options?: CommandStackOptions)
 |---|---|
 | `do()` | Applies the change. Called once, synchronously, by `push`. |
 | `undo()` | Reverses the change applied by `do`. |
+| `meta?` | Free-form description of the command (type parameter `M` of `CommandStack<M>`), for example the section it touched and an action label. A coalesced group keeps the latest command's meta. |
 | `coalesceKey?` | When set, a push sharing this same key with the current top-of-history entry, within `coalesceWindowMs`, merges into that entry instead of creating a new one. Omit for a command that should always become its own history entry. |
 
 **Coalescing semantics:** merging keeps the group's *original* `undo` (the state before the whole group started) and only replaces the entry's `redo` target with the latest `do`. A single `undo()` on a coalesced group therefore reverts all the way back to before the group — not just one step back through the last intermediate value. See `.vibe/decisions/011-command-stack-coalescing-semantics.md`.

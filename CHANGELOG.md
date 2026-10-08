@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-08
+
+### Added
+
+- `CommandStack` can tell whether the history is back at a saved position: `markSaved()` records it and `isAtSavedState` reports it (editing then undoing back to it reads `true` again). Commands can carry a `meta` value, read back through `undoMeta` / `redoMeta` before an undo or redo, so an app can announce or navigate to what is about to change. `CommandStack` and `Command` are now generic over the meta type; existing code is unaffected.
+
 ## [0.15.1] - 2026-10-08
 
 ### Fixed
