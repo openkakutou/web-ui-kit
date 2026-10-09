@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-10-09
+
 ### Added
 
 - `<wuik-file-drop-zone directory>` takes a whole folder: the native picker selects a folder, a dropped folder is walked recursively, and `wuik-files-selected` carries `paths` (each file's path relative to the folder's parent). `accept` is ignored in this mode; the status line shows the folder name and file count. FR/EN strings included.
