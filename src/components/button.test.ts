@@ -188,4 +188,34 @@ describe("wuik-button", () => {
       expect(css).toMatch(/var\(--wuik-color-text\)/);
     });
   });
+
+  it("forwards aria-* attributes to the inner button, including later changes and removals", async () => {
+    const host = mountButton("", {
+      "aria-label": "Close",
+      "aria-expanded": "false",
+    });
+    expect(nativeButton(host).getAttribute("aria-label")).toBe("Close");
+    expect(nativeButton(host).getAttribute("aria-expanded")).toBe("false");
+
+    host.setAttribute("aria-expanded", "true");
+    host.removeAttribute("aria-label");
+    await Promise.resolve();
+    expect(nativeButton(host).getAttribute("aria-expanded")).toBe("true");
+    expect(nativeButton(host).hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("leaves aria-pressed to the pressed attribute (edge case)", async () => {
+    const host = mountButton("Tog", { "aria-pressed": "true" });
+    expect(nativeButton(host).hasAttribute("aria-pressed")).toBe(false);
+    host.setAttribute("pressed", "");
+    expect(nativeButton(host).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("stops forwarding once removed from the document (edge case)", async () => {
+    const host = mountButton("", { "aria-label": "A" });
+    host.remove();
+    host.setAttribute("aria-label", "B");
+    await Promise.resolve();
+    expect(nativeButton(host).getAttribute("aria-label")).toBe("A");
+  });
 });

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-file-drop-zone directory>` takes a whole folder: the native picker selects a folder, a dropped folder is walked recursively, and `wuik-files-selected` carries `paths` (each file's path relative to the folder's parent). `accept` is ignored in this mode; the status line shows the folder name and file count. FR/EN strings included.
+
+### Fixed
+
+- `<wuik-button>` now forwards its host `aria-*` attributes (`aria-label`, `aria-expanded`, …) to the inner native button, so assistive technology sees them on the focused element. `aria-pressed` stays driven by `pressed`.
+
 ## [0.16.0] - 2026-10-08
 
 ### Added

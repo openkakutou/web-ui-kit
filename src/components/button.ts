@@ -12,6 +12,10 @@
  * warning. See
  * `.vibe/decisions/007-form-input-components-shared-conventions.md`.
  *
+ * Host `aria-*` attributes (`aria-label`, `aria-expanded`, `aria-controls`…)
+ * are forwarded to the inner native button, so assistive technology sees them
+ * on the element that takes focus.
+ *
  * The boolean `pressed` attribute layers a visually distinct, token-driven
  * "pressed"/"selected" style on top of the current `variant` and sets
  * `aria-pressed="true"` on the native button. When absent, `aria-pressed`
@@ -136,6 +140,11 @@ export class WuikButtonElement extends HTMLElement {
 
   readonly #button: HTMLButtonElement;
   readonly #slot: HTMLSlotElement;
+  readonly #ariaObserver = new MutationObserver((records) => {
+    for (const record of records) {
+      this.#forwardAria(record.attributeName);
+    }
+  });
 
   constructor() {
     super();
@@ -149,6 +158,14 @@ export class WuikButtonElement extends HTMLElement {
   connectedCallback(): void {
     this.#render();
     this.#syncEmptyState();
+    for (const name of this.getAttributeNames()) {
+      this.#forwardAria(name);
+    }
+    this.#ariaObserver.observe(this, { attributes: true });
+  }
+
+  disconnectedCallback(): void {
+    this.#ariaObserver.disconnect();
   }
 
   attributeChangedCallback(): void {
@@ -173,6 +190,23 @@ export class WuikButtonElement extends HTMLElement {
       this.#button.setAttribute("aria-pressed", "true");
     } else {
       this.#button.removeAttribute("aria-pressed");
+    }
+  }
+
+  /**
+   * Mirrors a host `aria-*` attribute onto the inner button, which is the
+   * element assistive technology actually focuses. `aria-pressed` is owned by
+   * the `pressed` attribute and never forwarded.
+   */
+  #forwardAria(name: string | null): void {
+    if (!name?.startsWith("aria-") || name === "aria-pressed") {
+      return;
+    }
+    const value = this.getAttribute(name);
+    if (value === null) {
+      this.#button.removeAttribute(name);
+    } else {
+      this.#button.setAttribute(name, value);
     }
   }
 

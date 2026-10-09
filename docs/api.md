@@ -101,10 +101,11 @@ A drag-and-drop + click-to-browse file input area. Keyboard-operable first: the 
 | `accept` | Comma-separated list of accepted file extensions (`.png`), MIME wildcards (`image/*`), or exact MIME types (`image/png`). Omitted = accept everything. |
 | `multiple` | Presence enables selecting/dropping more than one file; otherwise only the first accepted file is kept. |
 | `disabled` | Ignores clicks, keyboard activation, and drag/drop entirely. |
+| `directory` | Takes a whole folder: the native picker selects a folder and a dropped folder is walked recursively. `accept` and `multiple` are ignored; the status line summarizes the folder (name and file count) instead of listing files. |
 
 | Event | Detail | Fired when |
 |---|---|---|
-| `wuik-files-selected` | `{ files: File[] }` | At least one dropped/selected file matches `accept`. Only accepted files are included — rejected files are never silently dropped: the zone shows a visible rejected state and an inline status message instead. A new selection/drop always replaces the previous one. |
+| `wuik-files-selected` | `{ files: File[], paths?: string[] }` | At least one dropped/selected file matches `accept`. In `directory` mode, every file of the folder is emitted and `paths` holds each file's path relative to the folder's parent (`hero/sprites/a.png`); a folder that cannot be read shows the rejected state and emits nothing. Only accepted files are included — rejected files are never silently dropped: the zone shows a visible rejected state and an inline status message instead. A new selection/drop always replaces the previous one. |
 
 Default slot: custom prompt content (falls back to a localized "Drag and drop files here, or click to browse"). After a choice, a polite status line names the selected files ("Selected: …") and any rejected ones; both follow the active locale.
 
@@ -167,6 +168,7 @@ Wraps a native `<button>`.
 | `disabled` | Forwarded to the native button. |
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
 | `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |
+| `aria-*` | Every other `aria-*` attribute set on the host (`aria-label`, `aria-expanded`, `aria-controls`…) is mirrored onto the native button, including later changes and removals, so assistive technology sees it on the focused element. `aria-pressed` is excluded: it is owned by `pressed`. |
 
 ### `<wuik-text-input>`
 

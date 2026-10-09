@@ -36,6 +36,9 @@
   "fileDropZone": {
     "prompt": "Déposez des fichiers ici, ou cliquez pour parcourir",
     "rejected": "Refusé, type non accepté : {{names}}",
-    "selected": "Sélectionné : {{names}}"
+    "selected": "Sélectionné : {{names}}",
+    "folderPrompt": "Déposez un dossier ici, ou cliquez pour en choisir un",
+    "folderSelected": "Dossier sélectionné : {{name}} — fichiers : {{count}}",
+    "folderUnreadable": "Impossible de lire ce dossier"
   }
 }

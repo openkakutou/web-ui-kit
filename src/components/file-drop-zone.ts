@@ -14,10 +14,22 @@
  * status message, and only accepted files (if any) are emitted via
  * `wuik-files-selected`. A new selection/drop always replaces the
  * previous one, matching native `<input type="file">` semantics.
+ *
+ * With the boolean `directory` attribute the zone takes a whole folder
+ * (native picker in `webkitdirectory` mode; dropped folders are walked
+ * recursively). `accept` is then ignored — the folder's content is the
+ * caller's to judge — and `wuik-files-selected` also carries `paths`, each
+ * file's path relative to the chosen folder's parent.
  */
 
 import { onLocaleChange, t } from "../i18n/i18n.ts";
 import { matchesAccept } from "./file-drop-zone-accept.ts";
+import {
+  type DataTransferItemLike,
+  type GatheredFile,
+  filesFromDroppedItems,
+  filesFromPickedFolder,
+} from "./file-drop-zone-folder.ts";
 
 const TEMPLATE = document.createElement("template");
 TEMPLATE.innerHTML = `
@@ -93,7 +105,7 @@ TEMPLATE.innerHTML = `
 
 export class WuikFileDropZoneElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["disabled"];
+    return ["disabled", "directory"];
   }
 
   readonly #zone: HTMLElement;
@@ -102,6 +114,8 @@ export class WuikFileDropZoneElement extends HTMLElement {
   readonly #defaultPrompt: HTMLElement;
   #unsubscribeLocaleChange: (() => void) | undefined;
   #lastResult: { accepted: string[]; rejected: string[] } | undefined;
+  #lastFolder: { name: string; count: number } | undefined;
+  #folderUnreadable = false;
 
   constructor() {
     super();
@@ -132,6 +146,7 @@ export class WuikFileDropZoneElement extends HTMLElement {
     if (this.hasAttribute("multiple")) {
       this.#input.setAttribute("multiple", "");
     }
+    this.#input.webkitdirectory = this.hasAttribute("directory");
     if (this.hasAttribute("accept")) {
       this.#input.setAttribute("accept", this.getAttribute("accept") ?? "");
     }
@@ -144,14 +159,37 @@ export class WuikFileDropZoneElement extends HTMLElement {
 
   /** Re-resolves every localized string without touching the selection state. */
   #renderStatic(): void {
-    this.#defaultPrompt.textContent = t(
-      "fileDropZone.prompt",
-      "Drag and drop files here, or click to browse",
-    );
+    this.#defaultPrompt.textContent = this.hasAttribute("directory")
+      ? t(
+          "fileDropZone.folderPrompt",
+          "Drop a folder here, or click to choose one",
+        )
+      : t(
+          "fileDropZone.prompt",
+          "Drag and drop files here, or click to browse",
+        );
     this.#renderStatus();
   }
 
   #renderStatus(): void {
+    if (this.#folderUnreadable) {
+      this.#status.textContent = t(
+        "fileDropZone.folderUnreadable",
+        "Could not read this folder",
+      );
+      return;
+    }
+    if (this.#lastFolder) {
+      this.#status.textContent = t(
+        "fileDropZone.folderSelected",
+        "Folder selected: {{name}} — files: {{count}}",
+        {
+          name: this.#lastFolder.name,
+          count: String(this.#lastFolder.count),
+        },
+      );
+      return;
+    }
     const result = this.#lastResult;
     if (!result) {
       this.#status.textContent = "";
@@ -178,6 +216,9 @@ export class WuikFileDropZoneElement extends HTMLElement {
   attributeChangedCallback(name: string): void {
     if (name === "disabled") {
       this.#syncDisabled();
+    } else if (name === "directory") {
+      this.#input.webkitdirectory = this.hasAttribute("directory");
+      this.#renderStatic();
     }
   }
 
@@ -234,18 +275,74 @@ export class WuikFileDropZoneElement extends HTMLElement {
     event.preventDefault();
     const dataTransfer = (event as DragEvent).dataTransfer as {
       files?: ArrayLike<File>;
+      items?: ArrayLike<DataTransferItemLike>;
     } | null;
+    if (this.hasAttribute("directory")) {
+      // Entries must be taken from the items while the event is dispatched.
+      this.#processFolder(
+        filesFromDroppedItems(Array.from(dataTransfer?.items ?? [])),
+      );
+      return;
+    }
     this.#processFiles(
       dataTransfer?.files ? Array.from(dataTransfer.files) : [],
     );
   };
 
   readonly #handleInputChange = (): void => {
-    this.#processFiles(this.#input.files ? Array.from(this.#input.files) : []);
+    const files = this.#input.files ? Array.from(this.#input.files) : [];
+    if (this.hasAttribute("directory")) {
+      this.#emitFolder(filesFromPickedFolder(files));
+      return;
+    }
+    this.#processFiles(files);
   };
+
+  #processFolder(gathering: Promise<GatheredFile[]>): void {
+    gathering.then(
+      (gathered) => this.#emitFolder(gathered),
+      () => {
+        this.#zone.classList.remove("is-accepted");
+        this.#zone.classList.add("is-rejected");
+        this.#lastFolder = undefined;
+        this.#folderUnreadable = true;
+        this.#renderStatus();
+      },
+    );
+  }
+
+  #emitFolder(gathered: GatheredFile[]): void {
+    this.#zone.classList.remove("is-accepted", "is-rejected");
+    this.#lastResult = undefined;
+    this.#folderUnreadable = false;
+    this.#lastFolder =
+      gathered.length > 0
+        ? {
+            name: gathered[0].relativePath.split("/")[0],
+            count: gathered.length,
+          }
+        : undefined;
+    this.#renderStatus();
+    if (gathered.length === 0) {
+      return;
+    }
+    this.#zone.classList.add("is-accepted");
+    this.dispatchEvent(
+      new CustomEvent("wuik-files-selected", {
+        detail: {
+          files: gathered.map((entry) => entry.file),
+          paths: gathered.map((entry) => entry.relativePath),
+        },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
 
   #processFiles(files: File[]): void {
     this.#zone.classList.remove("is-accepted", "is-rejected");
+    this.#lastFolder = undefined;
+    this.#folderUnreadable = false;
     if (files.length === 0) {
       this.#lastResult = undefined;
       this.#renderStatus();

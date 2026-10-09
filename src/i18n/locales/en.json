@@ -36,6 +36,9 @@
   "fileDropZone": {
     "prompt": "Drag and drop files here, or click to browse",
     "rejected": "Rejected, type not accepted: {{names}}",
-    "selected": "Selected: {{names}}"
+    "selected": "Selected: {{names}}",
+    "folderPrompt": "Drop a folder here, or click to choose one",
+    "folderSelected": "Folder selected: {{name}} — files: {{count}}",
+    "folderUnreadable": "Could not read this folder"
   }
 }

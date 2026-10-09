@@ -263,4 +263,82 @@ describe("wuik-file-drop-zone — selection status and localization", () => {
     dispatchDrop(zone, []);
     expect(statusText(zone)).toBe("");
   });
+
+  describe("directory mode", () => {
+    function pickerInput(zone: Element): HTMLInputElement {
+      return zone.shadowRoot?.querySelector(
+        'input[type="file"]',
+      ) as HTMLInputElement;
+    }
+
+    function dropEntries(zone: Element, items: unknown[]): void {
+      const event = new Event("drop", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "dataTransfer", {
+        value: { files: [], items },
+      });
+      zone.shadowRoot?.querySelector('[role="button"]')?.dispatchEvent(event);
+    }
+
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+    it("makes the native picker select a folder", () => {
+      expect(
+        pickerInput(mountDropZone({ directory: "" })).webkitdirectory,
+      ).toBe(true);
+      expect(pickerInput(mountDropZone()).webkitdirectory).toBe(false);
+    });
+
+    it("emits every file of a dropped folder with its relative path, ignoring accept", async () => {
+      const zone = mountDropZone({ directory: "", accept: ".png" });
+      const listener = vi.fn();
+      zone.addEventListener("wuik-files-selected", listener);
+      const file = new File(["x"], "hero.def");
+      dropEntries(zone, [
+        {
+          webkitGetAsEntry: () => ({
+            isFile: true,
+            isDirectory: false,
+            fullPath: "/hero/hero.def",
+            file: (ok: (f: File) => void) => ok(file),
+          }),
+        },
+      ]);
+      await flush();
+      const detail = listener.mock.calls[0][0].detail;
+      expect(detail.files).toEqual([file]);
+      expect(detail.paths).toEqual(["hero/hero.def"]);
+    });
+
+    it("emits a picked folder's files with webkitRelativePath", () => {
+      const zone = mountDropZone({ directory: "" });
+      const listener = vi.fn();
+      zone.addEventListener("wuik-files-selected", listener);
+      const file = new File(["x"], "a.png");
+      Object.defineProperty(file, "webkitRelativePath", { value: "d/a.png" });
+      const input = pickerInput(zone);
+      Object.defineProperty(input, "files", { value: [file] });
+      input.dispatchEvent(new Event("change"));
+      expect(listener.mock.calls[0][0].detail.paths).toEqual(["d/a.png"]);
+    });
+
+    it("shows a rejected state when the folder cannot be read (error path)", async () => {
+      const zone = mountDropZone({ directory: "" });
+      const listener = vi.fn();
+      zone.addEventListener("wuik-files-selected", listener);
+      dropEntries(zone, [
+        {
+          webkitGetAsEntry: () => ({
+            isFile: true,
+            isDirectory: false,
+            fullPath: "/x",
+            file: (_ok: unknown, fail: (e: Error) => void) =>
+              fail(new Error("denied")),
+          }),
+        },
+      ]);
+      await flush();
+      expect(listener).not.toHaveBeenCalled();
+      expect(statusText(zone)).toContain("Could not read");
+    });
+  });
 });
