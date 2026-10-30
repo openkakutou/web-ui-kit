@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-10-30
+
 ### Added
 
 - `<wuik-text-input type="number">` is a numeric field with `min`, `max` and `step`: arrow keys step the value, a numeric keyboard is requested on mobile (`inputmode` can be overridden), and a value outside the range shows the invalid state with an explanatory message once the field has been left. FR/EN strings included.
@@ -167,7 +169,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.14.1...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.17.0...v0.18.0
+[0.17.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.14.1...v0.17.0
 [0.14.1]: https://github.com/openkakutou/web-ui-kit/compare/v0.13.0...v0.14.1
 [0.13.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.13.0
 [0.12.0]: https://github.com/openkakutou/web-ui-kit/releases/tag/v0.12.0
