@@ -18,9 +18,15 @@ export interface TextInputValidityInput {
   error: string | null;
   /** Whether the field has been blurred at least once. */
   touched: boolean;
+  /** Input mode; defaults to `"text"`. Range checks only apply to `"number"`. */
+  type?: "text" | "number";
+  /** Lower bound (number mode), or `null`/omitted for none. */
+  min?: number | null;
+  /** Upper bound (number mode), or `null`/omitted for none. */
+  max?: number | null;
 }
 
-export type TextInputValidityReason = "custom" | "required" | null;
+export type TextInputValidityReason = "custom" | "required" | "range" | null;
 
 export interface TextInputValidity {
   invalid: boolean;
@@ -45,6 +51,17 @@ export function resolveTextInputValidity(
   const isBlank = input.value.trim() === "";
   if (input.required && input.touched && isBlank) {
     return { invalid: true, reason: "required" };
+  }
+
+  if (input.type === "number" && input.touched && !isBlank) {
+    const n = Number(input.value);
+    const outOfRange =
+      !Number.isFinite(n) ||
+      (input.min != null && n < input.min) ||
+      (input.max != null && n > input.max);
+    if (outOfRange) {
+      return { invalid: true, reason: "range" };
+    }
   }
 
   return { invalid: false, reason: null };

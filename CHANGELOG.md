@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-text-input type="number">` is a numeric field with `min`, `max` and `step`: arrow keys step the value, a numeric keyboard is requested on mobile (`inputmode` can be overridden), and a value outside the range shows the invalid state with an explanatory message once the field has been left. FR/EN strings included.
+
 ## [0.17.0] - 2026-10-09
 
 ### Added

@@ -1,6 +1,6 @@
 /**
  * `<wuik-text-input>` — a standalone text-input/form-field Web Component
- * wrapping a native `<input type="text">`, with a real visible `<label>`
+ * wrapping a native `<input>` (`type="text"`, or `"number"` via the `type` attribute), with a real visible `<label>`
  * (unlike `wuik-slider`/`wuik-color-picker`, which only forward an
  * `aria-label` since they have no visible text of their own to attach a
  * label to). Usable on its own, with no dependency on the layout shell or
@@ -51,7 +51,7 @@ TEMPLATE.innerHTML = `
       color: var(--wuik-color-text);
     }
 
-    input[type="text"] {
+    input {
       font: inherit;
       color: var(--wuik-color-text);
       background: var(--wuik-color-bg);
@@ -62,12 +62,12 @@ TEMPLATE.innerHTML = `
       box-sizing: border-box;
     }
 
-    input[type="text"]:focus-visible {
+    input:focus-visible {
       outline: var(--wuik-focus-ring-width) solid var(--wuik-color-focus);
       outline-offset: calc(-1 * var(--wuik-focus-ring-width));
     }
 
-    input[type="text"]:disabled {
+    input:disabled {
       cursor: not-allowed;
     }
 
@@ -76,7 +76,7 @@ TEMPLATE.innerHTML = `
       pointer-events: none;
     }
 
-    .wrapper.is-invalid input[type="text"] {
+    .wrapper.is-invalid input {
       outline: var(--wuik-focus-ring-width) solid var(--wuik-color-error);
       outline-offset: var(--wuik-focus-ring-offset);
     }
@@ -102,7 +102,19 @@ TEMPLATE.innerHTML = `
 
 export class WuikTextInputElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["label", "placeholder", "required", "value", "disabled", "error"];
+    return [
+      "label",
+      "placeholder",
+      "required",
+      "value",
+      "disabled",
+      "error",
+      "type",
+      "min",
+      "max",
+      "step",
+      "inputmode",
+    ];
   }
 
   readonly #wrapper: HTMLElement;
@@ -124,9 +136,7 @@ export class WuikTextInputElement extends HTMLElement {
     this.#requiredMarker = shadow.querySelector(
       ".required-marker",
     ) as HTMLElement;
-    this.#input = shadow.querySelector(
-      'input[type="text"]',
-    ) as HTMLInputElement;
+    this.#input = shadow.querySelector("input") as HTMLInputElement;
     this.#error = shadow.querySelector(".error") as HTMLElement;
 
     const id = `wuik-text-input-${nextInstanceId++}`;
@@ -197,6 +207,8 @@ export class WuikTextInputElement extends HTMLElement {
       this.#input.removeAttribute("placeholder");
     }
 
+    this.#renderNumberAttributes();
+
     const required = this.hasAttribute("required");
     this.#input.required = required;
     if (required) {
@@ -211,6 +223,50 @@ export class WuikTextInputElement extends HTMLElement {
     this.#input.disabled = disabled;
 
     this.#updateValidity();
+  }
+
+  get #isNumber(): boolean {
+    return this.getAttribute("type") === "number";
+  }
+
+  #bound(name: "min" | "max"): number | null {
+    const raw = this.getAttribute(name);
+    if (raw === null || raw.trim() === "") {
+      return null;
+    }
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /**
+   * Applies `type` (`number`, anything else falls back to `text`) and the
+   * number-only `min`/`max`/`step` to the native input, plus `inputmode`:
+   * the consumer's value if set, else in number mode `numeric` for an
+   * absent or positive-integer step and `decimal` otherwise.
+   */
+  #renderNumberAttributes(): void {
+    const isNumber = this.#isNumber;
+    this.#input.type = isNumber ? "number" : "text";
+    for (const name of ["min", "max", "step"]) {
+      const value = this.getAttribute(name);
+      if (isNumber && value !== null) {
+        this.#input.setAttribute(name, value);
+      } else {
+        this.#input.removeAttribute(name);
+      }
+    }
+
+    let inputMode = this.getAttribute("inputmode");
+    if (!inputMode && isNumber) {
+      const step = this.getAttribute("step");
+      inputMode =
+        step === null || /^[1-9]\d*$/.test(step.trim()) ? "numeric" : "decimal";
+    }
+    if (inputMode) {
+      this.#input.setAttribute("inputmode", inputMode);
+    } else {
+      this.#input.removeAttribute("inputmode");
+    }
   }
 
   /**
@@ -232,6 +288,9 @@ export class WuikTextInputElement extends HTMLElement {
       value: this.#input.value,
       error: this.getAttribute("error"),
       touched: this.#touched,
+      type: this.#isNumber ? "number" : "text",
+      min: this.#bound("min"),
+      max: this.#bound("max"),
     });
     this.#applyValidity(validity);
   }
@@ -258,7 +317,36 @@ export class WuikTextInputElement extends HTMLElement {
     if (reason === "required") {
       return t("forms.textInputRequired", "This field is required.");
     }
+    if (reason === "range") {
+      return this.#rangeMessage();
+    }
     return "";
+  }
+
+  #rangeMessage(): string {
+    const min = this.#bound("min");
+    const max = this.#bound("max");
+    if (min !== null && max !== null) {
+      return t(
+        "forms.textInputRange",
+        "Enter a number between {{min}} and {{max}}.",
+        {
+          min: String(min),
+          max: String(max),
+        },
+      );
+    }
+    if (min !== null) {
+      return t("forms.textInputMin", "Enter a number of at least {{min}}.", {
+        min: String(min),
+      });
+    }
+    if (max !== null) {
+      return t("forms.textInputMax", "Enter a number of at most {{max}}.", {
+        max: String(max),
+      });
+    }
+    return t("forms.textInputNotNumber", "Enter a valid number.");
   }
 
   readonly #handleInput = (): void => {

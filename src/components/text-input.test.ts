@@ -17,7 +17,7 @@ function mountTextInput(attributes: Record<string, string> = {}): HTMLElement {
 }
 
 function nativeInput(el: Element): HTMLInputElement {
-  return el.shadowRoot?.querySelector("input[type='text']") as HTMLInputElement;
+  return el.shadowRoot?.querySelector("input") as HTMLInputElement;
 }
 
 function labelEl(el: Element): HTMLLabelElement | null {
@@ -212,6 +212,130 @@ describe("wuik-text-input", () => {
       const css = hostStyleText(el);
       const markerRule = css.match(/\.required-marker\s*{[^}]*}/)?.[0] ?? "";
       expect(markerRule).not.toContain("var(--wuik-color-error)");
+    });
+  });
+
+  describe("type=number", () => {
+    function blur(el: Element): void {
+      nativeInput(el).dispatchEvent(new Event("blur"));
+    }
+
+    it("renders a native number input and forwards min, max and step", () => {
+      const el = mountTextInput({
+        type: "number",
+        min: "1",
+        max: "9",
+        step: "2",
+      });
+      const input = nativeInput(el);
+      expect(input.type).toBe("number");
+      expect(input.getAttribute("min")).toBe("1");
+      expect(input.getAttribute("max")).toBe("9");
+      expect(input.getAttribute("step")).toBe("2");
+    });
+
+    it("defaults inputmode to numeric for integer or absent step, decimal otherwise", () => {
+      expect(
+        nativeInput(mountTextInput({ type: "number" })).getAttribute(
+          "inputmode",
+        ),
+      ).toBe("numeric");
+      expect(
+        nativeInput(mountTextInput({ type: "number", step: "5" })).getAttribute(
+          "inputmode",
+        ),
+      ).toBe("numeric");
+      expect(
+        nativeInput(
+          mountTextInput({ type: "number", step: "0.1" }),
+        ).getAttribute("inputmode"),
+      ).toBe("decimal");
+      expect(
+        nativeInput(
+          mountTextInput({ type: "number", step: "any" }),
+        ).getAttribute("inputmode"),
+      ).toBe("decimal");
+    });
+
+    it("forwards a consumer inputmode and sets none in text mode", () => {
+      expect(
+        nativeInput(
+          mountTextInput({ type: "number", inputmode: "text" }),
+        ).getAttribute("inputmode"),
+      ).toBe("text");
+      expect(
+        nativeInput(mountTextInput({ inputmode: "email" })).getAttribute(
+          "inputmode",
+        ),
+      ).toBe("email");
+      expect(nativeInput(mountTextInput()).hasAttribute("inputmode")).toBe(
+        false,
+      );
+    });
+
+    it("falls back to a text input for an unknown type, without min/max/step", () => {
+      const el = mountTextInput({ type: "range", min: "1" });
+      expect(nativeInput(el).type).toBe("text");
+      expect(nativeInput(el).hasAttribute("min")).toBe(false);
+    });
+
+    it("shows the invalid state with a range message after blur when out of range", () => {
+      const el = mountTextInput({ type: "number", min: "1", max: "9" });
+      const input = nativeInput(el);
+      input.value = "12";
+      input.dispatchEvent(new Event("input"));
+      expect(wrapperEl(el).classList.contains("is-invalid")).toBe(false);
+      blur(el);
+      expect(wrapperEl(el).classList.contains("is-invalid")).toBe(true);
+      expect(input.getAttribute("aria-invalid")).toBe("true");
+      expect(errorEl(el).textContent).toBe("Enter a number between 1 and 9.");
+      input.value = "5";
+      input.dispatchEvent(new Event("input"));
+      expect(wrapperEl(el).classList.contains("is-invalid")).toBe(false);
+    });
+
+    it("uses a min-only and a max-only message", () => {
+      const lo = mountTextInput({ type: "number", min: "3" });
+      nativeInput(lo).value = "1";
+      blur(lo);
+      expect(errorEl(lo).textContent).toBe("Enter a number of at least 3.");
+      const hi = mountTextInput({ type: "number", max: "3" });
+      nativeInput(hi).value = "8";
+      blur(hi);
+      expect(errorEl(hi).textContent).toBe("Enter a number of at most 3.");
+    });
+
+    it("keeps an empty non-required number field valid after blur", () => {
+      const el = mountTextInput({ type: "number", min: "1" });
+      blur(el);
+      expect(wrapperEl(el).classList.contains("is-invalid")).toBe(false);
+    });
+
+    it("lets a custom error win over the range message", () => {
+      const el = mountTextInput({ type: "number", max: "3", error: "Taken" });
+      nativeInput(el).value = "8";
+      blur(el);
+      expect(errorEl(el).textContent).toBe("Taken");
+    });
+
+    it("keeps the typed value when type is switched live", () => {
+      const el = mountTextInput();
+      nativeInput(el).value = "42";
+      el.setAttribute("type", "number");
+      expect(nativeInput(el).type).toBe("number");
+      expect(nativeInput(el).value).toBe("42");
+      el.setAttribute("type", "text");
+      expect(nativeInput(el).type).toBe("text");
+      expect(nativeInput(el).value).toBe("42");
+    });
+
+    it("emits wuik-input with a string value", () => {
+      const el = mountTextInput({ type: "number" });
+      const handler = vi.fn();
+      el.addEventListener("wuik-input", handler);
+      nativeInput(el).value = "7";
+      nativeInput(el).dispatchEvent(new Event("input"));
+      expect(handler.mock.calls[0][0].detail).toEqual({ value: "7" });
     });
   });
 });

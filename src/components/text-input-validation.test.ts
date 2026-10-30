@@ -81,4 +81,109 @@ describe("resolveTextInputValidity", () => {
     });
     expect(result).toEqual({ invalid: true, reason: "required" });
   });
+
+  describe("number mode", () => {
+    const base = {
+      required: false,
+      error: null,
+      touched: true,
+      type: "number" as const,
+      min: null,
+      max: null,
+    };
+
+    it("is invalid with reason 'range' when below min", () => {
+      expect(
+        resolveTextInputValidity({ ...base, value: "4", min: 5, max: 10 }),
+      ).toEqual({ invalid: true, reason: "range" });
+    });
+
+    it("is invalid with reason 'range' when above max", () => {
+      expect(
+        resolveTextInputValidity({ ...base, value: "11", min: 5, max: 10 }),
+      ).toEqual({ invalid: true, reason: "range" });
+    });
+
+    it("is valid on the inclusive bounds and between them", () => {
+      for (const value of ["5", "7.5", "10"]) {
+        expect(
+          resolveTextInputValidity({ ...base, value, min: 5, max: 10 }),
+        ).toEqual({ invalid: false, reason: null });
+      }
+    });
+
+    it("checks only the bound that exists (min only, max only)", () => {
+      expect(
+        resolveTextInputValidity({ ...base, value: "-1", min: 0 }).invalid,
+      ).toBe(true);
+      expect(
+        resolveTextInputValidity({ ...base, value: "1000000", min: 0 }).invalid,
+      ).toBe(false);
+      expect(
+        resolveTextInputValidity({ ...base, value: "101", max: 100 }).invalid,
+      ).toBe(true);
+      expect(
+        resolveTextInputValidity({ ...base, value: "-1000000", max: 100 })
+          .invalid,
+      ).toBe(false);
+    });
+
+    it("treats an empty non-required value as valid", () => {
+      expect(resolveTextInputValidity({ ...base, value: "", min: 5 })).toEqual({
+        invalid: false,
+        reason: null,
+      });
+    });
+
+    it("is invalid when the value is not a finite number", () => {
+      for (const value of ["abc", "Infinity", "1e999", "NaN"]) {
+        expect(resolveTextInputValidity({ ...base, value })).toEqual({
+          invalid: true,
+          reason: "range",
+        });
+      }
+    });
+
+    it("stays valid before the field is touched", () => {
+      expect(
+        resolveTextInputValidity({
+          ...base,
+          touched: false,
+          value: "abc",
+          min: 5,
+        }),
+      ).toEqual({ invalid: false, reason: null });
+    });
+
+    it("lets a custom error win over a range failure", () => {
+      expect(
+        resolveTextInputValidity({
+          ...base,
+          value: "99",
+          max: 10,
+          error: "Taken",
+        }),
+      ).toEqual({ invalid: true, reason: "custom" });
+    });
+
+    it("reports required before range when empty, required and touched", () => {
+      expect(
+        resolveTextInputValidity({ ...base, required: true, value: "" }),
+      ).toEqual({ invalid: true, reason: "required" });
+    });
+  });
+
+  it("ignores min/max in text mode", () => {
+    expect(
+      resolveTextInputValidity({
+        required: false,
+        value: "abc",
+        error: null,
+        touched: true,
+        type: "text",
+        min: 5,
+        max: 6,
+      }),
+    ).toEqual({ invalid: false, reason: null });
+  });
 });

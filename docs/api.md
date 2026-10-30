@@ -172,7 +172,7 @@ Wraps a native `<button>`.
 
 ### `<wuik-text-input>`
 
-Wraps a native `<input type="text">` with a real, visible `<label>` — unlike `<wuik-slider>`/`<wuik-color-picker>`, which only forward an `aria-label` since they have no visible text of their own. See `.vibe/decisions/024-text-input-visible-label-and-blur-validation.md`.
+Wraps a native `<input>` (`type="text"`, or `type="number"` via the `type` attribute) with a real, visible `<label>` — unlike `<wuik-slider>`/`<wuik-color-picker>`, which only forward an `aria-label` since they have no visible text of their own. See `.vibe/decisions/024-text-input-visible-label-and-blur-validation.md`.
 
 | Attribute | Meaning |
 |---|---|
@@ -182,6 +182,9 @@ Wraps a native `<input type="text">` with a real, visible `<label>` — unlike `
 | `value` | The field's current value. Setting this attribute (or the `.value` property, which reflects onto it) resets the touched state, so a programmatic reset clears any stale invalid state too. |
 | `error` | A consumer-supplied validation message (e.g. a server-side rejection). Shown immediately regardless of touched state, and always takes priority over the built-in required check. An empty/blank value falls back to the built-in check. |
 | `disabled` | Forwarded to the native input. A disabled field never shows the invalid state, even if required and empty. |
+| `type` | `text` (default) or `number`; any other value falls back to `text`. In `number` mode the native input is `type="number"` (role `spinbutton`, ArrowUp/ArrowDown stepping). Switching it live keeps the typed value. |
+| `min`, `max`, `step` | Number mode only: forwarded to the native input. After the field is blurred, a non-empty value that is not a finite number, is below `min` or above `max` shows the invalid state (reason `range`) with a localized message adapted to which bounds exist. An empty non-required value stays valid; a custom `error` still wins. |
+| `inputmode` | Forwarded to the native input if set. Otherwise in number mode: `numeric` when `step` is absent or a positive integer, `decimal` for any other step (e.g. `0.1`, `any`); nothing in text mode. |
 
 | Event | Detail | Fired when |
 |---|---|---|

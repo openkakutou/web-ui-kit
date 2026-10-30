@@ -22,7 +22,11 @@
     "sliderInvalidConfig": "Configuration du curseur invalide — affichage de la plage par défaut à la place.",
     "colorPickerInvalidValue": "Valeur de couleur invalide — affichage de {{defaultColor}} à la place.",
     "radioGroupInvalidOptions": "Valeur d'option en double « {{value}} » — seule la première correspondance est affichée.",
-    "textInputRequired": "Ce champ est obligatoire."
+    "textInputRequired": "Ce champ est obligatoire.",
+    "textInputRange": "Saisissez un nombre entre {{min}} et {{max}}.",
+    "textInputMin": "Saisissez un nombre supérieur ou égal à {{min}}.",
+    "textInputMax": "Saisissez un nombre inférieur ou égal à {{max}}.",
+    "textInputNotNumber": "Saisissez un nombre valide."
   },
   "dialog": {
     "close": "Fermer"
