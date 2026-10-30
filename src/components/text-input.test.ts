@@ -366,4 +366,89 @@ describe("wuik-text-input — localization", () => {
 
     expect(errorEl(el).textContent).toBe("Ce champ est obligatoire.");
   });
+
+  describe("hint", () => {
+    function hintEl(el: Element): HTMLElement {
+      return el.shadowRoot?.querySelector(".hint") as HTMLElement;
+    }
+
+    function describedByIds(el: Element): string[] {
+      return (nativeInput(el).getAttribute("aria-describedby") ?? "")
+        .split(" ")
+        .filter(Boolean);
+    }
+
+    it("shows the hint text and links it to the input with aria-describedby (nominal)", () => {
+      const el = mountTextInput({
+        label: "Name",
+        hint: "Up to 20 characters.",
+      });
+
+      expect(hintEl(el).textContent).toBe("Up to 20 characters.");
+      expect(hintEl(el).hidden).toBe(false);
+      expect(describedByIds(el)).toEqual([hintEl(el).id]);
+    });
+
+    it("sets no aria-describedby and hides the hint when there is no hint (edge case)", () => {
+      const el = mountTextInput({ label: "Name" });
+
+      expect(hintEl(el).hidden).toBe(true);
+      expect(nativeInput(el).hasAttribute("aria-describedby")).toBe(false);
+    });
+
+    it("treats a blank hint like no hint (edge case)", () => {
+      const el = mountTextInput({ label: "Name", hint: "   " });
+
+      expect(hintEl(el).hidden).toBe(true);
+      expect(nativeInput(el).hasAttribute("aria-describedby")).toBe(false);
+    });
+
+    it("announces the hint and the error together while invalid, then the hint alone once valid (error path)", () => {
+      const el = mountTextInput({
+        label: "Name",
+        hint: "Up to 20 characters.",
+        required: "",
+      });
+      const input = nativeInput(el);
+
+      input.dispatchEvent(new Event("blur"));
+      expect(describedByIds(el)).toEqual([hintEl(el).id, errorEl(el).id]);
+
+      input.value = "Ryu";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      expect(describedByIds(el)).toEqual([hintEl(el).id]);
+    });
+
+    it("keeps announcing the error alone when the hint is removed while invalid (edge case)", () => {
+      const el = mountTextInput({
+        label: "Name",
+        hint: "Up to 20 characters.",
+        error: "Already taken.",
+      });
+      el.removeAttribute("hint");
+
+      expect(describedByIds(el)).toEqual([errorEl(el).id]);
+    });
+
+    it("updates the hint without overwriting what the user typed (edge case)", () => {
+      const el = mountTextInput({ label: "Name", hint: "Old." });
+      const input = nativeInput(el);
+      input.value = "Ryu";
+      el.setAttribute("hint", "New.");
+
+      expect(input.value).toBe("Ryu");
+      expect(hintEl(el).textContent).toBe("New.");
+    });
+
+    it("never announces a hint on a disabled field's error state (edge case)", () => {
+      const el = mountTextInput({
+        label: "Name",
+        hint: "Up to 20 characters.",
+        error: "Already taken.",
+        disabled: "",
+      });
+
+      expect(describedByIds(el)).toEqual([hintEl(el).id]);
+    });
+  });
 });

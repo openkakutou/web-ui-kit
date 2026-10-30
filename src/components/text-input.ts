@@ -81,6 +81,11 @@ TEMPLATE.innerHTML = `
       outline-offset: var(--wuik-focus-ring-offset);
     }
 
+    .hint {
+      color: var(--wuik-color-text);
+      font-size: var(--wuik-font-size-sm);
+    }
+
     .error {
       display: none;
       color: var(--wuik-color-text);
@@ -96,6 +101,7 @@ TEMPLATE.innerHTML = `
       <span class="label-text"></span><span class="required-marker" aria-hidden="true" hidden> *</span>
     </label>
     <input type="text" />
+    <span class="hint" hidden></span>
   </div>
   <span class="error" role="status"></span>
 `;
@@ -104,6 +110,7 @@ export class WuikTextInputElement extends HTMLElement {
   static get observedAttributes(): string[] {
     return [
       "label",
+      "hint",
       "placeholder",
       "required",
       "value",
@@ -122,6 +129,7 @@ export class WuikTextInputElement extends HTMLElement {
   readonly #labelText: HTMLElement;
   readonly #requiredMarker: HTMLElement;
   readonly #input: HTMLInputElement;
+  readonly #hint: HTMLElement;
   readonly #error: HTMLElement;
   #touched = false;
   #unsubscribeLocaleChange: (() => void) | undefined;
@@ -137,11 +145,13 @@ export class WuikTextInputElement extends HTMLElement {
       ".required-marker",
     ) as HTMLElement;
     this.#input = shadow.querySelector("input") as HTMLInputElement;
+    this.#hint = shadow.querySelector(".hint") as HTMLElement;
     this.#error = shadow.querySelector(".error") as HTMLElement;
 
     const id = `wuik-text-input-${nextInstanceId++}`;
     this.#input.id = id;
     this.#label.htmlFor = id;
+    this.#hint.id = `${id}-hint`;
     this.#error.id = `${id}-error`;
 
     this.#input.addEventListener("input", this.#handleInput);
@@ -199,6 +209,10 @@ export class WuikTextInputElement extends HTMLElement {
     const label = this.getAttribute("label") ?? "";
     this.#label.hidden = label === "";
     this.#labelText.textContent = label;
+
+    const hint = this.getAttribute("hint")?.trim() ?? "";
+    this.#hint.hidden = hint === "";
+    this.#hint.textContent = hint;
 
     const placeholder = this.getAttribute("placeholder");
     if (placeholder) {
@@ -300,11 +314,16 @@ export class WuikTextInputElement extends HTMLElement {
     reason: TextInputValidityReason;
   }): void {
     this.#wrapper.classList.toggle("is-invalid", validity.invalid);
+    const describedBy = this.#hint.hidden ? [] : [this.#hint.id];
     if (validity.invalid) {
       this.#input.setAttribute("aria-invalid", "true");
-      this.#input.setAttribute("aria-describedby", this.#error.id);
+      describedBy.push(this.#error.id);
     } else {
       this.#input.removeAttribute("aria-invalid");
+    }
+    if (describedBy.length > 0) {
+      this.#input.setAttribute("aria-describedby", describedBy.join(" "));
+    } else {
       this.#input.removeAttribute("aria-describedby");
     }
     this.#error.textContent = this.#messageFor(validity.reason);

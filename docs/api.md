@@ -177,6 +177,7 @@ Wraps a native `<input>` (`type="text"`, or `type="number"` via the `type` attri
 | Attribute | Meaning |
 |---|---|
 | `label` | Visible label text, associated with the input via `for`/`id`. Omitted = the label element is hidden, matching the app-shell "collapse when empty" convention — no accessible name is fabricated. |
+| `hint` | Optional help text shown under the field and linked to the input with `aria-describedby`, so screen readers announce it with the field. The control lives in the shadow root, so an `aria-describedby` pointing at an element outside the component cannot work: put the help text here instead. A blank value hides it. |
 | `placeholder` | Forwarded to the native input. |
 | `required` | Forwarded to the native input (`required` + `aria-required="true"`) and shows a visual asterisk next to the label (wrapped in `aria-hidden="true"`, so it is never read aloud — the native attribute is what announces "required"). Does **not** show the built-in invalid state immediately: only once the field has been blurred at least once while empty, so a freshly-loaded, untouched form never looks pre-broken. Once shown, it re-validates live on every keystroke. |
 | `value` | The field's current value. Setting this attribute (or the `.value` property, which reflects onto it) resets the touched state, so a programmatic reset clears any stale invalid state too. |
@@ -191,7 +192,16 @@ Wraps a native `<input>` (`type="text"`, or `type="number"` via the `type` attri
 | `wuik-input` | `{ value: string }` | Continuously, as the value changes (live preview) — mirrors the native `input` event. |
 | `wuik-change` | `{ value: string }` | Once, when the change is committed — mirrors the native `change` event. |
 
-The invalid state (`is-invalid` class, `aria-invalid="true"`, danger-colored border, inline error text) is the same shared contract every other form/input component uses, plus `aria-describedby` linking the input to its error message text for screen-reader users.
+The invalid state (`is-invalid` class, `aria-invalid="true"`, danger-colored border, inline error text) is the same shared contract every other form/input component uses, plus `aria-describedby` linking the input to its error message text for screen-reader users.  While invalid, `aria-describedby` lists the hint (if any) and then the error message, so both are announced.
+
+```html
+<wuik-text-input
+  label="Display name"
+  hint="Up to 20 characters."
+  error="That name is already taken."
+></wuik-text-input>
+<!-- input[aria-invalid="true"][aria-describedby="…-hint …-error"] -->
+```
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.
 

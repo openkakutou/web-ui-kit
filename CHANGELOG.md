@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `<wuik-text-input hint="…">` shows help text under the field that screen readers announce together with it; while the field is invalid, the error message is announced after the hint.
+
 ## [0.18.0] - 2026-10-30
 
 ### Added
