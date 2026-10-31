@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Apps can now offer yes/no options with a checkbox, which also shows a partially-selected state, or with an on/off switch for options that apply right away. Both work with the keyboard and screen readers, take part in real forms (submit, reset, required), look right in light and dark themes, and are available in English and French.
+
 ## [0.21.0] - 2026-10-31
 
 ### Added

@@ -1,11 +1,11 @@
 /**
- * Barrel: importing this module registers every layout-shell custom element
- * (each source module self-registers via `customElements.define` on
- * import) and re-exports their classes for consumers that want the types.
+ * Barrel: importing this module registers every component (each module
+ * self-registers on import) and re-exports their classes.
  */
 export { WuikAppShellElement } from "./app-shell.ts";
 export { WuikBadgeElement } from "./badge.ts";
 export { WuikButtonElement } from "./button.ts";
+export { WuikCheckboxElement } from "./checkbox.ts";
 export { WuikColorPickerElement } from "./color-picker.ts";
 export { WuikDialogElement } from "./dialog.ts";
 export { WuikFileDropZoneElement } from "./file-drop-zone.ts";
@@ -25,6 +25,7 @@ export {
 } from "./sidebar-nav.ts";
 export { WuikSliderElement } from "./slider.ts";
 export { WuikSpinnerElement } from "./spinner.ts";
+export { WuikSwitchElement } from "./switch.ts";
 export { WuikTabPanelElement, WuikTabsElement } from "./tabs.ts";
 export { WuikTextInputElement } from "./text-input.ts";
 export { WuikToastElement, WuikToastRegionElement } from "./toast.ts";

@@ -20,6 +20,8 @@ import "../src/components/help-hint.ts";
 import "../src/components/list-row.ts";
 import "../src/components/section-header.ts";
 import "../src/components/select.ts";
+import "../src/components/checkbox.ts";
+import "../src/components/switch.ts";
 import "../src/components/sidebar-nav.ts";
 import "../src/components/toast.ts";
 import { initI18n } from "../src/i18n/i18n.ts";
@@ -386,6 +388,34 @@ app.insertAdjacentHTML(
     <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
       <wuik-toast variant="success" duration="0">Exported 12 files.</wuik-toast>
       <wuik-toast variant="error" duration="0">Export failed: invalid key sequence in kfm.cmd.</wuik-toast>
+    </div>
+  </div>
+`,
+);
+
+app.insertAdjacentHTML(
+  "beforeend",
+  `
+  <h2>Toggles</h2>
+  <div id="section-toggles" style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; max-width: 720px;">
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 300px;">
+      <wuik-checkbox label="Unchecked"></wuik-checkbox>
+      <wuik-checkbox label="Checked" checked></wuik-checkbox>
+      <wuik-checkbox label="Indeterminate" indeterminate></wuik-checkbox>
+      <wuik-checkbox label="Disabled" disabled></wuik-checkbox>
+      <wuik-checkbox label="Disabled checked" disabled checked></wuik-checkbox>
+      <wuik-checkbox label="Invalid" error="This option is required."></wuik-checkbox>
+      <wuik-checkbox label="Hidden label" hide-label checked></wuik-checkbox>
+      <wuik-checkbox label="A very long label that must wrap onto several lines at a narrow width without breaking the control alignment"></wuik-checkbox>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 300px;">
+      <wuik-switch label="Unchecked"></wuik-switch>
+      <wuik-switch label="Checked" checked></wuik-switch>
+      <wuik-switch label="Disabled" disabled></wuik-switch>
+      <wuik-switch label="Disabled checked" disabled checked></wuik-switch>
+      <wuik-switch label="Invalid" error="This option is required."></wuik-switch>
+      <wuik-switch label="Hidden label" hide-label checked></wuik-switch>
+      <wuik-switch label="A very long label that must wrap onto several lines at a narrow width without breaking the control alignment"></wuik-switch>
     </div>
   </div>
 `,

@@ -26,7 +26,8 @@
     "textInputRange": "Saisissez un nombre entre {{min}} et {{max}}.",
     "textInputMin": "Saisissez un nombre supérieur ou égal à {{min}}.",
     "textInputMax": "Saisissez un nombre inférieur ou égal à {{max}}.",
-    "textInputNotNumber": "Saisissez un nombre valide."
+    "textInputNotNumber": "Saisissez un nombre valide.",
+    "toggleRequired": "Cette option est obligatoire."
   },
   "dialog": {
     "close": "Fermer"

@@ -23,15 +23,12 @@ const SECTIONS = [
   "section-viewport-3d",
   "section-shortcuts",
   "section-locale",
-  // Appended last, deliberately: it is the newest section on the page and
-  // must never be inserted above an existing one — see
-  // .vibe/decisions/020-tabs-vertical-orientation-and-baseline-shift-avoidance.md.
+  // Append new sections last: inserting above shifts every baseline (decision 020).
   "section-tabs-vertical",
-  // Also appended last, for the same reason.
   "section-text-inputs",
-  // Appended last as well.
   "section-navigation",
   "section-feedback",
+  "section-toggles",
 ];
 
 test.beforeEach(async ({ page }) => {

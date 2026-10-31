@@ -98,3 +98,8 @@ _Sources: `src/components/dialog.ts`_
 A control that lists every language a consuming app (plus this kit's own translated text) is available in and switches the active one when the user picks a different option, with no page reload. The active selection always reflects a previously persisted manual choice over the browser's own auto-detected language, and stays in sync with a switch made anywhere else (another switcher instance, or the app itself) without rebuilding its own option list.
 **Do not confuse with:** the underlying localization setup a consuming app performs once — the switcher is only the UI on top of it; a consuming app never needs one to have working translated text.
 _Sources: `src/i18n/locale-switcher.ts`_
+
+## Toggle
+A boolean form control: a checkbox (checked, unchecked, or partially selected) or an on/off switch for an option that applies immediately. Its `checked` attribute is the default state and its `checked` property is the current state, which the user, a form reset or a form restore can change.
+**Do not confuse with:** Button pressed state — a pressed button is a button that stays visibly toggled; a toggle is a distinct form control that submits a value.
+_Sources: `src/components/toggle-base.ts`, `src/components/checkbox.ts`, `src/components/switch.ts`_

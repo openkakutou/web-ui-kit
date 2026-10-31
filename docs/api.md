@@ -28,6 +28,8 @@
 | `WuikButtonElement` | custom element class (`<wuik-button>`) | `src/components/button.ts` |
 | `WuikSpinnerElement` | custom element class (`<wuik-spinner>`) | `src/components/spinner.ts` |
 | `WuikTextInputElement` | custom element class (`<wuik-text-input>`) | `src/components/text-input.ts` |
+| `WuikCheckboxElement` | custom element class (`<wuik-checkbox>`) | `src/components/checkbox.ts` |
+| `WuikSwitchElement` | custom element class (`<wuik-switch>`) | `src/components/switch.ts` |
 | `WuikViewportElement` | custom element class (`<wuik-viewport>`) | `src/canvas/viewport.ts` |
 | `WuikViewport3DElement` | custom element class (`<wuik-viewport-3d>`) | `src/canvas3d/viewport-3d.ts` |
 | `CommandStack` | class | `src/history/command-stack.ts` |
@@ -201,6 +203,34 @@ The invalid state (`is-invalid` class, `aria-invalid="true"`, danger-colored bor
   error="That name is already taken."
 ></wuik-text-input>
 <!-- input[aria-invalid="true"][aria-describedby="…-hint …-error"] -->
+```
+
+### `<wuik-checkbox>` + `<wuik-switch>`
+
+Two form-associated boolean controls sharing one base class (`src/components/toggle-base.ts`). Each wraps a native `<input type="checkbox">` in its shadow root (the switch sets `role="switch"` on it), so keyboard, focus and the accessibility tree come from the platform. Use a **switch** for an option that takes effect immediately, a **checkbox** for an option applied on submit or for a selection. See `.vibe/decisions/028-checkbox-switch-form-association-and-shared-base.md`.
+
+| Attribute | Meaning |
+|---|---|
+| `label` | Visible label; clicking it toggles the control. |
+| `hide-label` | Boolean. Keeps `label` as the accessible name but hides it visually (for example a per-row select). |
+| `aria-label` | Accessible name when no `label` is given. With neither, a development-time `console.warn` is logged and no name is fabricated. An external `<label for>` still toggles on click but is **not** counted as a name. |
+| `checked` | The **default** state, like a native input. The `checked` property is the **current** state; once set by the property, the user or a form restore, a later attribute change no longer overrides it. |
+| `indeterminate` | Checkbox only. Shows a partial state; a user click resolves it to checked (the next click unchecks). A switch ignores it and warns; its `indeterminate` always reads `false`. |
+| `required` | Unchecked is invalid; the error shows only after the control was blurred or a form reported it invalid. |
+| `disabled` | Dimmed, not focusable, ignores events; a disabled checked control stays visibly checked. Also honoured when a form or `<fieldset disabled>` disables it. |
+| `error` | A consumer message. Shown with `aria-invalid="true"` and a danger border; wins over the built-in required check. Blank values are ignored. |
+| `name`, `value` | Form submission: `name=value` (default `on`) only while checked, nothing when unchecked. `form.reset()` restores the `checked` attribute state. |
+
+| Event | Detail | Fired when |
+|---|---|---|
+| `wuik-change` | `{ checked: boolean, indeterminate: boolean }` | Once per user toggle. Never for programmatic changes. |
+
+Calling `focus()` on the host moves focus into the control. The invalid and disabled states follow the shared contract of `.vibe/decisions/007-form-input-components-shared-conventions.md`; the required message is localized (`forms.toggleRequired`).
+
+```html
+<wuik-checkbox name="loop" label="Loop" checked></wuik-checkbox>
+<wuik-switch label="Show collision boxes"></wuik-switch>
+<wuik-checkbox label="Select Ryu" hide-label></wuik-checkbox>
 ```
 
 Default slot: the button's label. A button mounted with no slotted content and no `aria-label`/`aria-labelledby` does **not** get fabricated placeholder text (a false accessible name is worse than an honest empty state) — instead it shows a visible dashed-outline empty-state indicator and logs a development-time `console.warn`.

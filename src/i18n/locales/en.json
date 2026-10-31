@@ -26,7 +26,8 @@
     "textInputRange": "Enter a number between {{min}} and {{max}}.",
     "textInputMin": "Enter a number of at least {{min}}.",
     "textInputMax": "Enter a number of at most {{max}}.",
-    "textInputNotNumber": "Enter a valid number."
+    "textInputNotNumber": "Enter a valid number.",
+    "toggleRequired": "This option is required."
   },
   "dialog": {
     "close": "Close"
