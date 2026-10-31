@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A list row can be marked unavailable while staying reachable by keyboard: it ignores clicks and Enter/Space, is announced as unavailable, and is shown dimmed with a dotted underline so the state does not rely on colour alone.
+
 ## [0.19.0] - 2026-10-30
 
 ### Added

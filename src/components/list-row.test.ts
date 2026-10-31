@@ -15,6 +15,9 @@ function mountRow(attributes: Record<string, string> = {}): HTMLElement {
 const inner = (host: Element) =>
   host.shadowRoot?.querySelector("button") as HTMLButtonElement;
 
+const host2css = () =>
+  mountRow().shadowRoot?.querySelector("style")?.textContent ?? "";
+
 describe("wuik-list-row", () => {
   afterEach(() => {
     document.body.innerHTML = "";
@@ -69,6 +72,52 @@ describe("wuik-list-row", () => {
     inner(host).click();
     expect(inner(host).disabled).toBe(true);
     expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("stays focusable and exposes aria-disabled when the host has aria-disabled", () => {
+    const host = mountRow({ "aria-disabled": "true" });
+    expect(inner(host).getAttribute("aria-disabled")).toBe("true");
+    expect(inner(host).disabled).toBe(false);
+    inner(host).focus();
+    expect(host.shadowRoot?.activeElement).toBe(inner(host));
+  });
+
+  it("removes the inner aria-disabled when the host attribute is removed or false", () => {
+    const host = mountRow({ "aria-disabled": "true" });
+    host.setAttribute("aria-disabled", "false");
+    expect(inner(host).hasAttribute("aria-disabled")).toBe(false);
+    host.setAttribute("aria-disabled", "true");
+    host.removeAttribute("aria-disabled");
+    expect(inner(host).hasAttribute("aria-disabled")).toBe(false);
+  });
+
+  it("ignores activation while aria-disabled: an expandable row does not toggle (edge case)", () => {
+    const host = mountRow({ expandable: "", "aria-disabled": "true" });
+    const handler = vi.fn();
+    host.addEventListener("wuik-toggle", handler);
+    inner(host).click();
+    expect(handler).not.toHaveBeenCalled();
+    expect(host.hasAttribute("expanded")).toBe(false);
+    expect(inner(host).getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("toggles again once aria-disabled is removed", () => {
+    const host = mountRow({ expandable: "", "aria-disabled": "true" });
+    host.removeAttribute("aria-disabled");
+    inner(host).click();
+    expect(host.hasAttribute("expanded")).toBe(true);
+  });
+
+  it("lets disabled win over aria-disabled (edge case)", () => {
+    const host = mountRow({ disabled: "", "aria-disabled": "true" });
+    expect(inner(host).disabled).toBe(true);
+  });
+
+  it("marks the unavailable state with a cue other than colour", () => {
+    const css = host2css();
+    expect(css).toMatch(
+      /button\[aria-disabled="true"\][^}]*text-decoration[^}]*dotted/,
+    );
   });
 
   it("projects the main and end slots", () => {

@@ -224,7 +224,7 @@ Grouped navigation for editors with several sections.
 
 ### `<wuik-list-row>`
 
-28 px list row. Attributes `selected` (→ `aria-current="true"`, accent bar), `disabled`, `expandable` (disclosure with `aria-expanded`), `expanded`. Slots: default and `end`. Event `wuik-toggle` (`detail.expanded`) when an expandable row is toggled.
+28 px list row. Attributes `selected` (→ `aria-current="true"`, accent bar), `disabled`, `aria-disabled="true"` (unavailable but still focusable: ignores activation, dimmed with a dotted underline so it is not colour alone; `disabled` wins if both are set), `expandable` (disclosure with `aria-expanded`), `expanded`. Slots: default and `end`. Event `wuik-toggle` (`detail.expanded`) when an expandable row is toggled.
 
 ### `<wuik-badge>`
 

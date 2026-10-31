@@ -7,7 +7,10 @@
  * disclosure: a click toggles `expanded`, which is mirrored as
  * `aria-expanded`, and a bubbling `wuik-toggle` event reports the new state.
  * `selected` sets `aria-current="true"`. The `end` slot holds trailing
- * content (count, badge). The expanded content itself stays in the consumer's
+ * content (count, badge). `aria-disabled="true"` on the host marks an
+ * unavailable row that stays focusable (so its reason can be explained): it
+ * ignores activation and is drawn dimmed with a dotted underline. `disabled`
+ * wins when both are set. The expanded content itself stays in the consumer's
  * DOM, next to the row.
  */
 
@@ -63,6 +66,13 @@ TEMPLATE.innerHTML = `
       cursor: not-allowed;
     }
 
+    button[aria-disabled="true"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      text-decoration: underline dotted;
+      text-underline-offset: 0.2em;
+    }
+
     .chevron {
       display: none;
       width: 0.5rem;
@@ -104,7 +114,7 @@ TEMPLATE.innerHTML = `
 
 export class WuikListRowElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["selected", "expandable", "expanded", "disabled"];
+    return ["selected", "expandable", "expanded", "disabled", "aria-disabled"];
   }
 
   readonly #button: HTMLButtonElement;
@@ -127,6 +137,11 @@ export class WuikListRowElement extends HTMLElement {
 
   #render(): void {
     this.#button.disabled = this.hasAttribute("disabled");
+    if (this.getAttribute("aria-disabled") === "true") {
+      this.#button.setAttribute("aria-disabled", "true");
+    } else {
+      this.#button.removeAttribute("aria-disabled");
+    }
     if (this.hasAttribute("selected")) {
       this.#button.setAttribute("aria-current", "true");
     } else {
@@ -143,7 +158,10 @@ export class WuikListRowElement extends HTMLElement {
   }
 
   readonly #handleClick = (): void => {
-    if (!this.hasAttribute("expandable")) {
+    if (
+      !this.hasAttribute("expandable") ||
+      this.getAttribute("aria-disabled") === "true"
+    ) {
       return;
     }
     this.toggleAttribute("expanded");
