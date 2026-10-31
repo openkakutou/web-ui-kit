@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-10-31
+
 ### Added
 
 - Buttons have a new outline danger style: a destructive action can now sit next to the view's one filled primary button, with a red edge and normal text colour that stays readable in both themes.
@@ -185,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.17.0...v0.18.0
