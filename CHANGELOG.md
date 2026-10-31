@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-10-31
+
 ### Added
 
 - Apps can now offer yes/no options with a checkbox, which also shows a partially-selected state, or with an on/off switch for options that apply right away. Both work with the keyboard and screen readers, take part in real forms (submit, reset, required), look right in light and dark themes, and are available in English and French.
@@ -191,7 +193,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.22.0...HEAD
+[0.22.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.18.0...v0.19.0
