@@ -3,8 +3,10 @@
  * Usable on its own, with no dependency on the layout shell or any other
  * component (backlog item 003).
  *
- * Variants: `primary` (one per view), `secondary`, `ghost` (toolbar actions)
- * and `danger`. An unrecognized `variant` falls back to `primary`. A button mounted with
+ * Variants: `primary` (one per view), `secondary`, `ghost` (toolbar actions),
+ * `danger` (filled) and `danger-outline` (error-colored edge, transparent
+ * fill — for a destructive action in a view that already has its filled
+ * primary). An unrecognized `variant` falls back to `primary`. A button mounted with
  * no slotted content and no `aria-label` does not get fabricated
  * placeholder label text — that would give it a false accessible name,
  * which is worse than an honest empty state. Instead it shows a visible
@@ -24,7 +26,13 @@
  * `.vibe/decisions/018-button-pressed-state-design.md`.
  */
 
-const VARIANTS = new Set(["primary", "secondary", "ghost", "danger"]);
+const VARIANTS = new Set([
+  "primary",
+  "secondary",
+  "ghost",
+  "danger",
+  "danger-outline",
+]);
 const DEFAULT_VARIANT = "primary";
 
 const TEMPLATE = document.createElement("template");
@@ -83,6 +91,12 @@ TEMPLATE.innerHTML = `
       border-color: var(--wuik-color-error);
     }
 
+    button.danger-outline {
+      background: transparent;
+      color: var(--wuik-color-text);
+      border-color: var(--wuik-color-error);
+    }
+
     button.primary:hover {
       background: color-mix(in srgb, var(--wuik-color-primary) 88%, var(--wuik-color-text));
     }
@@ -94,6 +108,10 @@ TEMPLATE.innerHTML = `
 
     button.danger:hover {
       background: color-mix(in srgb, var(--wuik-color-error) 88%, var(--wuik-color-text));
+    }
+
+    button.danger-outline:hover {
+      background: color-mix(in srgb, var(--wuik-color-error) 12%, transparent);
     }
 
     button.is-pressed {
@@ -112,6 +130,10 @@ TEMPLATE.innerHTML = `
 
     button.danger.is-pressed {
       background: color-mix(in srgb, var(--wuik-color-error) 85%, var(--wuik-color-text));
+    }
+
+    button.danger-outline.is-pressed {
+      background: color-mix(in srgb, var(--wuik-color-error) 22%, transparent);
     }
 
     button.is-empty {

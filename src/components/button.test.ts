@@ -55,6 +55,13 @@ describe("wuik-button", () => {
     expect(nativeButton(host).classList.contains("ghost")).toBe(true);
   });
 
+  it("applies the danger-outline variant class for a destructive action that is not the view's primary", () => {
+    const host = mountButton("Delete", { variant: "danger-outline" });
+    const button = nativeButton(host);
+    expect(button.classList.contains("danger-outline")).toBe(true);
+    expect(button.classList.contains("primary")).toBe(false);
+  });
+
   it("falls back to the primary variant for an unrecognized variant value (error path)", () => {
     const host = mountButton("Go", { variant: "not-a-real-variant" });
     const button = nativeButton(host);
@@ -151,6 +158,18 @@ describe("wuik-button", () => {
       const css = hostStyleText(host);
       expect(css).toContain("--wuik-color-error");
       expect(css).toContain("--wuik-color-on-error");
+    });
+
+    it("draws the danger-outline edge with the error token and its label with the text token, on a transparent fill", () => {
+      const css = hostStyleText(
+        mountButton("Delete", { variant: "danger-outline" }),
+      );
+      const rule = css.match(/button\.danger-outline\s*\{([^}]*)\}/)?.[1] ?? "";
+      expect(rule).toMatch(/background:\s*transparent/);
+      expect(rule).toMatch(/color:\s*var\(--wuik-color-text\)/);
+      expect(rule).toMatch(/border-color:\s*var\(--wuik-color-error\)/);
+      expect(css).toMatch(/button\.danger-outline:hover/);
+      expect(css).toMatch(/button\.danger-outline\.is-pressed/);
     });
 
     it("references the focus ring token", () => {

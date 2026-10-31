@@ -164,7 +164,7 @@ Wraps a native `<button>`.
 
 | Attribute | Meaning |
 |---|---|
-| `variant` | `primary` (default), `secondary`, `ghost`, or `danger`. An unrecognized value falls back to `primary`. |
+| `variant` | `primary` (default), `secondary`, `ghost`, `danger` (filled), or `danger-outline` (transparent fill, error-colored edge, regular text color — use it for a destructive action when the view already shows its one filled primary; the edge meets 3:1 and the label 4.5:1 against the surface in both themes). An unrecognized value falls back to `primary`. |
 | `disabled` | Forwarded to the native button. |
 | `type` | Forwarded to the native button's `type`. Default `button` (never `submit` by default). |
 | `pressed` | Boolean attribute for a toggle-style/selectable button. Applies a token-driven "pressed" visual on top of the current `variant` and sets `aria-pressed="true"` on the native button. When absent, `aria-pressed` is removed entirely (never `"false"`) so a plain button never gains toggle semantics. See `.vibe/decisions/018-button-pressed-state-design.md`. |

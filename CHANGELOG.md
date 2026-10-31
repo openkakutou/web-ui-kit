@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Buttons have a new outline danger style: a destructive action can now sit next to the view's one filled primary button, with a red edge and normal text colour that stays readable in both themes.
+
 ## [0.20.0] - 2026-10-31
 
 ### Added
