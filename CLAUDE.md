@@ -18,6 +18,10 @@ English — all documentation, backlog items, code comments, and other generated
 
 This repo ships components and tokens — it is never itself a site. There is no `index.html`, no dev server workflow: `npm run dev` is `vite build --watch`, and the build output is `dist/web-ui-kit.js` (ESM), exposed via the `exports` field in `package.json`. Consumers are plain Vite apps importing it as a normal ESM dependency — nothing here may rely on bundler-specific behavior. Components are native Web Components (custom elements); design tokens are CSS custom properties importable from a single CSS entrypoint.
 
+## Compatibility target (MUST) <!-- keep -->
+
+Every feature and fix touching MUGEN/Ikemen GO formats or behavior must be compatible with **both MUGEN 1.0/1.1 and Ikemen GO**, extensions included, and validated against real community files — never MUGEN-only, never from memory. Where the two engines diverge, record the divergence and the chosen behavior in an ADR, and ground engine-behavior claims in a source (fixture, doc, engine source), marking anything unverified. This is an org-wide rule (`roadmap/repos.md`), already settled: do not ask the user whether it applies, and carry it as a 🔒 MUST in every need framing, implementer prompt and review.
+
 ## Architecture
 
 Design tokens and the publish pipeline have landed; Web Components (layout shell, form/input widgets) and canvas/viewport controls (2D and, per roadmap decision `014`, 3D) are still planned.
