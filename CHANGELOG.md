@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.1] - 2026-11-09
+
+### Fixed
+
+- The 0.23.0 package was never published because its release check failed; 0.23.1 ships the same changes.
+
 ## [0.23.0] - 2026-11-09
 
 ### Added
@@ -199,7 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.23.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.23.1...HEAD
+[0.23.1]: https://github.com/openkakutou/web-ui-kit/compare/v0.23.0...v0.23.1
 [0.23.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.20.0...v0.21.0
