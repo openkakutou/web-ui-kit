@@ -29,6 +29,7 @@ const SECTIONS = [
   "section-navigation",
   "section-feedback",
   "section-toggles",
+  "section-selects",
 ];
 
 test.beforeEach(async ({ page }) => {

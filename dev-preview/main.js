@@ -420,3 +420,44 @@ app.insertAdjacentHTML(
   </div>
 `,
 );
+
+app.insertAdjacentHTML(
+  "beforeend",
+  `
+  <h2>Selects</h2>
+  <div id="section-selects" style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; max-width: 720px;">
+    <wuik-select label="Language" value="fr" style="width: 200px;">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </wuik-select>
+    <wuik-select aria-label="Animation" style="width: 200px;">
+      <option value="idle">Idle</option>
+      <option value="walk">Walk</option>
+    </wuik-select>
+    <wuik-select label="Disabled" disabled style="width: 200px;">
+      <option value="en">English</option>
+    </wuik-select>
+    <wuik-select label="Invalid" error="Choose a language." style="width: 200px;">
+      <option value="">— none —</option>
+      <option value="en">English</option>
+    </wuik-select>
+    <wuik-select label="Placeholder" style="width: 200px;">
+      <option value="">— none —</option>
+      <option value="en">English</option>
+    </wuik-select>
+    <wuik-select label="Grouped" style="width: 200px;">
+      <optgroup label="Stances">
+        <option value="stand">Stand</option>
+        <option value="crouch">Crouch</option>
+      </optgroup>
+      <optgroup label="Attacks">
+        <option value="punch">Punch</option>
+      </optgroup>
+    </wuik-select>
+    <wuik-select label="Long list" style="width: 200px;">
+      <option value="long">A very long option text that must stay within the width of its host without overflowing the layout</option>
+      <option value="s1">Sprite 1</option><option value="s2">Sprite 2</option><option value="s3">Sprite 3</option><option value="s4">Sprite 4</option><option value="s5">Sprite 5</option><option value="s6">Sprite 6</option><option value="s7">Sprite 7</option><option value="s8">Sprite 8</option><option value="s9">Sprite 9</option><option value="s10">Sprite 10</option><option value="s11">Sprite 11</option><option value="s12">Sprite 12</option><option value="s13">Sprite 13</option><option value="s14">Sprite 14</option><option value="s15">Sprite 15</option><option value="s16">Sprite 16</option><option value="s17">Sprite 17</option><option value="s18">Sprite 18</option><option value="s19">Sprite 19</option><option value="s20">Sprite 20</option><option value="s21">Sprite 21</option><option value="s22">Sprite 22</option><option value="s23">Sprite 23</option><option value="s24">Sprite 24</option><option value="s25">Sprite 25</option><option value="s26">Sprite 26</option><option value="s27">Sprite 27</option><option value="s28">Sprite 28</option><option value="s29">Sprite 29</option><option value="s30">Sprite 30</option><option value="s31">Sprite 31</option><option value="s32">Sprite 32</option><option value="s33">Sprite 33</option><option value="s34">Sprite 34</option><option value="s35">Sprite 35</option><option value="s36">Sprite 36</option><option value="s37">Sprite 37</option><option value="s38">Sprite 38</option><option value="s39">Sprite 39</option><option value="s40">Sprite 40</option><option value="s41">Sprite 41</option><option value="s42">Sprite 42</option><option value="s43">Sprite 43</option><option value="s44">Sprite 44</option><option value="s45">Sprite 45</option><option value="s46">Sprite 46</option><option value="s47">Sprite 47</option><option value="s48">Sprite 48</option><option value="s49">Sprite 49</option><option value="s50">Sprite 50</option><option value="s51">Sprite 51</option><option value="s52">Sprite 52</option><option value="s53">Sprite 53</option><option value="s54">Sprite 54</option><option value="s55">Sprite 55</option><option value="s56">Sprite 56</option><option value="s57">Sprite 57</option><option value="s58">Sprite 58</option><option value="s59">Sprite 59</option>
+    </wuik-select>
+  </div>
+`,
+);

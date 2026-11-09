@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Drop-down lists without a visible label can now be given a name that screen readers announce, and a very long option no longer makes the list overflow its space. Apps can now replace their plain drop-down lists with the kit's one, including placeholders, grouped options and long lists.
+
 ## [0.22.0] - 2026-10-31
 
 ### Added

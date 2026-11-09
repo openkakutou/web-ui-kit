@@ -91,6 +91,59 @@ describe("wuik-select", () => {
     expect(native(host).hasAttribute("aria-invalid")).toBe(false);
   });
 
+  it("forwards aria-label to the native select when there is no visible label", () => {
+    const host = mountSelect({ "aria-label": "Animation" });
+    expect(native(host).getAttribute("aria-label")).toBe("Animation");
+    host.setAttribute("aria-label", "Clip");
+    expect(native(host).getAttribute("aria-label")).toBe("Clip");
+  });
+
+  it("removes the native aria-label live when the attribute is removed (edge case)", () => {
+    const host = mountSelect({ "aria-label": "Animation" });
+    host.removeAttribute("aria-label");
+    expect(native(host).hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("lets a visible label take precedence over aria-label (edge case)", () => {
+    const host = mountSelect({ label: "Language", "aria-label": "Other" });
+    expect(native(host).hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("never exposes an empty aria-label (error path)", () => {
+    const host = mountSelect({ "aria-label": "   " });
+    expect(native(host).hasAttribute("aria-label")).toBe(false);
+  });
+
+  it("selects nothing when the value matches no option (edge case)", () => {
+    const host = mountSelect({ value: "zz" }) as HTMLElement & {
+      value: string;
+    };
+    expect(host.value).toBe("");
+    expect(native(host).selectedIndex).toBe(-1);
+  });
+
+  it("supports an empty-value option as a placeholder", () => {
+    const host = mountSelect(
+      {},
+      '<option value="">— none —</option><option value="a">A</option>',
+    );
+    expect((host as HTMLElement & { value: string }).value).toBe("");
+    expect(native(host).selectedIndex).toBe(0);
+    const handler = vi.fn();
+    host.addEventListener("wuik-change", handler);
+    native(host).value = "a";
+    native(host).dispatchEvent(new Event("change"));
+    expect(handler.mock.calls[0][0].detail).toEqual({ value: "a" });
+  });
+
+  it("keeps the inner select within its host width", () => {
+    const css = native(mountSelect())
+      .ownerDocument.querySelector("wuik-select")
+      ?.shadowRoot?.querySelector("style")?.textContent;
+    expect(css).toMatch(/select\s*{[^}]*min-width:\s*0/);
+    expect(css).toMatch(/select\s*{[^}]*max-width:\s*100%/);
+  });
+
   it("flags a required field for assistive technology", () => {
     const host = mountSelect({ required: "", label: "Language" });
     expect(native(host).getAttribute("aria-required")).toBe("true");

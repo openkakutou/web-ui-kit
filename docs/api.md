@@ -274,7 +274,12 @@ Grouped navigation for editors with several sections.
 
 ### `<wuik-select>`
 
-`<wuik-select label="Language" value="fr" [required] [disabled] [error="…"]>` with light-DOM `<option>`/`<optgroup>` children (mirrored when they change). Property `value`; event `wuik-change` (`detail.value`).
+`<wuik-select label="Language" value="fr" [aria-label="…"] [required] [disabled] [error="…"]>` with light-DOM `<option>`/`<optgroup>` children (mirrored when they change). Property `value`; event `wuik-change` (`detail.value`).
+
+- `aria-label`: accessible name when there is no visible `label`; forwarded live to the inner native select. A visible `label` takes precedence (no `aria-label` is set), and an empty or whitespace-only value is treated as absent.
+- Placeholder: add an option with `value=""` (e.g. `<option value="">— none —</option>`); it is selected by default and picking another option emits `wuik-change`.
+- `<optgroup>` children are supported. Long lists use the native listbox; long option text never overflows the host (the select is capped at 100% width).
+- A `value` matching no option leaves nothing selected: `value` reads `""` (native `selectedIndex` is `-1`).
 
 ## Overlay components (`src/components/`)
 

@@ -34,6 +34,9 @@ TEMPLATE.innerHTML = `
     }
 
     select {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
       font: inherit;
       color: var(--wuik-color-text);
       background: var(--wuik-color-bg);
@@ -81,7 +84,7 @@ TEMPLATE.innerHTML = `
 
 export class WuikSelectElement extends HTMLElement {
   static get observedAttributes(): string[] {
-    return ["label", "required", "value", "disabled", "error"];
+    return ["label", "required", "value", "disabled", "error", "aria-label"];
   }
 
   readonly #wrapper: HTMLElement;
@@ -175,6 +178,13 @@ export class WuikSelectElement extends HTMLElement {
     const label = this.getAttribute("label") ?? "";
     this.#label.hidden = label === "";
     this.#labelText.textContent = label;
+
+    const ariaLabel = (this.getAttribute("aria-label") ?? "").trim();
+    if (label === "" && ariaLabel !== "") {
+      this.#select.setAttribute("aria-label", ariaLabel);
+    } else {
+      this.#select.removeAttribute("aria-label");
+    }
 
     const required = this.hasAttribute("required");
     this.#select.required = required;
