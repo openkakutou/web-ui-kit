@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-11-09
+
 ### Added
 
 - Drop-down lists without a visible label can now be given a name that screen readers announce, and a very long option no longer makes the list overflow its space. Apps can now replace their plain drop-down lists with the kit's one, including placeholders, grouped options and long lists.
@@ -197,7 +199,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Design tokens for color (with a light/dark pair), spacing, and typography, importable from the package's single CSS entrypoint. Dark mode is switched by setting `data-theme="dark"` on the page.
 
-[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.22.0...HEAD
+[Unreleased]: https://github.com/openkakutou/web-ui-kit/compare/v0.23.0...HEAD
+[0.23.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/openkakutou/web-ui-kit/compare/v0.19.0...v0.20.0
