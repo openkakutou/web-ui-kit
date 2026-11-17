@@ -5,7 +5,7 @@
 
 ## Project overview
 
-A shared, framework-agnostic design system for every OpenKakutou (github.com/openkakutou) viewer/editor/mode web app: native Web Components plus CSS custom-property design tokens — no React/Vue, matching the org's framework-free TS/Vite convention. Built in Vite library mode and published as a plain ESM package consumed by `character-viewer-web`, `character-editor`, `stage-viewer-web`, `stage-editor`, `lifebar-viewer-web`, `lifebar-editor`, and `mode-quick-versus`. See the org roadmap's `.vibe/decisions/011-shared-design-system-web-ui-kit.md` for the founding decision.
+A shared, framework-agnostic design system for every OpenKakutou (github.com/openkakutou) viewer/editor/game web app: native Web Components plus CSS custom-property design tokens — no React/Vue, matching the org's framework-free TS/Vite convention. Built in Vite library mode and published as a plain ESM package consumed by `character-viewer-web`, `character-editor`, `stage-viewer-web`, `stage-editor`, `lifebar-viewer-web`, `lifebar-editor`, and `game`. See the org roadmap's `.vibe/decisions/011-shared-design-system-web-ui-kit.md` for the founding decision.
 
 **Stack:** TypeScript / Vite (library mode, ESM output) / Vitest / Biome
 **Type:** library (browser UI components, no backend)

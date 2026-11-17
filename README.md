@@ -1,6 +1,6 @@
 # web-ui-kit
 
-A shared, framework-agnostic design system for every [OpenKakutou](https://github.com/openkakutou) viewer/editor/mode web app — native Web Components plus CSS custom-property design tokens, published as a plain ESM package so any of the org's TypeScript/Vite apps can adopt it without a UI framework.
+A shared, framework-agnostic design system for every [OpenKakutou](https://github.com/openkakutou) viewer/editor/game web app — native Web Components plus CSS custom-property design tokens, published as a plain ESM package so any of the org's TypeScript/Vite apps can adopt it without a UI framework.
 
 <!-- vibe:begin:features -->
 This project is in early-stage development. Available now:
